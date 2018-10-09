@@ -16,6 +16,7 @@
     "vuetify": "^1.2.0"
   },
   "devDependencies": {
+    "@fortawesome/fontawesome-free": "^5.4.0",
     "@vue/cli-plugin-babel": "^3.0.4",
     "@vue/cli-plugin-eslint": "^3.0.4",
     "@vue/cli-service": "^3.0.4",
@@ -23,6 +24,7 @@
     "pug": "^2.0.3",
     "pug-plain-loader": "^1.0.0",
     "sass-loader": "^7.1.0",
+    "simple-syntax-highlighter": "^1.0.0",
     "vue-cli-plugin-vuetify": "^0.2.1",
     "vue-template-compiler": "^2.5.17"
   },
