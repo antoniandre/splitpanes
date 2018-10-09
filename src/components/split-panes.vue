@@ -193,6 +193,7 @@ export default {
 <style lang="scss">
 .split-panes {
   display: flex;
+  width: 100%;
   height: 100%;
 
   &--vertical {flex-direction: row;}
@@ -201,6 +202,7 @@ export default {
   &__pane {
     width: 100%;
     height: 100%;
+    overflow: hidden;
   }
 
   &--vertical > .split-panes__splitter {min-width: 1px;cursor: ew-resize;}
