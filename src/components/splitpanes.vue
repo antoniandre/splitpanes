@@ -158,7 +158,7 @@ export default {
         // Splitter.
         if (i) {
           let splitterAttributes = {
-            class: 'split-panes__splitter',
+            class: 'splitpanes__splitter',
             ref: `splitter-${i}`
           }
           splitPanesChildren.push(createEl('div', splitterAttributes))
@@ -166,7 +166,7 @@ export default {
 
         // Pane.
         let paneAttributes = {
-          class: 'split-panes__pane',
+          class: 'splitpanes__pane',
           style: {
             ...(this.horizontal ? { height: `${this.panes[i].width}%` } : null),
             ...(!this.horizontal ? { width: `${this.panes[i].width}%` } : null)
@@ -179,8 +179,8 @@ export default {
     // Wrapper.
     let wrapperAttributes = {
       class: [
-        'split-panes',
-        `split-panes--${ this.horizontal ? 'horizontal' : 'vertical' }`
+        'splitpanes',
+        `splitpanes--${ this.horizontal ? 'horizontal' : 'vertical' }`
       ],
       ref: 'container'
     }
@@ -191,7 +191,7 @@ export default {
 </script>
 
 <style lang="scss">
-.split-panes {
+.splitpanes {
   display: flex;
   width: 100%;
   height: 100%;
@@ -205,7 +205,7 @@ export default {
     overflow: hidden;
   }
 
-  &--vertical > .split-panes__splitter {min-width: 1px;cursor: ew-resize;}
-  &--horizontal > .split-panes__splitter {min-height: 1px;cursor: ns-resize;}
+  &--vertical > .splitpanes__splitter {min-width: 1px;cursor: ew-resize;}
+  &--horizontal > .splitpanes__splitter {min-height: 1px;cursor: ns-resize;}
 }
 </style>
