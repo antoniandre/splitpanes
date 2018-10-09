@@ -1,18 +1,28 @@
 <template lang="pug">
-  #app
-    img(alt="Vue logo" src="./assets/logo.png")
-    h1.headline Vue Split Panes
+  v-app.white
+    v-content
+      img(alt="Vue logo" src="./assets/logo.png" height="40")
+      h1.headline Vue Split Panes
 
-    p.subheading A Vue JS reliable and simple panes splitter / resizer.
+      p.subheading A Vue JS reliable and simple panes splitter / resizer.
 
-    split-panes.demo(vertical style="height:400px")
-      span 1
-      split-panes(horizontal)
-        span 2
-        span 3
-        span 4
-      span 5
-      span 6
+      p.subheading # Demo 1
+      split-panes.demo(vertical style="height:400px")
+        span 1
+        split-panes(horizontal)
+          span 2
+          span 3
+          span 4
+        span 5
+
+      p.subheading # Demo 2
+      split-panes.demo(horizontal style="height:400px")
+        span 1
+        split-panes(vertical)
+          span 2
+          span 3
+          span 4
+        span 5
 </template>
 
 <script>
