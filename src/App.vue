@@ -1,7 +1,6 @@
-<template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-  </div>
+<template lang="pug">
+  #app
+    img(alt="Vue logo" src="./assets/logo.png")
 </template>
 
 <script>
