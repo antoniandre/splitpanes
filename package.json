@@ -53,5 +53,5 @@
     "last 2 versions",
     "not ie <= 10"
   ],
-  "main": "./dist/split-panes.common.js"
+  "main": "./dist/splitpanes.common.js"
 }
