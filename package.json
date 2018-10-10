@@ -14,13 +14,13 @@
     "material-design-icons-iconfont": "^3.0.3",
     "roboto-fontface": "*",
     "vue": "^2.5.17",
-    "vuetify": "^1.2.0"
+    "vuetify": "^1.2.7"
   },
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^5.4.0",
-    "@vue/cli-plugin-babel": "^3.0.4",
-    "@vue/cli-plugin-eslint": "^3.0.4",
-    "@vue/cli-service": "^3.0.4",
+    "@vue/cli-plugin-babel": "^3.0.5",
+    "@vue/cli-plugin-eslint": "^3.0.5",
+    "@vue/cli-service": "^3.0.5",
     "node-sass": "^4.9.3",
     "pug": "^2.0.3",
     "pug-plain-loader": "^1.0.0",
