@@ -80,11 +80,8 @@
         a(href="#installation") Installation
         a(name="installation")
 
-      highlight-message(type="warning").
-        Not yet released on NPM and Unpkg. Will be released this week (8th of October 2018).
-
       p You have two options: #[em NPM] #[strong.mx-2 or] #[span.code &lt;script&gt;] tag.
-      h3 Via NPM - COMING SOON!
+      h3 Via NPM
       ssh-pre(language="shell" label="Shell") npm install splitpanes --save-dev
       p Then import the 2 components and use it:
       ssh-pre(language="js" label="Javascript").
@@ -103,8 +100,8 @@
         &lt;head&gt;
           ...
           &lt;script src="https://unpkg.com/vue/dist/vue.min.js"&gt;&lt;/script&gt;
-          &lt;script src="https://unpkg.com/splitpanes/dist/splitpanes.min.js"&gt;&lt;/script&gt;
-          &lt;link href="https://unpkg.com/splitpanes/dist/splitpanes.min.css" rel="stylesheet"&gt;
+          &lt;script src="https://unpkg.com/splitpanes/dist/splitpanes.umd.min.js"&gt;&lt;/script&gt;
+          &lt;link href="https://unpkg.com/splitpanes/dist/splitpanes.css" rel="stylesheet"&gt;
         &lt;/head&gt;
 
       h2.mt-5

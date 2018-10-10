@@ -1,12 +1,12 @@
 {
   "name": "splitpanes",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A Vue JS reliable and simple panes splitter / resizer",
   "repository": "https://github.com/antoniandre/splitpanes",
   "author": "Antoni Andre <antoniandre.web@gmail.com>",
   "license": "MIT",
   "main": "./dist/splitpanes.common.js",
-  "unpkg": "dist/splitpanes.common.min.js",
+  "unpkg": "dist/splitpanes.umd.min.js",
   "keywords": [
     "split panes",
     "panes resizer",
