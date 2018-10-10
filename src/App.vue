@@ -30,13 +30,43 @@
             a(href="https://github.com/antoniandre/splitpanes" target="_blank") //github.com/antoniandre/splitpanes #[v-icon(small color="primary") open_in_new]
 
       p.mt-5.subheading # Demo 1
-      splitpanes(vertical style="height:400px")
+      splitpanes(style="height:400px")
         span 1
         splitpanes(horizontal)
           span 2
           span 3
           span 4
         span 5
+      ssh-pre(language="html-vue" label="HTML Vue Template" v-pre).
+        &lt;splitpanes style="height: 400px"&gt;
+          &lt;span&gt;1&lt;/span&gt;
+          &lt;splitpanes horizontal style="height: 400px"&gt;
+            &lt;span&gt;2&lt;/span&gt;
+            &lt;span&gt;3&lt;/span&gt;
+            &lt;span&gt;4&lt;/span&gt;
+          &lt;/splitpanes&gt;
+          &lt;span&gt;5&lt;/span&gt;
+        &lt;/splitpanes&gt;
+      ssh-pre(language="css" label="CSS" v-pre).
+        .splitpanes {background-color: #f2f2f2;}
+
+        .splitpanes__pane {
+          box-shadow: 0 0 3px rgba(0, 0, 0, .2) inset;
+          justify-content: center;
+          align-items: center;
+          display: flex;
+        }
+
+        .splitpanes__splitter {background-color: #fff;}
+        .splitpanes--vertical > .splitpanes__splitter {width: 10px;}
+        .splitpanes--horizontal > .splitpanes__splitter {height: 10px;}
+
+        .splitpanes span {
+          font-family: Helvetica, Arial, sans-serif;
+          color: #fff;
+          font-size: 5em;
+          opacity: 0.6;
+        }
 
       p.mt-5.subheading # Demo 2
       splitpanes(horizontal style="height:400px")
@@ -74,8 +104,6 @@
           ...
           &lt;script src="https://unpkg.com/vue/dist/vue.min.js"&gt;&lt;/script&gt;
           &lt;script src="https://unpkg.com/splitpanes/dist/splitpanes.min.js"&gt;&lt;/script&gt;
-
-          // Since v. 1.6.0, you need to include Vueper Slides CSS file for default styles.
           &lt;link href="https://unpkg.com/splitpanes/dist/splitpanes.min.css" rel="stylesheet"&gt;
         &lt;/head&gt;
 
@@ -86,6 +114,10 @@
       p.
         Once included in your project, use as follows.#[br]
         The splitters will be added automatically between all the direct children.
+
+      highlight-message(type="tips").
+        By default the layout is 'column' (vertical), if you need you can set the attribute
+        #[span.code horizontal] on the #[span.code &lt;splitpanes&gt;] tag to change the layout to rows.
 
       ssh-pre(language="html-vue" label="HTML Vue Template" v-pre).
         &lt;splitpanes&gt;
@@ -123,6 +155,10 @@ a {
 ul {
   list-style-type: none;
   padding: 0;
+}
+
+.code {
+  font-family: monospace,monospace;
 }
 
 .splitpanes {

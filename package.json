@@ -1,6 +1,6 @@
 {
-  "name": "split-panes",
-  "version": "0.1.0",
+  "name": "splitpanes",
+  "version": "1.0.0",
   "description": "A Vue JS reliable and simple panes splitter / resizer",
   "private": true,
   "scripts": {
