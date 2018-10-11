@@ -31,7 +31,7 @@
     "material-design-icons-iconfont": "^3.0.3",
     "roboto-fontface": "*",
     "vue": "^2.5.17",
-    "vuetify": "^1.2.7"
+    "vuetify": "^1.2.8"
   },
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^5.4.0",
