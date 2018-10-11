@@ -4,7 +4,7 @@
       div.text-xs-center
         img(alt="Vue logo" src="./assets/logo.png" height="40")
         h1.mb-3.headline Vue Split Panes
-        p.subheading A Vue JS reliable and simple panes splitter / resizer.
+        p.subheading A Vue JS reliable, simple and touch-ready panes splitter / resizer.
 
       v-layout(row)
         v-flex
@@ -15,7 +15,10 @@
               | Nesting supported
             li
               v-icon.mr-2(color="primary" size="20") check
-              | Light weight & no dependencies other than Vue JS
+              | Light weight &amp; no dependencies other than Vue JS
+            li
+              v-icon.mr-2(color="primary" size="20") check
+              | Support for touch devices
             li
               v-icon.mr-2(color="primary" size="20") check
               | Simple yet efficient
@@ -58,8 +61,8 @@
         }
 
         .splitpanes__splitter {background-color: #fff;}
-        .splitpanes--vertical > .splitpanes__splitter {width: 10px;}
-        .splitpanes--horizontal > .splitpanes__splitter {height: 10px;}
+        .splitpanes--vertical &gt; .splitpanes__splitter {width: 10px;}
+        .splitpanes--horizontal &gt; .splitpanes__splitter {height: 10px;}
 
         .splitpanes span {
           font-family: Helvetica, Arial, sans-serif;
@@ -76,7 +79,7 @@
           span 3
         span 4
 
-      h2.mt-5.headline
+      h2.mt-5.mb-2.headline
         a(href="#installation") Installation
         a(name="installation")
 
@@ -104,7 +107,7 @@
           &lt;link href="https://unpkg.com/splitpanes/dist/splitpanes.css" rel="stylesheet"&gt;
         &lt;/head&gt;
 
-      h2.mt-5
+      h2.mt-5.mb-2
         a.headline(href="#how-to-use") How to use
         a(name="how-to-use")
 
@@ -120,6 +123,19 @@
         &lt;splitpanes&gt;
           &lt;div v-for="i in 3" :key="i"&gt;{{ i.toString() }}&lt;/splitpanes&gt;
         &lt;/splitpanes&gt;
+
+      h2.mt-5.mb-2
+        a.headline(href="#more-examples") More examples
+        a(name="more-examples")
+
+      p More examples are available on codePen:#[br]
+      ul
+        li
+          | Basic example
+          a(href="https://codepen.io/antoniandre/pen/PypgKY" target="_blank" class="ml-2") //codepen.io/antoniandre/pen/PypgKY #[v-icon(small color="primary") open_in_new]
+        li
+          | Example to extend the reactive touch zone for touch devices
+          a(href="https://codepen.io/antoniandre/pen/XxRZmB" target="_blank" class="ml-2") //codepen.io/antoniandre/pen/XxRZmB #[v-icon(small color="primary") open_in_new]
 </template>
 
 <script>

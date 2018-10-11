@@ -4,7 +4,7 @@
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 
 
-> A Vue JS reliable and simple panes splitter / resizer.
+> A Vue JS reliable, simple and touch-ready panes splitter / resizer.
 
 ## Installation
 
