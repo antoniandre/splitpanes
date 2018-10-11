@@ -27,7 +27,8 @@ export default {
         )
       })
 
-      document.addEventListener(hasTouch ? 'touchmove' : 'mousemove', this.onMouseMove)
+      // Passive: false to prevent scrolling while touch dragging.
+      document.addEventListener(hasTouch ? 'touchmove' : 'mousemove', this.onMouseMove, { passive: false })
       document.addEventListener(hasTouch ? 'touchend' : 'mouseup', this.onMouseUp)
     },
 
@@ -38,12 +39,13 @@ export default {
       let index = this.touch.activeSplitter.index
       this.touch.sumOfWidths = this.panes[index - 1].width + this.panes[index].width
       this.touch.sumOfHeights = this.touch.sumOfWidths
-
-      // console.log('mouse down', e, splitter)
     },
 
     onMouseMove (e) {
       if (this.touch.mouseDown) {
+        // Prevent scrolling while touch dragging.
+        e.preventDefault()
+
         this.touch.dragging = true
 
         let drag = this.getCurrentMouseDrag(e)
@@ -195,6 +197,7 @@ export default {
 
   &--vertical {flex-direction: row;}
   &--horizontal {flex-direction: column;}
+  &--dragging * {user-select: none;}
 
   &__pane {
     width: 100%;
