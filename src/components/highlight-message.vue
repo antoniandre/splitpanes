@@ -1,5 +1,5 @@
 <template lang="pug">
-  component(:class="'highlight ' + type" :is="tag")
+  component(:class="`highlight ${type}`" :is="tag")
     v-icon {{ icon }}
     slot
 </template>
@@ -18,28 +18,14 @@ export default {
   },
   computed: {
     icon () {
-      let icon
-
       switch (this.type) {
-        case 'success':
-          icon = 'check'
-        break
-        case 'error':
-          icon = 'close'
-        break
-        case 'warning':
-          icon = 'error_outline'
-        break
-        case 'tips':
-        icon = 'wb_incandescent'
-        break
+        case 'success': return 'check'
+        case 'error': return 'close'
+        case 'warning': return 'priority_high'
+        case 'tips': return 'wb_incandescent'
         case 'info':
-        default:
-          icon = 'error_outline'
-        break
+        default: return 'priority_high'
       }
-
-      return icon
     }
   }
 }
@@ -79,46 +65,23 @@ export default {
 
   .v-icon {
     position: absolute;
-    left: -9px;
+    left: -11px;
     color: #fff !important;
     border-radius: 1em;
-    width: 16px;
-    height: 16px;
-    font-size: 21px;
-    line-height: 16px;
+    width: 20px;
+    height: 20px;
+    font-size: 18px;
+    line-height: 20px;
     text-align: center;
-    text-indent: -2px;
+    text-indent: 1px;
+    top: 0.5em;
   }
 
-  &.info .v-icon {
-    background: #09f !important;
-    transform: rotate(180deg);
-    font-size: 23px;
-    top: 0.4em;
-  }
-
-  &.success .v-icon {
-    background-color: #6c0 !important;
-    font-size: 15px;
-    top: 0.7em;
-  }
-
-  &.error .v-icon {
-    background-color: #f33 !important;
-    font-size: 15px;
-    top: 0.7em;
-  }
-
-  &.tips .v-icon {
-    background-color: #fd0 !important;
-    font-size: 14px;
-    top: 0.7em;
-    transform: rotate(180deg);
-  }
-
-  &.warning .v-icon {
-    background-color: #fa0 !important;
-    top: 0.4em;
-  }
+  &.info .v-icon {background: #09f !important;transform: rotate(180deg);}
+  &.success .v-icon {background-color: #6c0 !important;}
+  &.error .v-icon {background-color: #f33 !important;}
+  &.tips .v-icon {background-color: #fd0 !important;transform: rotate(180deg);}
+  &.warning .v-icon {background-color: #fa0 !important;}
+  &.info .v-icon, &.warning .v-icon {font-size: 16px;}
 }
 </style>
