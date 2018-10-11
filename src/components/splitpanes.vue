@@ -20,7 +20,7 @@ export default {
     bindEvents () {
       const hasTouch = 'ontouchstart' in window
 
-      this.splitters.forEach((splitter, i) => {
+      this.splitters.forEach(splitter => {
         this.$refs[splitter.id].addEventListener(
           hasTouch ? 'touchstart' : 'mousedown',
           (event) => this.onMouseDown(event, splitter)
@@ -82,11 +82,7 @@ export default {
       }
     },
 
-    onMouseUp (e) {
-      if (this.touch.mouseDown) {
-        // console.log('mouse Up', e)
-      }
-
+    onMouseUp () {
       this.touch.mouseDown = false
       this.touch.dragging = false
     },
@@ -103,7 +99,7 @@ export default {
         let el = this.container.vnode
         let top = el.offsetTop
 
-        while (el = el.offsetParent) {
+        while ((el = el.offsetParent)) {
           top += el.offsetTop
         }
 
@@ -120,7 +116,7 @@ export default {
         let el = this.container.vnode
         let left = el.offsetLeft
 
-        while (el = el.offsetParent) {
+        while ((el = el.offsetParent)) {
           left += el.offsetLeft
         }
 
@@ -180,7 +176,8 @@ export default {
     let wrapperAttributes = {
       class: [
         'splitpanes',
-        `splitpanes--${ this.horizontal ? 'horizontal' : 'vertical' }`
+        `splitpanes--${ this.horizontal ? 'horizontal' : 'vertical' }`,
+        this.touch.dragging ? 'splitpanes--dragging' : ''
       ],
       ref: 'container'
     }
@@ -205,7 +202,7 @@ export default {
     overflow: hidden;
   }
 
-  &--vertical > .splitpanes__splitter {min-width: 1px;cursor: ew-resize;}
-  &--horizontal > .splitpanes__splitter {min-height: 1px;cursor: ns-resize;}
+  &--vertical > .splitpanes__splitter {min-width: 1px;cursor: col-resize;}
+  &--horizontal > .splitpanes__splitter {min-height: 1px;cursor: row-resize;}
 }
 </style>
