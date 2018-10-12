@@ -1,6 +1,6 @@
 {
   "name": "splitpanes",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A Vue JS reliable, simple and touch-ready panes splitter / resizer",
   "repository": "https://github.com/antoniandre/splitpanes",
   "author": "Antoni Andre <antoniandre.web@gmail.com>",
@@ -26,25 +26,23 @@
     "lint": "vue-cli-service lint",
     "build-bundle": "vue-cli-service build --target lib --name splitpanes ./src/components/splitpanes.vue --dest ./dist"
   },
-  "dependencies": {
-    "@babel/polyfill": "^7.0.0-rc.1",
-    "material-design-icons-iconfont": "^3.0.3",
-    "roboto-fontface": "*",
-    "vue": "^2.5.17",
-    "vuetify": "^1.2.8"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^5.4.0",
     "@vue/cli-plugin-babel": "^3.0.5",
     "@vue/cli-plugin-eslint": "^3.0.5",
     "@vue/cli-service": "^3.0.5",
+    "material-design-icons-iconfont": "^3.0.3",
     "node-sass": "^4.9.3",
     "pug": "^2.0.3",
     "pug-plain-loader": "^1.0.0",
+    "roboto-fontface": "*",
     "sass-loader": "^7.1.0",
     "simple-syntax-highlighter": "^1.0.0",
+    "vue": "^2.5.17",
     "vue-cli-plugin-vuetify": "^0.2.1",
-    "vue-template-compiler": "^2.5.17"
+    "vue-template-compiler": "^2.5.17",
+    "vuetify": "^1.2.8"
   },
   "eslintConfig": {
     "root": true,
