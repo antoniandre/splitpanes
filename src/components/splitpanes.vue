@@ -20,14 +20,15 @@ export default {
     bindEvents () {
       const hasTouch = 'ontouchstart' in window
 
-      this.splitters.forEach((splitter, i) => {
+      this.splitters.forEach(splitter => {
         this.$refs[splitter.id].addEventListener(
           hasTouch ? 'touchstart' : 'mousedown',
           (event) => this.onMouseDown(event, splitter)
         )
       })
 
-      document.addEventListener(hasTouch ? 'touchmove' : 'mousemove', this.onMouseMove)
+      // Passive: false to prevent scrolling while touch dragging.
+      document.addEventListener(hasTouch ? 'touchmove' : 'mousemove', this.onMouseMove, { passive: false })
       document.addEventListener(hasTouch ? 'touchend' : 'mouseup', this.onMouseUp)
     },
 
@@ -38,12 +39,13 @@ export default {
       let index = this.touch.activeSplitter.index
       this.touch.sumOfWidths = this.panes[index - 1].width + this.panes[index].width
       this.touch.sumOfHeights = this.touch.sumOfWidths
-
-      // console.log('mouse down', e, splitter)
     },
 
     onMouseMove (e) {
       if (this.touch.mouseDown) {
+        // Prevent scrolling while touch dragging.
+        e.preventDefault()
+
         this.touch.dragging = true
 
         let drag = this.getCurrentMouseDrag(e)
@@ -82,11 +84,7 @@ export default {
       }
     },
 
-    onMouseUp (e) {
-      if (this.touch.mouseDown) {
-        // console.log('mouse Up', e)
-      }
-
+    onMouseUp () {
       this.touch.mouseDown = false
       this.touch.dragging = false
     },
@@ -103,7 +101,7 @@ export default {
         let el = this.container.vnode
         let top = el.offsetTop
 
-        while (el = el.offsetParent) {
+        while ((el = el.offsetParent)) {
           top += el.offsetTop
         }
 
@@ -120,7 +118,7 @@ export default {
         let el = this.container.vnode
         let left = el.offsetLeft
 
-        while (el = el.offsetParent) {
+        while ((el = el.offsetParent)) {
           left += el.offsetLeft
         }
 
@@ -180,7 +178,8 @@ export default {
     let wrapperAttributes = {
       class: [
         'splitpanes',
-        `splitpanes--${ this.horizontal ? 'horizontal' : 'vertical' }`
+        `splitpanes--${ this.horizontal ? 'horizontal' : 'vertical' }`,
+        this.touch.dragging ? 'splitpanes--dragging' : ''
       ],
       ref: 'container'
     }
@@ -198,6 +197,7 @@ export default {
 
   &--vertical {flex-direction: row;}
   &--horizontal {flex-direction: column;}
+  &--dragging * {user-select: none;}
 
   &__pane {
     width: 100%;
