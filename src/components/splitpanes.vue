@@ -205,7 +205,7 @@ export default {
     overflow: hidden;
   }
 
-  &--vertical > .splitpanes__splitter {min-width: 1px;cursor: ew-resize;}
-  &--horizontal > .splitpanes__splitter {min-height: 1px;cursor: ns-resize;}
+  &--vertical > .splitpanes__splitter {min-width: 1px;cursor: col-resize;}
+  &--horizontal > .splitpanes__splitter {min-height: 1px;cursor: row-resize;}
 }
 </style>

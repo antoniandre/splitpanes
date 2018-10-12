@@ -40,7 +40,7 @@
       ssh-pre(language="html-vue" label="HTML Vue Template" v-pre).
         &lt;splitpanes style="height: 400px"&gt;
           &lt;span&gt;1&lt;/span&gt;
-          &lt;splitpanes horizontal style="height: 400px"&gt;
+          &lt;splitpanes horizontal&gt;
             &lt;span&gt;2&lt;/span&gt;
             &lt;span&gt;3&lt;/span&gt;
             &lt;span&gt;4&lt;/span&gt;
