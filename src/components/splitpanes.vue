@@ -4,6 +4,10 @@ export default {
     horizontal: {
       type: Boolean,
       default: false
+    },
+    pushOtherPanes: {
+      type: Boolean,
+      default: true
     }
   },
   data () {
@@ -19,17 +23,19 @@ export default {
   methods: {
     bindEvents () {
       const hasTouch = 'ontouchstart' in window
+      const eventNames = {
+        start: hasTouch ? 'touchstart' : 'mousedown',
+        move: hasTouch ? 'touchmove' : 'mousemove',
+        end: hasTouch ? 'touchend' : 'mouseup'
+      }
 
       this.splitters.forEach(splitter => {
-        this.$refs[splitter.id].addEventListener(
-          hasTouch ? 'touchstart' : 'mousedown',
-          (event) => this.onMouseDown(event, splitter)
-        )
+        this.$refs[splitter.id].addEventListener(eventNames.start, e => this.onMouseDown(e, splitter))
       })
 
       // Passive: false to prevent scrolling while touch dragging.
-      document.addEventListener(hasTouch ? 'touchmove' : 'mousemove', this.onMouseMove, { passive: false })
-      document.addEventListener(hasTouch ? 'touchend' : 'mouseup', this.onMouseUp)
+      document.addEventListener(eventNames.move, this.onMouseMove, { passive: false })
+      document.addEventListener(eventNames.end, this.onMouseUp)
     },
 
     onMouseDown (e, splitter) {
@@ -37,25 +43,29 @@ export default {
       this.touch.activeSplitter = splitter
 
       let index = this.touch.activeSplitter.index
-      this.touch.sumOfWidths = this.panes[index - 1].width + this.panes[index].width
+
+      // Store the sum of the widths taken by the 2 panes being resized.
+      this.touch.sumOfWidths = this.panes[index].width + this.panes[index + 1].width
+      // sumOfWidths is used for column layout, sumOfHeights for row layout.
+      // Same value but more appropriate var name.
       this.touch.sumOfHeights = this.touch.sumOfWidths
     },
 
     onMouseMove (e) {
       if (this.touch.mouseDown) {
-        // Prevent scrolling while touch dragging.
+        // Prevent scrolling while touch dragging (only works with an active event, eg. passive: false).
         e.preventDefault()
 
         this.touch.dragging = true
 
         let drag = this.getCurrentMouseDrag(e)
-        let index = this.touch.activeSplitter.index
+        let splitterIndex = this.touch.activeSplitter.index
         let dragPercentage = 0
 
         if (this.horizontal) {
           let aboveCellsHeightsSum = 0
           this.panes.forEach((cell, i) => {
-            if (i < index - 1) aboveCellsHeightsSum += cell.width
+            if (i < splitterIndex) aboveCellsHeightsSum += cell.width
           })
           let aboveCellsHeightsSumPercent = aboveCellsHeightsSum * this.container.vnode.clientHeight / 100
 
@@ -65,21 +75,29 @@ export default {
 
           dragPercentage = ((drag.y - offsetTop + scrollTop) * 100 / this.container.vnode.clientHeight) * 100 / this.touch.sumOfHeights
 
-          this.panes[index - 1].width = dragPercentage / (100 / this.touch.sumOfHeights)
-          this.panes[index].width = (100 - dragPercentage) / (100 / this.touch.sumOfHeights)
+          this.panes[splitterIndex].width = dragPercentage / (100 / this.touch.sumOfHeights)
+          this.panes[splitterIndex + 1].width = (100 - dragPercentage) / (100 / this.touch.sumOfHeights)
         }
         else {
-          let leftHandCellsWidthSum = 0
+          let leftHandCellsWidthSumPercent = 0
           this.panes.forEach((cell, i) => {
-            if (i < index - 1) leftHandCellsWidthSum += cell.width
+            if (i < splitterIndex) leftHandCellsWidthSumPercent += cell.width
           })
-          let leftHandCellsWidthSumPercent = leftHandCellsWidthSum * this.container.vnode.clientWidth / 100
+          let leftHandCellsWidthSumPixels = leftHandCellsWidthSumPercent * this.container.vnode.clientWidth / 100
 
-          let offsetLeft = this.getContainerOffsetLeft() + leftHandCellsWidthSumPercent
+          let offsetLeft = this.getContainerOffsetLeft() + leftHandCellsWidthSumPixels
           dragPercentage = ((drag.x - offsetLeft) * 100 / this.container.vnode.clientWidth) * 100 / this.touch.sumOfWidths
 
-          this.panes[index - 1].width = dragPercentage / (100 / this.touch.sumOfWidths)
-          this.panes[index].width = (100 - dragPercentage) / (100 / this.touch.sumOfWidths)
+          if (this.pushOtherPanes
+              && (splitterIndex < this.splitters.length - 1 && dragPercentage > 100
+              || splitterIndex === this.splitters.length - 1 && dragPercentage < 0)) {
+            this.doPushOtherPanes(splitterIndex, dragPercentage)
+          }
+          // Prevent going beyond 0 to 100% width (don't change other panes widths).
+          else dragPercentage = Math.min(Math.max(dragPercentage, 0), 100)
+
+          this.panes[splitterIndex].width = dragPercentage / (100 / this.touch.sumOfWidths)
+          this.panes[splitterIndex + 1].width = (100 - dragPercentage) / (100 / this.touch.sumOfWidths)
         }
       }
     },
@@ -127,12 +145,30 @@ export default {
 
       return this.container.offsetLeft
     },
+
+    doPushOtherPanes (splitterIndex, dragPercentage) {
+      let paneToResize = null
+      let increase = dragPercentage > 100
+      // console.log(increase ? 'increasing width' : 'decreasing width', dragPercentage)
+
+      this.panes.forEach((pane, i) => {
+        // Don't change any dimension for the pane being resized.
+        if (i !== splitterIndex) {
+          // Do some pane resizing here.
+
+          // if (increase) {
+          //   this.panes[splitterIndex + 2].width = 100 - this.panes[splitterIndex].width
+          // }
+        }
+      })
+    }
   },
 
   created () {
-    for (let i of (this.$slots.default || []).keys()) {
+    // Create the panes and splitters arrays.
+    if (this.$slots.default) for (let i = 0, max = this.$slots.default.length; i < max; i++) {
       this.$set(this.panes, i, { width: this.defaultWidth })
-      if (i) this.$set(this.splitters, i, { id: `splitter-${i}`, index: i })
+      if (i) this.$set(this.splitters, i - 1, { id: `splitter-${i - 1}`, index: i - 1 })
     }
   },
 
@@ -157,7 +193,7 @@ export default {
         if (i) {
           let splitterAttributes = {
             class: 'splitpanes__splitter',
-            ref: `splitter-${i}`
+            ref: `splitter-${i - 1}`
           }
           splitPanesChildren.push(createEl('div', splitterAttributes))
         }
