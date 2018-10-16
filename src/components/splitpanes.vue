@@ -108,9 +108,10 @@ export default {
     // if the sum of width of the 2 cells  is 60%, the dragPercentage range will be 0 to 100% of this 60%.
     getCurrentDragPercentage (drag) {
       let splitterIndex = this.touch.activeSplitter.index
-      drag = drag[this.horizontal ? 'y': 'x']
       let doc = document.documentElement
       let scrollTop = this.horizontal ? (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0) : null
+      let offset = this[`getContainerOffset${this.horizontal ? 'Top' : 'Left'}`]()
+      drag = drag[this.horizontal ? 'y': 'x'] - offset + scrollTop
 
       // In the code bellow 'size' refers to 'width' for vertical and 'height' for horizontal layout.
       let containerSize = this.container.vnode[this.horizontal ? 'clientHeight' : 'clientWidth']
@@ -118,18 +119,27 @@ export default {
       this.panes.forEach((pane, i) => totalPrevPanesSize += i < splitterIndex ? pane.width : 0)
       let totalPrevPanesSizePx = totalPrevPanesSize * containerSize / 100
 
-      let offset = this[`getContainerOffset${this.horizontal ? 'Top' : 'Left'}`]() + totalPrevPanesSizePx
-
-      return ((drag - offset + scrollTop) * 100 / containerSize) * 100 / this.touch.sumOfWidths
+      return drag * 100 / containerSize
     },
 
     calculatePanesSize (drag) {
       let splitterIndex = this.touch.activeSplitter.index
       let dragPercentage = this.getCurrentDragPercentage(drag)
-      // let bellow0 = dragPercentage < 0
-      // let over100 = dragPercentage > 100
+      dragPercentage = Math.min(Math.max(dragPercentage, 0), 100)
+      let bellow0 = dragPercentage < 0
+      let over100 = dragPercentage > 100
+      let totalPrevPanesSize = this.totalPrevPanesSize(splitterIndex)
+      let totalNextPanesSize = this.totalNextPanesSize(splitterIndex)
 
-      // console.log(dragPercentage, bellow0, over100)
+      // console.log({
+      //   dragPercentage,
+      //   // bellow0,
+      //   // over100,
+      //   totalPrevPanesSize,
+      //   totalNextPanesSize,
+      //   secondPaneWidth: (100 - dragPercentage - totalPrevPanesSize - totalNextPanesSize),
+      //   thirdPaneWidth: totalNextPanesSize
+      // })
 
       this.panes.forEach((pane, i) => {
         // if (bellow0) {
@@ -139,36 +149,33 @@ export default {
 
         // }
         /* else */ {
-          if (i === splitterIndex) pane.width = dragPercentage / (100 / this.touch.sumOfWidths)
-          if (i === splitterIndex + 1) pane.width = (100 - dragPercentage) / (100 / this.touch.sumOfWidths)
+          if (i === splitterIndex) {
+            pane.width = Math.min(Math.max(dragPercentage - totalPrevPanesSize, 0), 100)
+          }
+          if (i === splitterIndex + 1) {
+            pane.width = Math.min(Math.max((100 - dragPercentage - totalNextPanesSize), 0), 100)
+          }
         }
       })
-
-      // if (this.pushOtherPanes
-      //     && (splitterIndex < this.splitters.length - 1 && dragPercentage > 100
-      //     || splitterIndex === this.splitters.length - 1 && dragPercentage < 0)) {
-      //   this.doPushOtherPanes(splitterIndex, dragPercentage)
-      // }
-      // Prevent going beyond 0 to 100% width (don't change other panes widths).
-      // else dragPercentage = Math.min(Math.max(dragPercentage, 0), 100)
     },
 
-  //   doPushOtherPanes (splitterIndex, dragPercentage) {
-  //     let paneToResize = null
-  //     let increase = dragPercentage > 100
-  //     // console.log(increase ? 'increasing width' : 'decreasing width', dragPercentage)
+    totalPrevPanesSize (splitterIndex) {
+      return this.panes.reduce((total, pane, i) => total + (i < splitterIndex ? pane.width : 0), 0)
+    },
 
-  //     this.panes.forEach((pane, i) => {
-  //       // Don't change any dimension for the pane being resized.
-  //       if (i !== splitterIndex) {
-  //         // Do some pane resizing here.
+    totalNextPanesSize (splitterIndex) {
+      return this.panes.reduce((total, pane, i) => total + (i > splitterIndex + 1 ? pane.width : 0), 0)
+    },
 
-  //         // if (increase) {
-  //         //   this.panes[splitterIndex + 2].width = 100 - this.panes[splitterIndex].width
-  //         // }
-  //       }
-  //     })
-  //   }
+    // Return the next pane from siblings which has a size (width for vert or height for horz) of more than 0.
+    // findNextExpandedPane (splitterIndex) {
+    //   let pane = null
+    //   this.panes.some((p, i) => {
+    //     if (i > splitterIndex && pane.width) pane = p
+    //     return i > splitterIndex && pane.width
+    //   })
+    //   return pane
+    // }
   },
 
   created () {
