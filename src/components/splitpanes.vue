@@ -16,7 +16,7 @@ export default {
       panesCount: (this.$slots.default || []).length,
       panes: [],
       splitters: [],
-      touch: { mouseDown: false, dragging: false, activeSplitter: null, sumOfWidths: 0, sumOfHeights: 0 }
+      touch: { mouseDown: false, dragging: false, activeSplitter: null, sumOfWidths: 0 }
     }
   },
 
@@ -88,7 +88,6 @@ export default {
       return this.container.offsetTop
     },
 
-
     // Recursively sum all the offsetTop values from current element up the tree until body.
     getContainerOffsetLeft (force = false) {
       if (this.container.offsetLeft === null || force) {
@@ -126,7 +125,24 @@ export default {
 
     calculatePanesSize (drag) {
       let splitterIndex = this.touch.activeSplitter.index
-      let dragPercentage = this.getCurrentDragPercentage (drag)
+      let dragPercentage = this.getCurrentDragPercentage(drag)
+      // let bellow0 = dragPercentage < 0
+      // let over100 = dragPercentage > 100
+
+      // console.log(dragPercentage, bellow0, over100)
+
+      this.panes.forEach((pane, i) => {
+        // if (bellow0) {
+
+        // }
+        // else if (over100) {
+
+        // }
+        /* else */ {
+          if (i === splitterIndex) pane.width = dragPercentage / (100 / this.touch.sumOfWidths)
+          if (i === splitterIndex + 1) pane.width = (100 - dragPercentage) / (100 / this.touch.sumOfWidths)
+        }
+      })
 
       // if (this.pushOtherPanes
       //     && (splitterIndex < this.splitters.length - 1 && dragPercentage > 100
@@ -134,29 +150,25 @@ export default {
       //   this.doPushOtherPanes(splitterIndex, dragPercentage)
       // }
       // Prevent going beyond 0 to 100% width (don't change other panes widths).
-      // else
-      dragPercentage = Math.min(Math.max(dragPercentage, 0), 100)
-
-      this.panes[splitterIndex].width = dragPercentage / (100 / this.touch.sumOfWidths)
-      this.panes[splitterIndex + 1].width = (100 - dragPercentage) / (100 / this.touch.sumOfWidths)
+      // else dragPercentage = Math.min(Math.max(dragPercentage, 0), 100)
     },
 
-    doPushOtherPanes (splitterIndex, dragPercentage) {
-      let paneToResize = null
-      let increase = dragPercentage > 100
-      // console.log(increase ? 'increasing width' : 'decreasing width', dragPercentage)
+  //   doPushOtherPanes (splitterIndex, dragPercentage) {
+  //     let paneToResize = null
+  //     let increase = dragPercentage > 100
+  //     // console.log(increase ? 'increasing width' : 'decreasing width', dragPercentage)
 
-      this.panes.forEach((pane, i) => {
-        // Don't change any dimension for the pane being resized.
-        if (i !== splitterIndex) {
-          // Do some pane resizing here.
+  //     this.panes.forEach((pane, i) => {
+  //       // Don't change any dimension for the pane being resized.
+  //       if (i !== splitterIndex) {
+  //         // Do some pane resizing here.
 
-          // if (increase) {
-          //   this.panes[splitterIndex + 2].width = 100 - this.panes[splitterIndex].width
-          // }
-        }
-      })
-    }
+  //         // if (increase) {
+  //         //   this.panes[splitterIndex + 2].width = 100 - this.panes[splitterIndex].width
+  //         // }
+  //       }
+  //     })
+  //   }
   },
 
   created () {
