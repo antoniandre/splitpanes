@@ -7,7 +7,7 @@ export default {
     },
     pushOtherPanes: {
       type: Boolean,
-      default: true
+      default: false
     }
   },
   data () {
@@ -124,22 +124,25 @@ export default {
 
     calculatePanesSize (drag) {
       let splitterIndex = this.touch.activeSplitter.index
-      let dragPercentage = this.getCurrentDragPercentage(drag)
-      dragPercentage = Math.min(Math.max(dragPercentage, 0), 100)
-      let bellow0 = dragPercentage < 0
-      let over100 = dragPercentage > 100
       let totalPrevPanesSize = this.totalPrevPanesSize(splitterIndex)
       let totalNextPanesSize = this.totalNextPanesSize(splitterIndex)
+      let minDrag = 0 + (this.pushOtherPanes ? 0 : totalPrevPanesSize)
+      let maxDrag = 100 - (this.pushOtherPanes ? 0 : totalNextPanesSize)
+      let dragPercentage = Math.max(Math.min(this.getCurrentDragPercentage(drag), maxDrag), minDrag)
+      let bellow0 = dragPercentage < 0
+      let over100 = dragPercentage > 100
 
-      // console.log({
-      //   dragPercentage,
-      //   // bellow0,
-      //   // over100,
-      //   totalPrevPanesSize,
-      //   totalNextPanesSize,
-      //   secondPaneWidth: (100 - dragPercentage - totalPrevPanesSize - totalNextPanesSize),
-      //   thirdPaneWidth: totalNextPanesSize
-      // })
+      console.log({
+        dragPercentage,
+        // bellow0,
+        // over100,
+        minDrag,
+        maxDrag,
+        totalPrevPanesSize,
+        totalNextPanesSize,
+        secondPaneWidth: (100 - dragPercentage - totalPrevPanesSize - totalNextPanesSize),
+        thirdPaneWidth: totalNextPanesSize
+      })
 
       this.panes.forEach((pane, i) => {
         // if (bellow0) {
@@ -149,9 +152,11 @@ export default {
 
         // }
         /* else */ {
+          // The pane right before active splitter.
           if (i === splitterIndex) {
             pane.width = Math.min(Math.max(dragPercentage - totalPrevPanesSize, 0), 100)
           }
+          // The pane right after active splitter.
           if (i === splitterIndex + 1) {
             pane.width = Math.min(Math.max((100 - dragPercentage - totalNextPanesSize), 0), 100)
           }
