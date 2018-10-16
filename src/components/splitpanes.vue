@@ -57,48 +57,7 @@ export default {
         e.preventDefault()
 
         this.touch.dragging = true
-
-        let drag = this.getCurrentMouseDrag(e)
-        let splitterIndex = this.touch.activeSplitter.index
-        let dragPercentage = 0
-
-        if (this.horizontal) {
-          let aboveCellsHeightsSum = 0
-          this.panes.forEach((cell, i) => {
-            if (i < splitterIndex) aboveCellsHeightsSum += cell.width
-          })
-          let aboveCellsHeightsSumPercent = aboveCellsHeightsSum * this.container.vnode.clientHeight / 100
-
-          let offsetTop = this.getContainerOffsetTop() + aboveCellsHeightsSumPercent
-          let doc = document.documentElement
-          let scrollTop = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0)
-
-          dragPercentage = ((drag.y - offsetTop + scrollTop) * 100 / this.container.vnode.clientHeight) * 100 / this.touch.sumOfHeights
-
-          this.panes[splitterIndex].width = dragPercentage / (100 / this.touch.sumOfHeights)
-          this.panes[splitterIndex + 1].width = (100 - dragPercentage) / (100 / this.touch.sumOfHeights)
-        }
-        else {
-          let leftHandCellsWidthSumPercent = 0
-          this.panes.forEach((cell, i) => {
-            if (i < splitterIndex) leftHandCellsWidthSumPercent += cell.width
-          })
-          let leftHandCellsWidthSumPixels = leftHandCellsWidthSumPercent * this.container.vnode.clientWidth / 100
-
-          let offsetLeft = this.getContainerOffsetLeft() + leftHandCellsWidthSumPixels
-          dragPercentage = ((drag.x - offsetLeft) * 100 / this.container.vnode.clientWidth) * 100 / this.touch.sumOfWidths
-
-          if (this.pushOtherPanes
-              && (splitterIndex < this.splitters.length - 1 && dragPercentage > 100
-              || splitterIndex === this.splitters.length - 1 && dragPercentage < 0)) {
-            this.doPushOtherPanes(splitterIndex, dragPercentage)
-          }
-          // Prevent going beyond 0 to 100% width (don't change other panes widths).
-          else dragPercentage = Math.min(Math.max(dragPercentage, 0), 100)
-
-          this.panes[splitterIndex].width = dragPercentage / (100 / this.touch.sumOfWidths)
-          this.panes[splitterIndex + 1].width = (100 - dragPercentage) / (100 / this.touch.sumOfWidths)
-        }
+        this.calculatePanesSize(this.getCurrentMouseDrag(e))
       }
     },
 
@@ -144,6 +103,42 @@ export default {
       }
 
       return this.container.offsetLeft
+    },
+
+    // Returns the drag percentage of the splitter relative to the 2 panes it's inbetween.
+    // if the sum of width of the 2 cells  is 60%, the dragPercentage range will be 0 to 100% of this 60%.
+    getCurrentDragPercentage (drag) {
+      let splitterIndex = this.touch.activeSplitter.index
+      drag = drag[this.horizontal ? 'y': 'x']
+      let doc = document.documentElement
+      let scrollTop = this.horizontal ? (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0) : null
+
+      // In the code bellow 'size' refers to 'width' for vertical and 'height' for horizontal layout.
+      let containerSize = this.container.vnode[this.horizontal ? 'clientHeight' : 'clientWidth']
+      let totalPrevPanesSize = 0
+      this.panes.forEach((pane, i) => totalPrevPanesSize += i < splitterIndex ? pane.width : 0)
+      let totalPrevPanesSizePx = totalPrevPanesSize * containerSize / 100
+
+      let offset = this[`getContainerOffset${this.horizontal ? 'Top' : 'Left'}`]() + totalPrevPanesSizePx
+
+      return ((drag - offset + scrollTop) * 100 / containerSize) * 100 / this.touch.sumOfWidths
+    },
+
+    calculatePanesSize (drag) {
+      let splitterIndex = this.touch.activeSplitter.index
+      let dragPercentage = this.getCurrentDragPercentage (drag)
+
+      // if (this.pushOtherPanes
+      //     && (splitterIndex < this.splitters.length - 1 && dragPercentage > 100
+      //     || splitterIndex === this.splitters.length - 1 && dragPercentage < 0)) {
+      //   this.doPushOtherPanes(splitterIndex, dragPercentage)
+      // }
+      // Prevent going beyond 0 to 100% width (don't change other panes widths).
+      // else
+      dragPercentage = Math.min(Math.max(dragPercentage, 0), 100)
+
+      this.panes[splitterIndex].width = dragPercentage / (100 / this.touch.sumOfWidths)
+      this.panes[splitterIndex + 1].width = (100 - dragPercentage) / (100 / this.touch.sumOfWidths)
     },
 
     doPushOtherPanes (splitterIndex, dragPercentage) {
