@@ -154,13 +154,13 @@ export default {
         if (pushingPrevPanes) {
           if (pane.id === prevExpandedPane.id) {
             pane.width = dragPercentage
-            console.log('pushed pane 1', this.panes.map(pane => pane.width))
+            // console.log('pushed pane 1', this.panes.map(pane => pane.width))
           }
         }
         else if (pushingNextPanes) {
           if (pushingNextPanes && pane.id === nextExpandedPane.id) {
             pane.width = 100 - dragPercentage
-            console.log('pushed pane 3', this.panes.map(pane => pane.width))
+            // console.log('pushed pane 3', this.panes.map(pane => pane.width))
           }
         }
 
