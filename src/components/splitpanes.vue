@@ -7,7 +7,7 @@ export default {
     },
     pushOtherPanes: {
       type: Boolean,
-      default: false
+      default: true
     }
   },
   data () {
@@ -123,43 +123,55 @@ export default {
     },
 
     calculatePanesSize (drag) {
-      let splitterIndex = this.touch.activeSplitter.index
-      let totalPrevPanesSize = this.totalPrevPanesSize(splitterIndex)
-      let totalNextPanesSize = this.totalNextPanesSize(splitterIndex)
-      let minDrag = 0 + (this.pushOtherPanes ? 0 : totalPrevPanesSize)
-      let maxDrag = 100 - (this.pushOtherPanes ? 0 : totalNextPanesSize)
-      let dragPercentage = Math.max(Math.min(this.getCurrentDragPercentage(drag), maxDrag), minDrag)
-      let bellow0 = dragPercentage < 0
-      let over100 = dragPercentage > 100
+      const splitterIndex = this.touch.activeSplitter.index
+      const totalPrevPanesSize = this.totalPrevPanesSize(splitterIndex)
+      const totalNextPanesSize = this.totalNextPanesSize(splitterIndex)
+      const minDrag = 0 + (this.pushOtherPanes ? 0 : totalPrevPanesSize)
+      const maxDrag = 100 - (this.pushOtherPanes ? 0 : totalNextPanesSize)
+      const dragPercentage = Math.max(Math.min(this.getCurrentDragPercentage(drag), maxDrag), minDrag)
 
-      console.log({
-        dragPercentage,
-        // bellow0,
-        // over100,
-        minDrag,
-        maxDrag,
-        totalPrevPanesSize,
-        totalNextPanesSize,
-        secondPaneWidth: (100 - dragPercentage - totalPrevPanesSize - totalNextPanesSize),
-        thirdPaneWidth: totalNextPanesSize
-      })
+      // When feature pushOtherPanes is true.
+      const pushingPrevPanes = !this.pushOtherPanes || dragPercentage < totalPrevPanesSize
+      const pushingNextPanes = !this.pushOtherPanes || dragPercentage > 100 - totalNextPanesSize
+      const nextExpandedPane = pushingNextPanes ? this.findNextExpandedPane(splitterIndex) : null
+      const prevExpandedPane = pushingPrevPanes ? this.findPrevExpandedPane(splitterIndex) : null
+
+      // console.log({
+      //   dragPercentage,
+      //   pushingPrevPanes,
+      //   pushingNextPanes,
+      //   nextExpandedPane,
+      //   // minDrag,
+      //   // maxDrag,
+      //   totalPrevPanesSize,
+      //   totalNextPanesSize,
+      //   secondPaneWidth: (100 - dragPercentage - totalPrevPanesSize - totalNextPanesSize),
+      //   thirdPaneWidth: totalNextPanesSize
+      // })
+      // console.log(this.panes.map(pane => pane.width))
 
       this.panes.forEach((pane, i) => {
-        // if (bellow0) {
-
-        // }
-        // else if (over100) {
-
-        // }
-        /* else */ {
-          // The pane right before active splitter.
-          if (i === splitterIndex) {
-            pane.width = Math.min(Math.max(dragPercentage - totalPrevPanesSize, 0), 100)
+        if (pushingPrevPanes) {
+          if (pane.id === prevExpandedPane.id) {
+            pane.width = dragPercentage
+            console.log('pushed pane 1', this.panes.map(pane => pane.width))
           }
-          // The pane right after active splitter.
-          if (i === splitterIndex + 1) {
-            pane.width = Math.min(Math.max((100 - dragPercentage - totalNextPanesSize), 0), 100)
+        }
+        else if (pushingNextPanes) {
+          if (pushingNextPanes && pane.id === nextExpandedPane.id) {
+            pane.width = 100 - dragPercentage
+            console.log('pushed pane 3', this.panes.map(pane => pane.width))
           }
+        }
+
+        // The pane right before active splitter.
+        if (i === splitterIndex) {
+          pane.width = Math.min(Math.max(dragPercentage - totalPrevPanesSize, 0), 100)
+        }
+
+        // The pane right after active splitter.
+        if (i === splitterIndex + 1) {
+          pane.width = Math.min(Math.max((100 - dragPercentage - totalNextPanesSize), 0), 100)
         }
       })
     },
@@ -173,14 +185,24 @@ export default {
     },
 
     // Return the next pane from siblings which has a size (width for vert or height for horz) of more than 0.
-    // findNextExpandedPane (splitterIndex) {
-    //   let pane = null
-    //   this.panes.some((p, i) => {
-    //     if (i > splitterIndex && pane.width) pane = p
-    //     return i > splitterIndex && pane.width
-    //   })
-    //   return pane
-    // }
+    findNextExpandedPane (splitterIndex) {
+      let pane = null
+      this.panes.some((p, i) => {
+        if (i > splitterIndex + 1 && p.width) pane = p
+        return i > splitterIndex + 1 && p.width
+      })
+      return pane
+    },
+
+    // Return the previous pane from siblings which has a size (width for vert or height for horz) of more than 0.
+    findPrevExpandedPane (splitterIndex) {
+      let pane = null
+      this.panes.some((p, i) => {
+        if (i < splitterIndex && p.width) pane = p
+        return i < splitterIndex && p.width
+      })
+      return pane
+    }
   },
 
   created () {
