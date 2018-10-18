@@ -29,4 +29,5 @@ ___
 
 ## Release Notes
 
+- __Version 1.1.0__ Allow pushing other panes while dragging splitter
 - __Version 1.0.0__ First public release

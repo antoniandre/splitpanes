@@ -124,57 +124,40 @@ export default {
 
     calculatePanesSize (drag) {
       const splitterIndex = this.touch.activeSplitter.index
+
       let totalPrevPanesSize = this.totalPrevPanesSize(splitterIndex)
       let totalNextPanesSize = this.totalNextPanesSize(splitterIndex)
+
       const minDrag = 0 + (this.pushOtherPanes ? 0 : totalPrevPanesSize)
       const maxDrag = 100 - (this.pushOtherPanes ? 0 : totalNextPanesSize)
       const dragPercentage = Math.max(Math.min(this.getCurrentDragPercentage(drag), maxDrag), minDrag)
 
-      // When feature pushOtherPanes is true.
-      const pushingPrevPanes = !this.pushOtherPanes || dragPercentage < totalPrevPanesSize
-      const pushingNextPanes = !this.pushOtherPanes || dragPercentage > 100 - totalNextPanesSize
-      let prevExpandedPane = pushingPrevPanes ? this.findPrevExpandedPane(splitterIndex) : null
-      let nextExpandedPane = pushingNextPanes ? this.findNextExpandedPane(splitterIndex) : null
-
       // If not pushing other panes, panes to resize are right before and right after splitter.
       let panesToResize = [splitterIndex, splitterIndex + 1]
-      if (pushingPrevPanes) panesToResize[0] = this.findPrevExpandedPane(splitterIndex).index
-      if (pushingNextPanes) panesToResize[1] = this.findNextExpandedPane(splitterIndex).index
+
+      // When pushOtherPanes = true, find the closest expanded pane on each side of the splitter.
+      if (this.pushOtherPanes) {
+        if (dragPercentage < totalPrevPanesSize) {
+          panesToResize[0] = this.findPrevExpandedPane(splitterIndex).index
+          totalPrevPanesSize = this.totalPrevPanesSize(panesToResize[0])
+        }
+        if (dragPercentage > 100 - totalNextPanesSize) {
+          panesToResize[1] = this.findNextExpandedPane(splitterIndex).index
+          totalNextPanesSize = this.totalNextPanesSize(panesToResize[1] - 1)
+        }
+      }
       // console.log(this.panes.map(pane => pane.width), dragPercentage)
 
-      /* console.log({
-        dragPercentage,
-        pushingPrevPanes,
-        pushingNextPanes,
-        nextExpandedPane,
-        // minDrag,
-        // maxDrag,
-        totalPrevPanesSize,
-        totalNextPanesSize,
-        secondPaneWidth: (100 - dragPercentage - totalPrevPanesSize - totalNextPanesSize),
-        thirdPaneWidth: totalNextPanesSize
-      }) */
-
-      if (panesToResize[0] !== undefined) this.panes[panesToResize[0]].width = dragPercentage - this.totalPrevPanesSize(panesToResize[0])
-      if (panesToResize[1] !== undefined) this.panes[panesToResize[1]].width = 100 - dragPercentage - this.totalNextPanesSize(panesToResize[1] - 1)
+      if (panesToResize[0] !== undefined) this.panes[panesToResize[0]].width = Math.max(dragPercentage - totalPrevPanesSize, 0)
+      if (panesToResize[1] !== undefined) this.panes[panesToResize[1]].width = Math.max(100 - dragPercentage - totalNextPanesSize, 0)
     },
 
     totalPrevPanesSize (splitterIndex) {
-      let size = this.panes.reduce((total, pane, i) => {
-        // console.log(i, total + (i < splitterIndex ? pane.width : 0))
-        return total + (i < splitterIndex ? pane.width : 0)
-      }, 0)
-      // console.log('total prev panes size = ' + size)
-      return size
+      return this.panes.reduce((total, pane, i) => total + (i < splitterIndex ? pane.width : 0), 0)
     },
 
     totalNextPanesSize (splitterIndex) {
-      let size = this.panes.reduce((total, pane, i) => {
-        // console.log('checking pane ' + i, i > splitterIndex + 1, splitterIndex + 1, 'total= ' + total)
-        return total + (i > splitterIndex + 1 ? pane.width : 0)
-      }, 0)
-      // console.log('total next panes size = ' + size)
-      return size
+      return this.panes.reduce((total, pane, i) => total + (i > splitterIndex + 1 ? pane.width : 0), 0)
     },
 
     // Return the previous pane from siblings which has a size (width for vert or height for horz) of more than 0.
@@ -182,12 +165,9 @@ export default {
       let pane = null
       let arr = [...this.panes]
       arr.reverse().some(p => {
-        // console.log('checking ' + p.index, p.index < splitterIndex, p.width, '.')
         if (p.index < splitterIndex && p.width) pane = p
         return p.index < splitterIndex && p.width
       })
-      // console.log(arr.reverse(), 'returning pane index ' + pane.index)
-      // debugger
       return pane
     },
 
