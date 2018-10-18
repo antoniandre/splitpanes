@@ -117,7 +117,6 @@ export default {
       let containerSize = this.container.vnode[this.horizontal ? 'clientHeight' : 'clientWidth']
       let totalPrevPanesSize = 0
       this.panes.forEach((pane, i) => totalPrevPanesSize += i < splitterIndex ? pane.width : 0)
-      let totalPrevPanesSizePx = totalPrevPanesSize * containerSize / 100
 
       return drag * 100 / containerSize
     },
