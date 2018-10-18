@@ -21,6 +21,9 @@
               | Support for touch devices
             li
               v-icon.mr-2(color="primary" size="20") check
+              | Push other panes or not
+            li
+              v-icon.mr-2(color="primary" size="20") check
               | Simple yet efficient
             li
               v-icon.mr-2(color="primary" size="20") check
@@ -33,9 +36,9 @@
             a(href="https://github.com/antoniandre/splitpanes" target="_blank") //github.com/antoniandre/splitpanes #[v-icon(small color="primary") open_in_new]
 
       p.mt-5.subheading # Demo 1
-      splitpanes(style="height:400px")
+      splitpanes.example(style="height:400px")
         span 1
-        splitpanes(horizontal)
+        splitpanes.example(horizontal)
           span 2
           span 3
           span 4
@@ -70,14 +73,6 @@
           font-size: 5em;
           opacity: 0.6;
         }
-
-      p.mt-5.subheading # Demo 2
-      splitpanes(horizontal style="height:400px")
-        splitpanes(vertical)
-          span 1
-          span 2
-          span 3
-        span 4
 
       h2.mt-5.mb-2.headline
         a(href="#installation") Installation
@@ -128,14 +123,48 @@
         a.headline(href="#more-examples") More examples
         a(name="more-examples")
 
-      p More examples are available on codePen:#[br]
-      ul
-        li
-          | Basic example
-          a(href="https://codepen.io/antoniandre/pen/PypgKY" target="_blank" class="ml-2") //codepen.io/antoniandre/pen/PypgKY #[v-icon(small color="primary") open_in_new]
-        li
-          | Example to extend the reactive touch zone for touch devices
-          a(href="https://codepen.io/antoniandre/pen/XxRZmB" target="_blank" class="ml-2") //codepen.io/antoniandre/pen/XxRZmB #[v-icon(small color="primary") open_in_new]
+      p.mt-5.subheading # Horizontal layout &amp; push other panes
+      splitpanes.example(horizontal style="height:400px")
+        span 1
+        span 2
+        span 3
+
+      p.mt-5.subheading # Mix layout with nested splitpanes &amp; prevent pushing other panes
+      p
+        | try it yourself:
+        a(href="https://codepen.io/antoniandre/pen/PypgKY" target="_blank" class="ml-2") //codepen.io/antoniandre/pen/PypgKY #[v-icon(small color="primary") open_in_new]
+      splitpanes.example(horizontal :push-other-panes="false" style="height:400px")
+        span 1
+        splitpanes.example(:push-other-panes="false")
+          span 2
+          span 3
+          span 4
+        span 5
+
+      p.mt-5.subheading # Lots of splitters &amp; push other panes
+      splitpanes.example(style="height:400px")
+        span 1
+        span 2
+        span 3
+        span 4
+        span 5
+        span 6
+        span 7
+        span 8
+
+      p.mt-5.subheading # Increased reactive touch zone for touch devices
+      p
+        | try it yourself:
+        a(href="https://codepen.io/antoniandre/pen/XxRZmB" target="_blank" class="ml-2") //codepen.io/antoniandre/pen/XxRZmB #[v-icon(small color="primary") open_in_new]
+
+      splitpanes.touch-example(horizontal style="height:400px")
+        splitpanes.touch-example(vertical)
+          span 1
+          span 2
+          span 3
+        span.text.
+          In this example the splitters are thin lines but the reactive touch zone is spread to 30 pixels all around!
+          #[em Hover a splitter to see the Fat-fingers reactive zone.]
 </template>
 
 <script>
@@ -171,7 +200,7 @@ ul {
 }
 
 .code {
-  font-family: monospace,monospace;
+  font-family: monospace;
 }
 
 .splitpanes {
@@ -186,16 +215,90 @@ ul {
 
   &__splitter {
     background-color: #fff;
-  }
+    box-sizing: border-box;
+    position: relative;
 
-  &--vertical > .splitpanes__splitter {width: 10px;}
-  &--horizontal > .splitpanes__splitter {height: 10px;}
+    &:before, &:after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      background-color: rgba(0, 0, 0, .15);
+      transition: background-color 0.3s;
+    }
+    &:hover:before, &:hover:after {background-color: rgba(0, 0, 0, .25);}
+
+    .splitpanes--vertical > & {
+      width: 9px;
+      border-left: 1px solid #eee;
+
+      &:before, &:after {
+        transform: translateY(-50%);
+        width: 1px;
+        height: 30px;
+      }
+      &:before {margin-left: -2px;}
+      &:after {margin-left: 1px;}
+    }
+
+    .splitpanes--horizontal > & {
+      height: 9px;
+      border-top: 1px solid #eee;
+
+      &:before,
+      &:after {
+        transform: translateX(-50%);
+        width: 30px;
+        height: 1px;
+      }
+      &:before {margin-top: -2px;}
+      &:after {margin-top: 1px;}
+    }
+  }
 
   span {
     font-family: Helvetica, Arial, sans-serif;
     color: #fff;
     font-size: 5em;
     opacity: 0.6;
+  }
+}
+
+.splitpanes.touch-example {
+  .splitpanes__pane {box-shadow: none;}
+  .splitpanes__splitter {background-color: #ccc;width: auto;height: auto;border: none;}
+  .splitpanes__splitter:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: 0;
+    transition: background-color 0.4s;
+    background-color: rgba(255, 0, 0, 0);
+    width: auto;
+    height: auto;
+    transform: none;
+  }
+  .splitpanes__splitter:hover:before {background-color: rgba(255, 0, 0, 0.3);}
+  .splitpanes__splitter:after {display: none;}
+}
+.touch-example.splitpanes--vertical > .splitpanes__splitter:before {left: -30px;right: -30px;height: 100%;}
+.touch-example.splitpanes--horizontal > .splitpanes__splitter:before {top: -30px;bottom: -30px;width: 100%;}
+
+.splitpanes.touch-example .text {
+  color: #999;
+  opacity: 1;
+  font-size: 15px;
+  text-align: center;
+
+  em {
+    display: block;
+    margin-top: 0.5em;
+    color: #bbb;
+    font-size: 13px;
+    text-align: center;
   }
 }
 </style>
