@@ -16,7 +16,7 @@ export default {
       panesCount: (this.$slots.default || []).length,
       panes: [],
       splitters: [],
-      touch: { mouseDown: false, dragging: false, activeSplitter: null, sumOfWidths: 0 }
+      touch: { mouseDown: false, dragging: false, activeSplitter: null }
     }
   },
 
@@ -41,14 +41,6 @@ export default {
     onMouseDown (e, splitter) {
       this.touch.mouseDown = true
       this.touch.activeSplitter = splitter
-
-      let index = this.touch.activeSplitter.index
-
-      // Store the sum of the widths taken by the 2 panes being resized.
-      this.touch.sumOfWidths = this.panes[index].width + this.panes[index + 1].width
-      // sumOfWidths is used for column layout, sumOfHeights for row layout.
-      // Same value but more appropriate var name.
-      this.touch.sumOfHeights = this.touch.sumOfWidths
     },
 
     onMouseMove (e) {
@@ -147,8 +139,14 @@ export default {
       }
       // console.log(this.panes.map(pane => pane.width), dragPercentage)
 
-      if (panesToResize[0] !== undefined) this.panes[panesToResize[0]].width = Math.max(dragPercentage - totalPrevPanesSize, 0)
-      if (panesToResize[1] !== undefined) this.panes[panesToResize[1]].width = Math.max(100 - dragPercentage - totalNextPanesSize, 0)
+      if (panesToResize[0] !== undefined) {
+        const pane = this.panes[panesToResize[0]]
+        pane.width = Math.max(dragPercentage - totalPrevPanesSize, pane.min)
+      }
+      if (panesToResize[1] !== undefined) {
+        const pane = this.panes[panesToResize[1]]
+        pane.width = Math.max(100 - dragPercentage - totalNextPanesSize, pane.min)
+      }
     },
 
     totalPrevPanesSize (splitterIndex) {
@@ -183,8 +181,11 @@ export default {
 
   created () {
     // Create the panes and splitters arrays.
-    if (this.$slots.default) for (let i = 0, max = this.$slots.default.length; i < max; i++) {
-      this.$set(this.panes, i, { width: this.defaultWidth, index: i })
+    if (this.$slots.default) for (let i = 0, length = this.$slots.default.length; i < length; i++) {
+      const { data: { attrs = {} } = {} } = this.$slots.default[i]
+      const { 'splitpanes-min': min = 0, 'splitpanes-max': max = 100 } = attrs
+
+      this.$set(this.panes, i, { width: this.defaultWidth, index: i, min, max })
       if (i) this.$set(this.splitters, i - 1, { id: `splitter-${i - 1}`, index: i - 1 })
     }
   },

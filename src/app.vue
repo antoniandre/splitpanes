@@ -18,6 +18,9 @@
               | Light weight &amp; no dependencies other than Vue JS
             li
               v-icon.mr-2(color="primary" size="20") check
+              | Responsive
+            li
+              v-icon.mr-2(color="primary" size="20") check
               | Support for touch devices
             li
               v-icon.mr-2(color="primary" size="20") check
@@ -37,7 +40,7 @@
 
       p.mt-5.subheading # Demo 1
       splitpanes.example(style="height:400px")
-        span 1
+        span(splitpanes-min="20") 1
         splitpanes.example(horizontal)
           span 2
           span 3
