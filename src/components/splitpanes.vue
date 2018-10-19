@@ -205,7 +205,7 @@ export default {
 
     if (!this.$slots.default) splitPanesChildren.push(createEl('div', 'Splitpanes needs some contents here.'))
     else this.$slots.default.forEach((vnode, i) => {
-      if (vnode.tag || vnode.text) {
+      if (vnode.tag || vnode.text.trim()) {
         // Splitter.
         if (i) {
           let splitterAttributes = {
