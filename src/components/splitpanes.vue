@@ -181,7 +181,7 @@ export default {
 
     if (!this.$slots.default) splitPanesChildren.push(createEl('div', 'Splitpanes needs some contents here.'))
     else {
-      // Create the panes and splitters arrays.
+      // Create the panes and splitters arrays each time the slots are updated.
       if (this.slotsCount !== this.$slots.default.length) {
         this.vnodes = this.$slots.default.filter(vnode => vnode.tag || (vnode.text || '').trim())
         this.vnodes.forEach((vnode, i) => {
