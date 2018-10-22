@@ -29,6 +29,7 @@ ___
 
 ## Release Notes
 
-- __Version 1.2.0__ Add a `default-theme` CSS class
+- __Version 1.3.0__ Splitpanes slots are now reactive (add/remove on the fly)
+- __Version 1.2.0__ Add a `default-theme` CSS class to load default theme
 - __Version 1.1.0__ Allow pushing other panes while dragging splitter
 - __Version 1.0.0__ First public release
