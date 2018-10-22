@@ -13,6 +13,7 @@ export default {
   data () {
     return {
       container: { vnode: null, offsetLeft: null, offsetTop: null },
+      slotsCount: 0,
       vnodes: [],
       panes: [],
       splitters: [],
@@ -23,24 +24,15 @@ export default {
   methods: {
     bindEvents () {
       const hasTouch = 'ontouchstart' in window
-      const eventNames = {
-        start: hasTouch ? 'touchstart' : 'mousedown',
-        move: hasTouch ? 'touchmove' : 'mousemove',
-        end: hasTouch ? 'touchend' : 'mouseup'
-      }
-
-      this.splitters.forEach(splitter => {
-        this.$refs[splitter.id].addEventListener(eventNames.start, e => this.onMouseDown(e, splitter))
-      })
 
       // Passive: false to prevent scrolling while touch dragging.
-      document.addEventListener(eventNames.move, this.onMouseMove, { passive: false })
-      document.addEventListener(eventNames.end, this.onMouseUp)
+      document.addEventListener(hasTouch ? 'touchmove' : 'mousemove', this.onMouseMove, { passive: false })
+      document.addEventListener(hasTouch ? 'touchend' : 'mouseup', this.onMouseUp)
     },
 
-    onMouseDown (e, splitter) {
+    onMouseDown (e, splitterIndex) {
       this.touch.mouseDown = true
-      this.touch.activeSplitter = splitter
+      this.touch.activeSplitter = splitterIndex
     },
 
     onMouseMove (e) {
@@ -99,7 +91,7 @@ export default {
     // Returns the drag percentage of the splitter relative to the 2 panes it's inbetween.
     // if the sum of width of the 2 cells  is 60%, the dragPercentage range will be 0 to 100% of this 60%.
     getCurrentDragPercentage (drag) {
-      let splitterIndex = this.touch.activeSplitter.index
+      let splitterIndex = this.touch.activeSplitter
       let doc = document.documentElement
       let scrollTop = this.horizontal ? (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0) : null
       let offset = this[`getContainerOffset${this.horizontal ? 'Top' : 'Left'}`]()
@@ -114,7 +106,7 @@ export default {
     },
 
     calculatePanesSize (drag) {
-      const splitterIndex = this.touch.activeSplitter.index
+      const splitterIndex = this.touch.activeSplitter
 
       let totalPrevPanesSize = this.totalPrevPanesSize(splitterIndex)
       let totalNextPanesSize = this.totalNextPanesSize(splitterIndex)
@@ -173,9 +165,6 @@ export default {
     }
   },
 
-  created () {
-  },
-
   mounted () {
     this.container.vnode = this.$refs.container
     this.bindEvents()
@@ -193,12 +182,14 @@ export default {
     if (!this.$slots.default) splitPanesChildren.push(createEl('div', 'Splitpanes needs some contents here.'))
     else {
       // Create the panes and splitters arrays.
-      if (!this.vnodes.length) {
+      if (this.slotsCount !== this.$slots.default.length) {
         this.vnodes = this.$slots.default.filter(vnode => vnode.tag || (vnode.text || '').trim())
         this.vnodes.forEach((vnode, i) => {
           this.$set(this.panes, i, { width: this.defaultWidth, index: i })
           if (i) this.$set(this.splitters, i - 1, { id: `splitter-${i - 1}`, index: i - 1 })
         })
+
+        this.slotsCount = this.$slots.default.length
       }
 
       this.vnodes.forEach((vnode, i) => {
@@ -207,8 +198,10 @@ export default {
           let splitterAttributes = {
             id: i - 1,
             class: 'splitpanes__splitter',
-            ref: `splitter-${i - 1}`
+            ref: `splitter-${i - 1}`,
+            on: {}
           }
+          splitterAttributes.on['ontouchstart' in window ? 'touchstart' : 'mousedown'] = e => this.onMouseDown(e, i - 1)
           splitPanesChildren.push(createEl('div', splitterAttributes))
         }
 
