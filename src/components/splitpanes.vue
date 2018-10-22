@@ -13,10 +13,10 @@ export default {
   data () {
     return {
       container: { vnode: null, offsetLeft: null, offsetTop: null },
-      panesCount: (this.$slots.default || []).length,
+      vnodes: [],
       panes: [],
       splitters: [],
-      touch: { mouseDown: false, dragging: false, activeSplitter: null, sumOfWidths: 0 }
+      touch: { mouseDown: false, dragging: false, activeSplitter: null }
     }
   },
 
@@ -41,14 +41,6 @@ export default {
     onMouseDown (e, splitter) {
       this.touch.mouseDown = true
       this.touch.activeSplitter = splitter
-
-      let index = this.touch.activeSplitter.index
-
-      // Store the sum of the widths taken by the 2 panes being resized.
-      this.touch.sumOfWidths = this.panes[index].width + this.panes[index + 1].width
-      // sumOfWidths is used for column layout, sumOfHeights for row layout.
-      // Same value but more appropriate var name.
-      this.touch.sumOfHeights = this.touch.sumOfWidths
     },
 
     onMouseMove (e) {
@@ -182,11 +174,6 @@ export default {
   },
 
   created () {
-    // Create the panes and splitters arrays.
-    if (this.$slots.default) for (let i = 0, max = this.$slots.default.length; i < max; i++) {
-      this.$set(this.panes, i, { width: this.defaultWidth, index: i })
-      if (i) this.$set(this.splitters, i - 1, { id: `splitter-${i - 1}`, index: i - 1 })
-    }
   },
 
   mounted () {
@@ -196,7 +183,7 @@ export default {
 
   computed: {
     defaultWidth () {
-      return 100 / this.panesCount
+      return 100 / this.vnodes.length
     }
   },
 
@@ -204,8 +191,17 @@ export default {
     const splitPanesChildren = []
 
     if (!this.$slots.default) splitPanesChildren.push(createEl('div', 'Splitpanes needs some contents here.'))
-    else this.$slots.default.forEach((vnode, i) => {
-      if (vnode.tag || vnode.text) {
+    else {
+      // Create the panes and splitters arrays.
+      if (!this.vnodes.length) {
+        this.vnodes = this.$slots.default.filter(vnode => vnode.tag || (vnode.text || '').trim())
+        this.vnodes.forEach((vnode, i) => {
+          this.$set(this.panes, i, { width: this.defaultWidth, index: i })
+          if (i) this.$set(this.splitters, i - 1, { id: `splitter-${i - 1}`, index: i - 1 })
+        })
+      }
+
+      this.vnodes.forEach((vnode, i) => {
         // Splitter.
         if (i) {
           let splitterAttributes = {
@@ -218,7 +214,7 @@ export default {
 
         // Pane.
         let paneAttributes = {
-          id: i - 1,
+          id: i,
           class: 'splitpanes__pane',
           style: {
             ...(this.horizontal ? { height: `${this.panes[i].width}%` } : null),
@@ -226,8 +222,8 @@ export default {
           }
         }
         splitPanesChildren.push(createEl('div', paneAttributes, [vnode]))
-      }
-    })
+      })
+    }
 
     // Wrapper.
     let wrapperAttributes = {
