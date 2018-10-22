@@ -199,9 +199,10 @@ export default {
             id: i - 1,
             class: 'splitpanes__splitter',
             ref: `splitter-${i - 1}`,
-            on: {}
+            on: {
+              ['ontouchstart' in window ? 'touchstart' : 'mousedown']: e => this.onMouseDown(e, i - 1)
+            }
           }
-          splitterAttributes.on['ontouchstart' in window ? 'touchstart' : 'mousedown'] = e => this.onMouseDown(e, i - 1)
           splitPanesChildren.push(createEl('div', splitterAttributes))
         }
 
