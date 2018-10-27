@@ -13,7 +13,8 @@ export default {
   data () {
     return {
       container: { vnode: null, offsetLeft: null, offsetTop: null },
-      panesCount: (this.$slots.default || []).length,
+      slotsCount: 0,
+      vnodes: [],
       panes: [],
       splitters: [],
       touch: { mouseDown: false, dragging: false, activeSplitter: null }
@@ -23,24 +24,15 @@ export default {
   methods: {
     bindEvents () {
       const hasTouch = 'ontouchstart' in window
-      const eventNames = {
-        start: hasTouch ? 'touchstart' : 'mousedown',
-        move: hasTouch ? 'touchmove' : 'mousemove',
-        end: hasTouch ? 'touchend' : 'mouseup'
-      }
-
-      this.splitters.forEach(splitter => {
-        this.$refs[splitter.id].addEventListener(eventNames.start, e => this.onMouseDown(e, splitter))
-      })
 
       // Passive: false to prevent scrolling while touch dragging.
-      document.addEventListener(eventNames.move, this.onMouseMove, { passive: false })
-      document.addEventListener(eventNames.end, this.onMouseUp)
+      document.addEventListener(hasTouch ? 'touchmove' : 'mousemove', this.onMouseMove, { passive: false })
+      document.addEventListener(hasTouch ? 'touchend' : 'mouseup', this.onMouseUp)
     },
 
-    onMouseDown (e, splitter) {
+    onMouseDown (e, splitterIndex) {
       this.touch.mouseDown = true
-      this.touch.activeSplitter = splitter
+      this.touch.activeSplitter = splitterIndex
     },
 
     onMouseMove (e) {
@@ -99,7 +91,7 @@ export default {
     // Returns the drag percentage of the splitter relative to the 2 panes it's inbetween.
     // if the sum of width of the 2 cells  is 60%, the dragPercentage range will be 0 to 100% of this 60%.
     getCurrentDragPercentage (drag) {
-      let splitterIndex = this.touch.activeSplitter.index
+      let splitterIndex = this.touch.activeSplitter
       let doc = document.documentElement
       let scrollTop = this.horizontal ? (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0) : null
       let offset = this[`getContainerOffset${this.horizontal ? 'Top' : 'Left'}`]()
@@ -114,7 +106,7 @@ export default {
     },
 
     calculatePanesSize (drag) {
-      const splitterIndex = this.touch.activeSplitter.index
+      const splitterIndex = this.touch.activeSplitter
 
       let totalPrevPanesSize = this.totalPrevPanesSize(splitterIndex)
       let totalNextPanesSize = this.totalNextPanesSize(splitterIndex)
@@ -179,17 +171,6 @@ export default {
     }
   },
 
-  created () {
-    // Create the panes and splitters arrays.
-    if (this.$slots.default) for (let i = 0, length = this.$slots.default.length; i < length; i++) {
-      const { data: { attrs = {} } = {} } = this.$slots.default[i]
-      const { 'splitpanes-min': min = 0, 'splitpanes-max': max = 100 } = attrs
-
-      this.$set(this.panes, i, { width: this.defaultWidth, index: i, min, max })
-      if (i) this.$set(this.splitters, i - 1, { id: `splitter-${i - 1}`, index: i - 1 })
-    }
-  },
-
   mounted () {
     this.container.vnode = this.$refs.container
     this.bindEvents()
@@ -197,7 +178,7 @@ export default {
 
   computed: {
     defaultWidth () {
-      return 100 / this.panesCount
+      return 100 / this.vnodes.length
     }
   },
 
@@ -205,21 +186,38 @@ export default {
     const splitPanesChildren = []
 
     if (!this.$slots.default) splitPanesChildren.push(createEl('div', 'Splitpanes needs some contents here.'))
-    else this.$slots.default.forEach((vnode, i) => {
-      if (vnode.tag || vnode.text) {
+    else {
+      // Create the panes and splitters arrays each time the slots are updated.
+      if (this.slotsCount !== this.$slots.default.length) {
+        this.vnodes = this.$slots.default.filter(vnode => vnode.tag || (vnode.text || '').trim())
+        this.vnodes.forEach((vnode, i) => {
+          const { data: { attrs = {} } = {} } = vnode
+          const { 'splitpanes-min': min = 0, 'splitpanes-max': max = 100 } = attrs
+
+          this.$set(this.panes, i, { width: this.defaultWidth, index: i, min, max })
+          if (i) this.$set(this.splitters, i - 1, { id: `splitter-${i - 1}`, index: i - 1 })
+        })
+
+        this.slotsCount = this.$slots.default.length
+      }
+
+      this.vnodes.forEach((vnode, i) => {
         // Splitter.
         if (i) {
           let splitterAttributes = {
             id: i - 1,
             class: 'splitpanes__splitter',
-            ref: `splitter-${i - 1}`
+            ref: `splitter-${i - 1}`,
+            on: {
+              ['ontouchstart' in window ? 'touchstart' : 'mousedown']: e => this.onMouseDown(e, i - 1)
+            }
           }
           splitPanesChildren.push(createEl('div', splitterAttributes))
         }
 
         // Pane.
         let paneAttributes = {
-          id: i - 1,
+          id: i,
           class: 'splitpanes__pane',
           style: {
             ...(this.horizontal ? { height: `${this.panes[i].width}%` } : null),
@@ -227,8 +225,8 @@ export default {
           }
         }
         splitPanesChildren.push(createEl('div', paneAttributes, [vnode]))
-      }
-    })
+      })
+    }
 
     // Wrapper.
     let wrapperAttributes = {
@@ -263,5 +261,65 @@ export default {
 
   &--vertical > .splitpanes__splitter {min-width: 1px;cursor: col-resize;}
   &--horizontal > .splitpanes__splitter {min-height: 1px;cursor: row-resize;}
+}
+
+
+.splitpanes.default-theme {
+  .splitpanes__pane {
+    background-color: #f2f2f2;
+  }
+
+  .splitpanes__splitter {
+    background-color: #fff;
+    box-sizing: border-box;
+    position: relative;
+
+    &:before, &:after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      background-color: rgba(0, 0, 0, .15);
+      transition: background-color 0.3s;
+    }
+    &:hover:before, &:hover:after {background-color: rgba(0, 0, 0, .25);}
+  }
+}
+
+.default-theme {
+  &.splitpanes .splitpanes .splitpanes__splitter {
+    z-index: 1;
+  }
+
+  &.splitpanes--vertical > .splitpanes__splitter,
+  .splitpanes--vertical > .splitpanes__splitter {
+    width: 9px;
+    border-left: 1px solid #eee;
+    margin-left: -1px;
+
+    &:before, &:after {
+      transform: translateY(-50%);
+      width: 1px;
+      height: 30px;
+    }
+    &:before {margin-left: -2px;}
+    &:after {margin-left: 1px;}
+  }
+
+  &.splitpanes--horizontal > .splitpanes__splitter,
+  .splitpanes--horizontal > .splitpanes__splitter {
+    height: 9px;
+    border-top: 1px solid #eee;
+    margin-top: -1px;
+
+    &:before,
+    &:after {
+      transform: translateX(-50%);
+      width: 30px;
+      height: 1px;
+    }
+    &:before {margin-top: -2px;}
+    &:after {margin-top: 1px;}
+  }
 }
 </style>

@@ -27,6 +27,9 @@
               | Push other panes or not
             li
               v-icon.mr-2(color="primary" size="20") check
+              | Adding panes on the fly automatically adds splitters
+            li
+              v-icon.mr-2(color="primary" size="20") check
               | Simple yet efficient
             li
               v-icon.mr-2(color="primary" size="20") check
@@ -39,13 +42,14 @@
             a(href="https://github.com/antoniandre/splitpanes" target="_blank") //github.com/antoniandre/splitpanes #[v-icon(small color="primary") open_in_new]
 
       p.mt-5.subheading # Demo 1
-      splitpanes.example(style="height:400px")
+      splitpanes.default-theme.example(style="height:400px")
         span(splitpanes-min="20") 1
-        splitpanes.example(horizontal)
+        splitpanes.default-theme.example(horizontal)
           span 2
           span 3
           span 4
         span 5
+
       ssh-pre(language="html-vue" label="HTML Vue Template" v-pre).
         &lt;splitpanes style="height: 400px"&gt;
           &lt;span&gt;1&lt;/span&gt;
@@ -117,57 +121,135 @@
         By default the layout is 'column' (vertical), if you need you can set the attribute
         #[span.code horizontal] on the #[span.code &lt;splitpanes&gt;] tag to change the layout to rows.
 
+      highlight-message(type="tips").
+        The CSS is external  so you can easily override or choose not to include it at all.#[br]
+        If you want to use it, you can also optionally use the CSS class #[span.code default-theme]
+        at the root of your splitpanes to apply the default theme like on this page.
+
       ssh-pre(language="html-vue" label="HTML Vue Template" v-pre).
-        &lt;splitpanes&gt;
-          &lt;div v-for="i in 3" :key="i"&gt;{{ i.toString() }}&lt;/splitpanes&gt;
+        &lt;splitpanes class="default-theme"&gt;
+          &lt;div v-for="i in 3" :key="i"&gt;{{ i }}&lt;/div&gt;
         &lt;/splitpanes&gt;
 
       h2.mt-5.mb-2
         a.headline(href="#more-examples") More examples
         a(name="more-examples")
 
+      //- Example.
       p.mt-5.subheading # Horizontal layout &amp; push other panes
-      splitpanes.example(horizontal style="height:400px")
+      splitpanes.default-theme.example(horizontal style="height:400px")
         span 1
         span 2
         span 3
 
+      ssh-pre(language="html-vue" label="HTML").
+        &lt;splitpanes class="default-theme" horizontal style="height:400px"&gt;
+          &lt;span&gt;1&lt;/span&gt;
+          &lt;span&gt;2&lt;/span&gt;
+          &lt;span&gt;3&lt;/span&gt;
+        &lt;/splitpanes&gt;
+
+      //- Example.
       p.mt-5.subheading # Mix layout with nested splitpanes &amp; prevent pushing other panes
       p
         | try it yourself:
         a(href="https://codepen.io/antoniandre/pen/PypgKY" target="_blank" class="ml-2") //codepen.io/antoniandre/pen/PypgKY #[v-icon(small color="primary") open_in_new]
-      splitpanes.example(horizontal :push-other-panes="false" style="height:400px")
+      splitpanes.default-theme.example(horizontal :push-other-panes="false" style="height:400px")
         span 1
-        splitpanes.example(:push-other-panes="false")
+        splitpanes(:push-other-panes="false")
           span 2
           span 3
           span 4
         span 5
 
-      p.mt-5.subheading # Lots of splitters &amp; push other panes
-      splitpanes.example(style="height:400px")
-        span 1
-        span 2
-        span 3
-        span 4
-        span 5
-        span 6
-        span 7
-        span 8
+      ssh-pre(language="html-vue" label="HTML").
+        &lt;splitpanes class="default-theme" horizontal :push-other-panes="false" style="height:400px"&gt;
+          &lt;span&gt;1&lt;/span&gt;
+          &lt;splitpanes :push-other-panes="false"&gt;
+            &lt;span&gt;2&lt;/span&gt;
+            &lt;span&gt;3&lt;/span&gt;
+            &lt;span&gt;4&lt;/span&gt;
+          &lt;/splitpanes&gt;
+          &lt;span&gt;5&lt;/span&gt;
+        &lt;/splitpanes&gt;
 
+      //- Example.
+      p.mt-5.subheading # Lots of splitters &amp; push other panes
+      splitpanes.default-theme.example(style="height:400px")
+        span(v-for="i in 8" :key="i") {{ i }}
+
+      ssh-pre(language="html-vue" label="HTML" v-pre).
+        &lt;splitpanes class="default-theme" style="height:400px"&gt;
+          &lt;span v-for="i in 8" :key="i"&gt;{{ i }}&lt;/span&gt;
+        &lt;/splitpanes&gt;
+
+      //- Example.
+      p.mt-5.subheading # Adding splitters on the fly
+      p
+        | This example shows the reactivity when you add a new element dynamically in splitpanes.
+        v-btn(color="primary" small @click="panesNumber++")
+          v-icon add
+          | Add pane
+
+      splitpanes.default-theme.example(style="height:400px")
+        span(v-for="i in panesNumber" :key="i") {{ i }}
+
+      ssh-pre(language="html-vue" label="HTML" v-pre).
+        &lt;button @click="panesNumber++"&gt;Add pane&lt;/button&gt;
+
+        &lt;splitpanes class="default-theme" style="height:400px"&gt;
+          &lt;span v-for="i in panesNumber" :key="i"&gt;{{ i }}&lt;/span&gt;
+        &lt;/splitpanes&gt;
+
+      ssh-pre(language="js" label="Javascript" v-pre).
+        // In your Vue component.
+        data: () =&gt; ({
+          panesNumber: 3
+        })
+
+      //- Example.
       p.mt-5.subheading # Increased reactive touch zone for touch devices
       p
         | try it yourself:
         a(href="https://codepen.io/antoniandre/pen/XxRZmB" target="_blank" class="ml-2") //codepen.io/antoniandre/pen/XxRZmB #[v-icon(small color="primary") open_in_new]
 
       splitpanes.touch-example(horizontal style="height:400px")
-        splitpanes.touch-example(vertical)
+        splitpanes.touch-example
           span 1
           span 2
           span 3
-        span.text.
-          In this example the splitters are thin lines but the reactive touch zone is spread to 30 pixels all around!
-          #[em Hover a splitter to see the Fat-fingers reactive zone.]
+        div.text
+          p.
+            In this example the splitters are thin lines but the reactive touch zone is spread to 30 pixels all around!
+            #[em Hover a splitter to see the Fat-fingers reactive zone. ]
+
+      ssh-pre(language="html-vue" label="HTML").
+        &lt;splitpanes class="default-theme touch-example" horizontal style="height:400px"&gt;
+          &lt;splitpanes :push-other-panes="false"&gt;
+            &lt;span&gt;1&lt;/span&gt;
+            &lt;span&gt;2&lt;/span&gt;
+            &lt;span&gt;3&lt;/span&gt;
+          &lt;/splitpanes&gt;
+          &lt;p&gt;In this example the splitters are thin lines but the reactive touch zone is spread to 30 pixels all around!&lt;/p&gt;
+        &lt;/splitpanes&gt;
+
+      ssh-pre(language="css" label="CSS").
+        .splitpanes {background-color: #f8f8f8;}
+
+        .splitpanes__splitter {background-color: #ccc;position: relative;}
+        .splitpanes__splitter:before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 0;
+          transition: opacity 0.4s;
+          background-color: rgba(255, 0, 0, 0.3);
+          opacity: 0;
+          z-index: 1;
+        }
+        .splitpanes__splitter:hover:before {opacity: 1;}
+        .splitpanes--vertical &gt; .splitpanes__splitter:before {left: -30px;right: -30px;height: 100%;}
+        .splitpanes--horizontal &gt; .splitpanes__splitter:before {top: -30px;bottom: -30px;width: 100%;}
 </template>
 
 <script>
@@ -178,7 +260,10 @@ import 'simple-syntax-highlighter/dist/simple-syntax-highlighter.min.css'
 
 export default {
   name: 'app',
-  components: { Splitpanes, sshPre: simpleSyntaxHighlighter, highlightMessage }
+  components: { Splitpanes, sshPre: simpleSyntaxHighlighter, highlightMessage },
+  data: () => ({
+    panesNumber: 3
+  })
 }
 </script>
 
@@ -206,102 +291,64 @@ ul {
   font-family: monospace;
 }
 
-.splitpanes {
-  background-color: #f2f2f2;
-
-  &__pane {
+.splitpanes.example {
+  .splitpanes__pane {
     box-shadow: 0 0 3px rgba(0, 0, 0, .2) inset;
     justify-content: center;
     align-items: center;
     display: flex;
   }
+}
 
-  &__splitter {
-    background-color: #fff;
-    box-sizing: border-box;
-    position: relative;
-
-    &:before, &:after {
-      content: "";
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      background-color: rgba(0, 0, 0, .15);
-      transition: background-color 0.3s;
-    }
-    &:hover:before, &:hover:after {background-color: rgba(0, 0, 0, .25);}
-
-    .splitpanes--vertical > & {
-      width: 9px;
-      border-left: 1px solid #eee;
-
-      &:before, &:after {
-        transform: translateY(-50%);
-        width: 1px;
-        height: 30px;
-      }
-      &:before {margin-left: -2px;}
-      &:after {margin-left: 1px;}
-    }
-
-    .splitpanes--horizontal > & {
-      height: 9px;
-      border-top: 1px solid #eee;
-
-      &:before,
-      &:after {
-        transform: translateX(-50%);
-        width: 30px;
-        height: 1px;
-      }
-      &:before {margin-top: -2px;}
-      &:after {margin-top: 1px;}
-    }
-  }
-
-  span {
-    font-family: Helvetica, Arial, sans-serif;
-    color: #fff;
-    font-size: 5em;
-    opacity: 0.6;
-  }
+.splitpanes span {
+  font-family: Helvetica, Arial, sans-serif;
+  color: #fff;
+  font-size: 5em;
+  opacity: 0.7;
 }
 
 .splitpanes.touch-example {
-  .splitpanes__pane {box-shadow: none;}
-  .splitpanes__splitter {background-color: #ccc;width: auto;height: auto;border: none;}
+  background-color: #f8f8f8;
+
+  .splitpanes__pane {
+    justify-content: center;
+    align-items: center;
+    display: flex;
+  }
+
+  .splitpanes__splitter {background-color: #ccc;position: relative;}
   .splitpanes__splitter:before {
     content: '';
     position: absolute;
     left: 0;
-    right: 0;
     top: 0;
-    bottom: 0;
-    margin: 0;
-    transition: background-color 0.4s;
-    background-color: rgba(255, 0, 0, 0);
-    width: auto;
-    height: auto;
-    transform: none;
+    transition: opacity 0.4s;
+    background-color: rgba(255, 0, 0, 0.3);
+    opacity: 0;
+    z-index: 1;
   }
-  .splitpanes__splitter:hover:before {background-color: rgba(255, 0, 0, 0.3);}
-  .splitpanes__splitter:after {display: none;}
+  .splitpanes__splitter:hover:before {opacity: 1;}
 }
 .touch-example.splitpanes--vertical > .splitpanes__splitter:before {left: -30px;right: -30px;height: 100%;}
 .touch-example.splitpanes--horizontal > .splitpanes__splitter:before {top: -30px;bottom: -30px;width: 100%;}
 
-.splitpanes.touch-example .text {
-  color: #999;
-  opacity: 1;
-  font-size: 15px;
-  text-align: center;
-
-  em {
-    display: block;
-    margin-top: 0.5em;
-    color: #bbb;
-    font-size: 13px;
+.splitpanes.touch-example {
+  .text {
+    color: #999;
+    opacity: 1;
+    font-size: 15px;
+    height: 100%;
     text-align: center;
+    display: flex;
+    align-items: center;
+
+    em {
+      display: block;
+      margin-top: 0.5em;
+      color: #bbb;
+      font-size: 13px;
+      text-align: center;
+    }
   }
 }
 </style>
