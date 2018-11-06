@@ -145,7 +145,18 @@ export default {
 
           // If nothing else to push down, cancel dragging.
           // @todo: instead of return should prevent moving next panes.
-          if (panesToResize[0] === undefined) return
+          if (panesToResize[0] === undefined) {
+            sumOfPrevReachedMinPanes = 0
+            this.panes[0].width = this.panes[0].min
+            this.panes.forEach((pane, i) => {
+              if (i > 0 && i <= splitterIndex) {
+                pane.width = pane.min
+                sumOfPrevReachedMinPanes += pane.min
+              }
+            })
+            this.panes[panesToResize[1]].width = 100 - sumOfPrevReachedMinPanes - this.panes[0].min - sumPrevPanesSize - sumNextPanesSize
+            return
+          }
         }
 
         // Pushing up beyond min width is reached: take the next expanded pane.
@@ -165,46 +176,32 @@ export default {
           }
 
           sumNextPanesSize = this.sumNextPanesSize(panesToResize[1])
-          console.log(panesToResize[1])
 
           // If nothing else to push up, cancel dragging.
-          if (panesToResize[1] === undefined) return
+          if (panesToResize[1] === undefined) {
+            sumOfNextReachedMinPanes = 0
+            this.panes[this.panes.length - 1].width = this.panes[this.panes.length - 1].min
+            this.panes.forEach((pane, i) => {
+              if (i < this.panes.length - 1 && i >= splitterIndex + 1) {
+                pane.width = pane.min
+                sumOfNextReachedMinPanes += pane.min
+              }
+            })
+            this.panes[panesToResize[0]].width = 100 - sumPrevPanesSize - sumOfNextReachedMinPanes - this.panes[this.panes.length - 1].min - sumNextPanesSize
+            return
+          }
         }
       }
 
       let paneBefore = this.panes[panesToResize[0]] || null
       let paneAfter = this.panes[panesToResize[1]] || null
-      // console.log(this.panes.map(pane => pane.width), dragPercentage, dragPercentage <= paneBefore.min || dragPercentage >= paneBefore.max)
-
-      // Check moving panes min & max and disable move if limit is reached.
-      // if (dragPercentage <= (paneBefore.min + sumPrevPanesSize) || dragPercentage >= paneBefore.max) {
-      //   paneBefore.width = paneBefore.min
-      //   console.log('here', paneBefore)
-      //   return
-      // }
-      // if (dragPercentage <= 100 - paneAfter.max || dragPercentage >= 100 - paneAfter.min) {
-
-      //   return
-      // }
 
       if (paneBefore !== null) {
-        if (pushingDown) {
-          // console.log(sumPrevPanesSize, 'this one')
-          // this.panes.reduce((total, p) => total += p.min, 0)
-        }
-                                                // 43        10         57
-
-                                                // 43                     0                 10              100
         paneBefore.width = Math.min(Math.max(dragPercentage - sumPrevPanesSize - sumOfPrevReachedMinPanes, paneBefore.min), paneBefore.max)
         // console.log(this.panes.map(pane => pane.width), dragPercentage)
       }
 
       if (paneAfter !== null) {
-        if (pushingUp) {
-          // console.log(sumNextPanesSize, sumOfNextReachedMinPanes, 'this one')
-          // this.panes.reduce((total, p) => total += p.min, 0)
-        }
-        // console.log(pane.min, pane.max, dragPercentage <= 100 - pane.max ||dragPercentage >= 100 - pane.min)
         paneAfter.width = Math.min(Math.max(100 - dragPercentage - sumNextPanesSize - sumOfNextReachedMinPanes, paneAfter.min), paneAfter.max)
       }
     },
@@ -217,24 +214,14 @@ export default {
       return this.panes.reduce((total, pane, i) => total + (i > splitterIndex + 1 ? pane.width : 0), 0)
     },
 
-    // Sum of the width of the panes before the splitter where the min is reached.
-    // sumPrevExpandedPanesSize (splitterIndex) {
-    //   return this.panes.reduce((total, pane, i) => total + (i < splitterIndex && pane.width + 0.15 <= pane.min ? pane.min : 0), 0)
-    // },
-
-    // sumNextExpandedPanesSize (splitterIndex) {
-    //   return this.panes.reduce((total, pane, i) => total + (i > splitterIndex + 1 ? pane.width : 0), 0)
-    // },
-
     // Return the previous pane from siblings which has a size (width for vert or height for horz) of more than 0.
     findPrevExpandedPane (splitterIndex) {
       let pane = {}
       let arr = [...this.panes]
       arr.reverse().some(p => {
         if (p.index < splitterIndex && p.width > p.min) pane = p
-        return p.index < splitterIndex && p.width
+        return p.index < splitterIndex && p.width > p.min
       })
-      // console.log('prev expanded pane = ', pane.index, pane.width, pane.min)
       return pane
     },
 
@@ -243,7 +230,7 @@ export default {
       let pane = {}
       this.panes.some(p => {
         if (p.index > splitterIndex + 1 && p.width > p.min) pane = p
-        return p.index > splitterIndex + 1 && p.width
+        return p.index > splitterIndex + 1 && p.width > p.min
       })
       return pane
     }
