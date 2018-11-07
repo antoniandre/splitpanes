@@ -115,8 +115,8 @@ export default {
       const maxDrag = 100 - (this.pushOtherPanes ? 0 : sumNextPanesSize)
       const dragPercentage = Math.max(Math.min(this.getCurrentDragPercentage(drag), maxDrag), minDrag)
 
-      let pushingDown = false
-      let pushingUp = false
+      // let pushingDown = false
+      // let pushingUp = false
       let sumOfPrevReachedMinPanes = 0
       let sumOfNextReachedMinPanes = 0
 
@@ -127,7 +127,7 @@ export default {
       if (this.pushOtherPanes) {
         // Going smaller than the current pane min width: take the previous expanded pane.
         if (dragPercentage < sumPrevPanesSize + this.panes[panesToResize[0]].min) {
-          pushingDown = true
+          // pushingDown = true
           panesToResize[0] = this.findPrevExpandedPane(splitterIndex).index
 
           sumOfPrevReachedMinPanes = 0
@@ -160,7 +160,7 @@ export default {
 
         // Pushing up beyond min width is reached: take the next expanded pane.
         if (dragPercentage > 100 - sumNextPanesSize - this.panes[panesToResize[1]].min) {
-          pushingUp = true
+          // pushingUp = true
           panesToResize[1] = this.findNextExpandedPane(splitterIndex).index
 
           sumOfNextReachedMinPanes = 0
