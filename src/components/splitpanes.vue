@@ -144,7 +144,6 @@ export default {
           sumPrevPanesSize = this.sumPrevPanesSize(panesToResize[0])
 
           // If nothing else to push down, cancel dragging.
-          // @todo: instead of return should prevent moving next panes.
           if (panesToResize[0] === undefined) {
             sumOfPrevReachedMinPanes = 0
             this.panes[0].width = this.panes[0].min
@@ -175,7 +174,7 @@ export default {
             })
           }
 
-          sumNextPanesSize = this.sumNextPanesSize(panesToResize[1])
+          sumNextPanesSize = this.sumNextPanesSize(panesToResize[1] - 1)
 
           // If nothing else to push up, cancel dragging.
           if (panesToResize[1] === undefined) {
@@ -187,6 +186,7 @@ export default {
                 sumOfNextReachedMinPanes += pane.min
               }
             })
+
             this.panes[panesToResize[0]].width = 100 - sumPrevPanesSize - sumOfNextReachedMinPanes - this.panes[this.panes.length - 1].min - sumNextPanesSize
             return
           }
@@ -198,7 +198,6 @@ export default {
 
       if (paneBefore !== null) {
         paneBefore.width = Math.min(Math.max(dragPercentage - sumPrevPanesSize - sumOfPrevReachedMinPanes, paneBefore.min), paneBefore.max)
-        // console.log(this.panes.map(pane => pane.width), dragPercentage)
       }
 
       if (paneAfter !== null) {

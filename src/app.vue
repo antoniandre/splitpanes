@@ -312,12 +312,12 @@
 
         .splitpanes--vertical > .splitpanes__splitter {
           min-width: 6px;
-          background: linear-gradient(90deg, #6cf, #16e);
+          background: linear-gradient(90deg, #ccc, #111);
         }
 
         .splitpanes--horizontal > .splitpanes__splitter {
           min-height: 6px;
-          background: linear-gradient(0deg, #6cf, #16e);
+          background: linear-gradient(0deg, #ccc, #111);
         }
 
 </template>
@@ -456,12 +456,12 @@ em.specs {
 
   .splitpanes--vertical > .splitpanes__splitter {
     min-width: 6px;
-    background: linear-gradient(90deg, #6cf, #16e);
+    background: linear-gradient(90deg, #ccc, #111);
   }
 
   &.splitpanes--horizontal > .splitpanes__splitter {
     min-height: 6px;
-    background: linear-gradient(#6cf, #16e);
+    background: linear-gradient(#ccc, #111);
   }
 }
 </style>
