@@ -107,102 +107,113 @@ export default {
 
     calculatePanesSize (drag) {
       const splitterIndex = this.touch.activeSplitter
+      let sums = {
+        prevPanesSize: this.sumPrevPanesSize(splitterIndex),
+        nextPanesSize: this.sumNextPanesSize(splitterIndex),
+        prevReachedMinPanes: 0,
+        nextReachedMinPanes: 0
+      }
 
-      let sumPrevPanesSize = this.sumPrevPanesSize(splitterIndex)
-      let sumNextPanesSize = this.sumNextPanesSize(splitterIndex)
-
-      const minDrag = 0 + (this.pushOtherPanes ? 0 : sumPrevPanesSize)
-      const maxDrag = 100 - (this.pushOtherPanes ? 0 : sumNextPanesSize)
+      const minDrag = 0 + (this.pushOtherPanes ? 0 : sums.prevPanesSize)
+      const maxDrag = 100 - (this.pushOtherPanes ? 0 : sums.nextPanesSize)
       const dragPercentage = Math.max(Math.min(this.getCurrentDragPercentage(drag), maxDrag), minDrag)
 
-      // let pushingDown = false
-      // let pushingUp = false
-      let sumOfPrevReachedMinPanes = 0
-      let sumOfNextReachedMinPanes = 0
 
       // If not pushing other panes, panes to resize are right before and right after splitter.
       let panesToResize = [splitterIndex, splitterIndex + 1]
 
       // When pushOtherPanes = true, find the closest expanded pane on each side of the splitter.
       if (this.pushOtherPanes) {
-        // Going smaller than the current pane min width: take the previous expanded pane.
-        if (dragPercentage < sumPrevPanesSize + this.panes[panesToResize[0]].min) {
-          // pushingDown = true
-          panesToResize[0] = this.findPrevExpandedPane(splitterIndex).index
+        let vars = this.doPushOtherPanes(sums, dragPercentage)
 
-          sumOfPrevReachedMinPanes = 0
-          // If pushing a n-2 or less pane, from splitter, then make sure all in between is at min size.
-          if (panesToResize[0] < splitterIndex) {
-            this.panes.forEach((pane, i) => {
-              if (i > panesToResize[0] && i <= splitterIndex) {
-                pane.width = pane.min
-                sumOfPrevReachedMinPanes += pane.min
-              }
-            })
-          }
-
-          sumPrevPanesSize = this.sumPrevPanesSize(panesToResize[0])
-
-          // If nothing else to push down, cancel dragging.
-          if (panesToResize[0] === undefined) {
-            sumOfPrevReachedMinPanes = 0
-            this.panes[0].width = this.panes[0].min
-            this.panes.forEach((pane, i) => {
-              if (i > 0 && i <= splitterIndex) {
-                pane.width = pane.min
-                sumOfPrevReachedMinPanes += pane.min
-              }
-            })
-            this.panes[panesToResize[1]].width = 100 - sumOfPrevReachedMinPanes - this.panes[0].min - sumPrevPanesSize - sumNextPanesSize
-            return
-          }
-        }
-
-        // Pushing up beyond min width is reached: take the next expanded pane.
-        if (dragPercentage > 100 - sumNextPanesSize - this.panes[panesToResize[1]].min) {
-          // pushingUp = true
-          panesToResize[1] = this.findNextExpandedPane(splitterIndex).index
-
-          sumOfNextReachedMinPanes = 0
-          // If pushing a n+2 or more pane, from splitter, then make sure all in between is at min size.
-          if (panesToResize[1] > splitterIndex + 1) {
-            this.panes.forEach((pane, i) => {
-              if (i > splitterIndex && i < panesToResize[1]) {
-                pane.width = pane.min
-                sumOfNextReachedMinPanes += pane.min
-              }
-            })
-          }
-
-          sumNextPanesSize = this.sumNextPanesSize(panesToResize[1] - 1)
-
-          // If nothing else to push up, cancel dragging.
-          if (panesToResize[1] === undefined) {
-            sumOfNextReachedMinPanes = 0
-            this.panes[this.panes.length - 1].width = this.panes[this.panes.length - 1].min
-            this.panes.forEach((pane, i) => {
-              if (i < this.panes.length - 1 && i >= splitterIndex + 1) {
-                pane.width = pane.min
-                sumOfNextReachedMinPanes += pane.min
-              }
-            })
-
-            this.panes[panesToResize[0]].width = 100 - sumPrevPanesSize - sumOfNextReachedMinPanes - this.panes[this.panes.length - 1].min - sumNextPanesSize
-            return
-          }
-        }
+        if (!vars) return // Prevent other calculation.
+        else ({ sums, panesToResize } = vars)
       }
 
       let paneBefore = this.panes[panesToResize[0]] || null
       let paneAfter = this.panes[panesToResize[1]] || null
 
       if (paneBefore !== null) {
-        paneBefore.width = Math.min(Math.max(dragPercentage - sumPrevPanesSize - sumOfPrevReachedMinPanes, paneBefore.min), paneBefore.max)
+        paneBefore.width = Math.min(Math.max(dragPercentage - sums.prevPanesSize - sums.prevReachedMinPanes, paneBefore.min), paneBefore.max)
       }
 
       if (paneAfter !== null) {
-        paneAfter.width = Math.min(Math.max(100 - dragPercentage - sumNextPanesSize - sumOfNextReachedMinPanes, paneAfter.min), paneAfter.max)
+        paneAfter.width = Math.min(Math.max(100 - dragPercentage - sums.nextPanesSize - sums.nextReachedMinPanes, paneAfter.min), paneAfter.max)
       }
+    },
+
+    doPushOtherPanes (sums, dragPercentage) {
+      const splitterIndex = this.touch.activeSplitter
+      let panesToResize = [splitterIndex, splitterIndex + 1]
+
+      // Pushing Down.
+      // Going smaller than the current pane min width: take the previous expanded pane.
+      if (dragPercentage < sums.prevPanesSize + this.panes[panesToResize[0]].min) {
+        panesToResize[0] = this.findPrevExpandedPane(splitterIndex).index
+
+        sums.prevReachedMinPanes = 0
+        // If pushing a n-2 or less pane, from splitter, then make sure all in between is at min size.
+        if (panesToResize[0] < splitterIndex) {
+          this.panes.forEach((pane, i) => {
+            if (i > panesToResize[0] && i <= splitterIndex) {
+              pane.width = pane.min
+              sums.prevReachedMinPanes += pane.min
+            }
+          })
+        }
+
+        sums.prevPanesSize = this.sumPrevPanesSize(panesToResize[0])
+
+        // If nothing else to push down, cancel dragging.
+        if (panesToResize[0] === undefined) {
+          sums.prevReachedMinPanes = 0
+          this.panes[0].width = this.panes[0].min
+          this.panes.forEach((pane, i) => {
+            if (i > 0 && i <= splitterIndex) {
+              pane.width = pane.min
+              sums.prevReachedMinPanes += pane.min
+            }
+          })
+          this.panes[panesToResize[1]].width = 100 - sums.prevReachedMinPanes - this.panes[0].min - sums.prevPanesSize - sums.nextPanesSize
+          return null
+        }
+      }
+
+      // Pushing Up.
+      // Pushing up beyond min width is reached: take the next expanded pane.
+      if (dragPercentage > 100 - sums.nextPanesSize - this.panes[panesToResize[1]].min) {
+        panesToResize[1] = this.findNextExpandedPane(splitterIndex).index
+
+        sums.nextReachedMinPanes = 0
+        // If pushing a n+2 or more pane, from splitter, then make sure all in between is at min size.
+        if (panesToResize[1] > splitterIndex + 1) {
+          this.panes.forEach((pane, i) => {
+            if (i > splitterIndex && i < panesToResize[1]) {
+              pane.width = pane.min
+              sums.nextReachedMinPanes += pane.min
+            }
+          })
+        }
+
+        sums.nextPanesSize = this.sumNextPanesSize(panesToResize[1] - 1)
+
+        // If nothing else to push up, cancel dragging.
+        if (panesToResize[1] === undefined) {
+          sums.nextReachedMinPanes = 0
+          this.panes[this.panes.length - 1].width = this.panes[this.panes.length - 1].min
+          this.panes.forEach((pane, i) => {
+            if (i < this.panes.length - 1 && i >= splitterIndex + 1) {
+              pane.width = pane.min
+              sums.nextReachedMinPanes += pane.min
+            }
+          })
+
+          this.panes[panesToResize[0]].width = 100 - sums.prevPanesSize - sums.nextReachedMinPanes - this.panes[this.panes.length - 1].min - sums.nextPanesSize
+          return null
+        }
+      }
+
+      return { sums, panesToResize }
     },
 
     sumPrevPanesSize (splitterIndex) {
