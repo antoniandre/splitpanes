@@ -91,16 +91,16 @@ export default {
     // Returns the drag percentage of the splitter relative to the 2 panes it's inbetween.
     // if the sum of width of the 2 cells  is 60%, the dragPercentage range will be 0 to 100% of this 60%.
     getCurrentDragPercentage (drag) {
-      let splitterIndex = this.touch.activeSplitter
-      let doc = document.documentElement
-      let scrollTop = this.horizontal ? (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0) : null
-      let offset = this[`getContainerOffset${this.horizontal ? 'Top' : 'Left'}`]()
-      drag = drag[this.horizontal ? 'y': 'x'] - offset + scrollTop
+      const splitterIndex = this.touch.activeSplitter
+      const doc = document.documentElement
+      const scrollTop = this.horizontal ? (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0) : null
+      const offset = this[`getContainerOffset${this.horizontal ? 'Top' : 'Left'}`]()
+      drag = drag[this.horizontal ? 'y' : 'x'] - offset + scrollTop
 
       // In the code bellow 'size' refers to 'width' for vertical and 'height' for horizontal layout.
-      let containerSize = this.container.vnode[this.horizontal ? 'clientHeight' : 'clientWidth']
+      const containerSize = this.container.vnode[this.horizontal ? 'clientHeight' : 'clientWidth']
       let sumPrevPanesSize = 0
-      this.panes.forEach((pane, i) => sumPrevPanesSize += i < splitterIndex ? pane.width : 0)
+      this.panes.forEach((pane, i) => (sumPrevPanesSize += i < splitterIndex ? pane.width : 0))
 
       return drag * 100 / containerSize
     },
@@ -117,7 +117,6 @@ export default {
       const minDrag = 0 + (this.pushOtherPanes ? 0 : sums.prevPanesSize)
       const maxDrag = 100 - (this.pushOtherPanes ? 0 : sums.nextPanesSize)
       const dragPercentage = Math.max(Math.min(this.getCurrentDragPercentage(drag), maxDrag), minDrag)
-
 
       // If not pushing other panes, panes to resize are right before and right after splitter.
       let panesToResize = [splitterIndex, splitterIndex + 1]
@@ -307,7 +306,7 @@ export default {
     let wrapperAttributes = {
       class: [
         'splitpanes',
-        `splitpanes--${ this.horizontal ? 'horizontal' : 'vertical' }`,
+        `splitpanes--${this.horizontal ? 'horizontal' : 'vertical'}`,
         this.touch.dragging ? 'splitpanes--dragging' : ''
       ],
       ref: 'container'
@@ -337,7 +336,6 @@ export default {
   &--vertical > .splitpanes__splitter {min-width: 1px;cursor: col-resize;}
   &--horizontal > .splitpanes__splitter {min-height: 1px;cursor: row-resize;}
 }
-
 
 .splitpanes.default-theme {
   .splitpanes__pane {
