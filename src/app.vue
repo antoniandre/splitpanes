@@ -91,7 +91,7 @@
       p Then import the component and CSS:
       ssh-pre(language="js" label="Javascript").
         // In your VueJS component.
-        import { Splitpanes } from 'splitpanes'
+        import Splitpanes from 'splitpanes'
         import 'splitpanes/dist/splitpanes.css'
 
         export default {
