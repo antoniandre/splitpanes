@@ -139,7 +139,6 @@
         at the root of your splitpanes to apply the default theme like on this page.#[br]
         If you want to go with your own style, you can check the #[a(href="#do-your-own-style") Do Your Own Style example].
 
-
       //- Examples.
       //-------------------------------------------------------//
       h2.mt-5.mb-2.headline
