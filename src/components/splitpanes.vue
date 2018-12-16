@@ -266,9 +266,9 @@ export default {
         this.vnodes = this.$slots.default.filter(vnode => vnode.tag || (vnode.text || '').trim())
         this.vnodes.forEach((vnode, i) => {
           const { data: { attrs = {} } = {} } = vnode
-          const { 'splitpanes-min': min = 0, 'splitpanes-max': max = 100 } = attrs
+          const { 'splitpanes-min': min = 0, 'splitpanes-max': max = 100, 'splitpanes-default': Default = this.defaultWidth } = attrs
 
-          this.$set(this.panes, i, { width: this.defaultWidth, index: i, min: parseFloat(min), max: parseFloat(max) })
+          this.$set(this.panes, i, { width: parseInt(Default), index: i, min: parseFloat(min), max: parseFloat(max) })
           if (i) this.$set(this.splitters, i - 1, { id: `splitter-${i - 1}`, index: i - 1 })
         })
 

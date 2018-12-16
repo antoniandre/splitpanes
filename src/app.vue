@@ -163,6 +163,27 @@
 
       //- Example.
       h3.mt-5.mb-2.subheading
+        a(href="#default-pane-width") # Default pane width or height
+        a(name="default-pane-width")
+      p.
+        Provide dimension of your panes when they first load (will be used for the width or height respectively for the vertical or horizontal layout).#[br]
+        If you provide a default width or height, make sure you provide it for all the panes and the total equals 100%.#[br]
+        Note that default value is different than setting a min or max value.
+
+      splitpanes.default-theme.example(horizontal style="height:400px")
+        span(splitpanes-default="65") 1
+        span(splitpanes-default="10") 2
+        span(splitpanes-default="25") 3
+
+      ssh-pre(language="html-vue" label="HTML").
+        &lt;splitpanes class="default-theme" horizontal style="height:400px"&gt;
+          &lt;span splitpanes-default="65"&gt;1&lt;/span&gt;
+          &lt;span splitpanes-default="10"&gt;2&lt;/span&gt;
+          &lt;span splitpanes-default="25"&gt;3&lt;/span&gt;
+        &lt;/splitpanes&gt;
+
+      //- Example.
+      h3.mt-5.mb-2.subheading
         a(href="#nested-splitpanes") # Mix layout with nested splitpanes &amp; prevent pushing other panes
         a(name="nested-splitpanes")
       p

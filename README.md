@@ -30,7 +30,8 @@ ___
 
 ## Release Notes
 
-- __Version 1.4.0__ Add minimum size feature on panes (max feature on the way!)
+- __Version 1.5.0__ Add default size feature on panes (max feature coming soon!)
+- __Version 1.4.0__ Add minimum size feature on panes
 - __Version 1.3.0__ Splitpanes slots are now reactive (add/remove on the fly)
 - __Version 1.2.0__ Add a `default-theme` CSS class to load default theme
 - __Version 1.1.0__ Allow pushing other panes while dragging splitter
