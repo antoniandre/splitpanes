@@ -48,6 +48,7 @@ export default {
     onMouseUp () {
       this.touch.mouseDown = false
       this.touch.dragging = false
+      this.$emit('resize', this.panes.map(pane => ({ min: pane.min, max: pane.max, width: pane.width })))
     },
 
     getCurrentMouseDrag: (e) => ({
@@ -248,6 +249,7 @@ export default {
   mounted () {
     this.container.vnode = this.$refs.container
     this.bindEvents()
+    this.$emit('ready')
   },
 
   computed: {

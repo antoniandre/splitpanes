@@ -248,6 +248,32 @@
 
       //- Example.
       h3.mt-5.mb-2.subheading
+        a(href="#emitted-events") # Listening to emitted events
+        a(name="emitted-events")
+      p.
+        Two events are currently emitted from splitpanes: #[span.code ready] &amp; #[span.code resize].#[br]
+        #[span.code ready] has no parameter, #[span.code resize] returns an array of all the panes objects with their dimensions.#[br]
+        Try resizing panes and check the logs bellow.
+
+      splitpanes.default-theme.example(style="height:400px" @resize="log('resize', $event)" @ready="log('ready', $event)")
+        span(v-for="i in 3" :key="i") {{ i }}
+
+      pre.ssh-pre(data-label="Logs")
+        div.grey--text
+          | //&nbsp;
+          strong Event name:&nbsp;
+          span Event params
+        div(v-for="(event, i) in logs" :key="i")
+          strong {{ event.name }}:&nbsp;
+          span {{ event.params }}
+
+      ssh-pre(language="html-vue" label="HTML" v-pre).
+        &lt;splitpanes class="default-theme" style="height:400px" @resize="log('resize', $event)" @ready="log('ready', $event)"&gt;
+          &lt;span v-for="i in 3" :key="i"&gt;{{ i }}&lt;/span&gt;
+        &lt;/splitpanes&gt;
+
+      //- Example.
+      h3.mt-5.mb-2.subheading
         a(href="#increased-touch-zone") # Increased reactive touch zone for touch devices
         a(name="increased-touch-zone")
       p
@@ -352,8 +378,14 @@ export default {
   name: 'app',
   components: { Splitpanes, sshPre: simpleSyntaxHighlighter, highlightMessage },
   data: () => ({
-    panesNumber: 3
-  })
+    panesNumber: 3,
+    logs: []
+  }),
+  methods: {
+    log (eventName, eventParams) {
+      this.logs.push({ name: eventName, params: JSON.stringify(eventParams) })
+    }
+  }
 }
 </script>
 
