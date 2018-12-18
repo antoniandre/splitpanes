@@ -251,11 +251,11 @@
         a(href="#emitted-events") # Listening to emitted events
         a(name="emitted-events")
       p.
-        Two events are currently emitted from splitpanes: #[span.code ready] &amp; #[span.code resize].#[br]
-        #[span.code ready] has no parameter, #[span.code resize] returns an array of all the panes objects with their dimensions.#[br]
+        Two events are currently emitted from splitpanes: #[span.code ready], #[span.code resized] &amp; #[span.code dblclick].#[br]
+        #[span.code ready] has no parameter, #[span.code resized] returns an array of all the panes objects with their dimensions, #[span.code dblclick] returns the double clicked pane object with its dimensions.#[br]
         Try resizing panes and check the logs bellow.
 
-      splitpanes.default-theme.example(style="height:400px" @resize="log('resize', $event)" @ready="log('ready', $event)")
+      splitpanes.default-theme.example(style="height:400px" @resized="log('resized', $event)" @dblclick="log('dblclick', $event)" @ready="log('ready', $event)")
         span(v-for="i in 3" :key="i") {{ i }}
 
       pre.ssh-pre(data-label="Logs")
@@ -268,7 +268,7 @@
           span {{ event.params }}
 
       ssh-pre(language="html-vue" label="HTML" v-pre).
-        &lt;splitpanes class="default-theme" style="height:400px" @resize="log('resize', $event)" @ready="log('ready', $event)"&gt;
+        &lt;splitpanes class="default-theme" style="height:400px" @resized="log('resized', $event)" @dblclick="log('dblclick', $event)" @ready="log('ready', $event)"&gt;
           &lt;span v-for="i in 3" :key="i"&gt;{{ i }}&lt;/span&gt;
         &lt;/splitpanes&gt;
 

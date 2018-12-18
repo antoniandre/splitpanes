@@ -46,9 +46,12 @@ export default {
     },
 
     onMouseUp () {
+      if (this.touch.dragging) {
+        this.$emit('resized', this.panes.map(pane => ({ min: pane.min, max: pane.max, width: pane.width })))
+      }
+
       this.touch.mouseDown = false
       this.touch.dragging = false
-      this.$emit('resize', this.panes.map(pane => ({ min: pane.min, max: pane.max, width: pane.width })))
     },
 
     getCurrentMouseDrag: (e) => ({
@@ -298,6 +301,9 @@ export default {
           style: {
             ...(this.horizontal ? { height: `${this.panes[i].width}%` } : null),
             ...(!this.horizontal ? { width: `${this.panes[i].width}%` } : null)
+          },
+          on: {
+            dblclick: e => this.$emit('dblclick', this.panes[i])
           }
         }
         splitPanesChildren.push(createEl('div', paneAttributes, [vnode]))
