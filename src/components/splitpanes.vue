@@ -47,11 +47,24 @@ export default {
 
     onMouseUp () {
       if (this.touch.dragging) {
-        this.$emit('resized', this.panes.map(pane => ({ min: pane.min, max: pane.max, width: pane.width })))
+        this.$emit('resize', this.panes.map(pane => ({ min: pane.min, max: pane.max, width: pane.width })))
       }
 
       this.touch.mouseDown = false
       this.touch.dragging = false
+    },
+
+    // On splitter dbl click maximize this pane.
+    onSplitterDblClick (e, splitterIndex) {
+      let totalMinWidths = 0
+      this.panes = this.panes.map((pane, i) => {
+        pane.width = i === splitterIndex ? pane.max : pane.min
+        if (i !== splitterIndex) totalMinWidths += pane.min
+
+        return pane
+      })
+      this.panes[splitterIndex].width -= totalMinWidths
+      this.$emit('pane-maximize', this.panes[splitterIndex])
     },
 
     getCurrentMouseDrag: (e) => ({
@@ -288,7 +301,8 @@ export default {
             class: 'splitpanes__splitter',
             ref: `splitter-${i - 1}`,
             on: {
-              ['ontouchstart' in window ? 'touchstart' : 'mousedown']: e => this.onMouseDown(e, i - 1)
+              ['ontouchstart' in window ? 'touchstart' : 'mousedown']: e => this.onMouseDown(e, i - 1),
+              dblclick: e => this.onSplitterDblClick(e, i)
             }
           }
           splitPanesChildren.push(createEl('div', splitterAttributes))
@@ -303,7 +317,7 @@ export default {
             ...(!this.horizontal ? { width: `${this.panes[i].width}%` } : null)
           },
           on: {
-            dblclick: e => this.$emit('dblclick', this.panes[i])
+            click: e => this.$emit('pane-click', this.panes[i])
           }
         }
         splitPanesChildren.push(createEl('div', paneAttributes, [vnode]))

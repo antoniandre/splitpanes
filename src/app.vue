@@ -27,6 +27,9 @@
               | Push other panes or not
             li
               v-icon.mr-2(color="primary" size="20") check
+              | Double click a splitter to maximize pane
+            li
+              v-icon.mr-2(color="primary" size="20") check
               | Adding panes on the fly automatically adds splitters
             li
               v-icon.mr-2(color="primary" size="20") check
@@ -36,7 +39,7 @@
               | Simple yet efficient
             li
               v-icon.mr-2(color="primary" size="20") check
-              | More features to come!
+              | More features to come: max-width, pane labels.
 
         div
           div.mt-5.mb-3.title Github project
@@ -149,6 +152,7 @@
       h3.mb-2.subheading
         a(href="#horizontal-layout") # Horizontal layout &amp; push other panes
         a(name="horizontal-layout")
+      p You can also double click a splitter to maximize the next pane! (First pane splitter will be an option soon)
       splitpanes.default-theme.example(horizontal style="height:400px")
         span(splitpanes-min="25") 1#[br]#[em.specs I have a min height of 25%]
         span 2
@@ -251,12 +255,16 @@
         a(href="#emitted-events") # Listening to emitted events
         a(name="emitted-events")
       p.
-        Two events are currently emitted from splitpanes: #[span.code ready], #[span.code resized] &amp; #[span.code dblclick].#[br]
-        #[span.code ready] has no parameter, #[span.code resized] returns an array of all the panes objects with their dimensions, #[span.code dblclick] returns the double clicked pane object with its dimensions.#[br]
-        Try resizing panes and check the logs bellow.
+        Four events are currently emitted from splitpanes: #[span.code ready], #[span.code resize], #[span.code pane-click] &amp; #[span.code pane-maximize].
+      ul
+      li #[span.code ready] has no parameter and fires when splitpanes is ready
+      li #[span.code resize] returns an array of all the panes objects with their dimensions, and fires once when the resizing stops (on mouseup/touchend)
+      li #[span.code pane-click] returns the clicked pane object with its dimensions.
+      li #[span.code pane-maximize] returns the maximized pane object with its dimensions.#[br]
+      p Try resizing panes and check the logs bellow.
 
-      splitpanes.default-theme.example(style="height:400px" @resized="log('resized', $event)" @dblclick="log('dblclick', $event)" @ready="log('ready', $event)")
-        span(v-for="i in 3" :key="i") {{ i }}
+      splitpanes.default-theme.example(style="height:400px" @resize="log('resize', $event)" @pane-maximize="log('pane-maximize', $event)" @pane-click="log('pane-click', $event)" @ready="log('ready', $event)")
+        span(v-for="i in 3" :key="i" splitpanes-min="10") {{ i }}
 
       pre.ssh-pre(data-label="Logs")
         div.grey--text
@@ -268,7 +276,7 @@
           span {{ event.params }}
 
       ssh-pre(language="html-vue" label="HTML" v-pre).
-        &lt;splitpanes class="default-theme" style="height:400px" @resized="log('resized', $event)" @dblclick="log('dblclick', $event)" @ready="log('ready', $event)"&gt;
+        &lt;splitpanes class="default-theme" style="height:400px" @resize="log('resize', $event)" @pane-maximize="log('pane-maximize', $event)" @pane-click="log('pane-click', $event)" @ready="log('ready', $event)"&gt;
           &lt;span v-for="i in 3" :key="i"&gt;{{ i }}&lt;/span&gt;
         &lt;/splitpanes&gt;
 

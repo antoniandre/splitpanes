@@ -30,6 +30,7 @@ ___
 
 ## Release Notes
 
+- __Version 1.7.0__ Double click splitter to maximize next pane
 - __Version 1.6.0__ Emit events
 - __Version 1.5.0__ Add default size feature on panes (max feature coming soon!)
 - __Version 1.4.0__ Add minimum size feature on panes
