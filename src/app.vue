@@ -277,7 +277,7 @@
 
       ssh-pre(language="html-vue" label="HTML" v-pre).
         &lt;splitpanes class="default-theme" style="height:400px" @resize="log('resize', $event)" @pane-maximize="log('pane-maximize', $event)" @pane-click="log('pane-click', $event)" @ready="log('ready', $event)"&gt;
-          &lt;span v-for="i in 3" :key="i"&gt;{{ i }}&lt;/span&gt;
+          &lt;span v-for="i in 3" :key="i" splitpanes-min="10"&gt;{{ i }}&lt;/span&gt;
         &lt;/splitpanes&gt;
 
       //- Example.
