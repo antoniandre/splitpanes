@@ -17,7 +17,8 @@ export default {
       vnodes: [],
       panes: [],
       splitters: [],
-      touch: { mouseDown: false, dragging: false, activeSplitter: null }
+      touch: { mouseDown: false, dragging: false, activeSplitter: null },
+      slotsCopy: ''
     }
   },
 
@@ -277,10 +278,53 @@ export default {
   render (createEl) {
     const splitPanesChildren = []
 
-    if (!this.$slots.default) splitPanesChildren.push(createEl('div', 'Splitpanes needs some contents here.'))
+    if (!this.$slots.default) splitPanesChildren.push(createEl('div', 'Splitpanes needs some content here.'))
     else {
+      const clearedProps = {
+        context: null,
+        elm: null,
+        Ctor: null,
+        componentInstance: {},
+        componentOptions: {},
+        parent: null,
+        data: {},
+      }
+      const deeperClearedProps = {
+        $vnode: {},
+        $options: {},
+        $parent: {},
+        $root: {},
+        $refs: {},
+        $slots: {},
+        $scopedSlots: {},
+        _self: {},
+        _vnode: {},
+        _watcher: {},
+        _watchers: {},
+        _computedWatcher: {},
+        _data: {}
+      }
+      // const slotsExport = JSON.stringify(this.$slots.default.map(item => ({...item, context: null})))
+      const slotsExport = this.$slots.default.map(item => ({
+        ...item,
+        ...clearedProps,
+        children: item.children && item.children.map(c => ({ ...c, ...clearedProps })) || [],
+        child: item.child && {
+          // ...item.child,
+          ...clearedProps,
+          // ...deeperClearedProps,
+          children: {},//item.child.children && item.child.children.map(c => ({ ...c, ...clearedProps })) || [],
+          child: {}//item.child.child && { ...item.child.child, ...clearedProps, ...deeperClearedProps } || {}
+        } || {}
+      }))
+      debugger
+      const slotsHaveChanged = this.slotsCopy !== slotsExport
+      console.log('rendering', JSON.stringify(slotsExport))
+
+      if (slotsHaveChanged) this.slotsCopy = slotsExport
+
       // Create the panes and splitters arrays each time the slots are updated.
-      if (this.slotsCount !== this.$slots.default.length) {
+      if (this.slotsCount !== this.$slots.default.length || slotsHaveChanged) {
         this.vnodes = this.$slots.default.filter(vnode => vnode.tag || (vnode.text || '').trim())
         this.vnodes.forEach((vnode, i) => {
           const { data: { attrs = {} } = {} } = vnode
