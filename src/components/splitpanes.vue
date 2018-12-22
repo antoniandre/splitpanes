@@ -280,48 +280,19 @@ export default {
 
     if (!this.$slots.default) splitPanesChildren.push(createEl('div', 'Splitpanes needs some content here.'))
     else {
-      const clearedProps = {
-        context: null,
-        elm: null,
-        Ctor: null,
-        componentInstance: {},
-        componentOptions: {},
-        parent: null,
-        data: {},
-      }
-      const deeperClearedProps = {
-        $vnode: {},
-        $options: {},
-        $parent: {},
-        $root: {},
-        $refs: {},
-        $slots: {},
-        $scopedSlots: {},
-        _self: {},
-        _vnode: {},
-        _watcher: {},
-        _watchers: {},
-        _computedWatcher: {},
-        _data: {}
-      }
-      // const slotsExport = JSON.stringify(this.$slots.default.map(item => ({...item, context: null})))
-      const slotsExport = this.$slots.default.map(item => ({
-        ...item,
-        ...clearedProps,
-        children: item.children && item.children.map(c => ({ ...c, ...clearedProps })) || [],
-        child: item.child && {
-          // ...item.child,
-          ...clearedProps,
-          // ...deeperClearedProps,
-          children: {},//item.child.children && item.child.children.map(c => ({ ...c, ...clearedProps })) || [],
-          child: {}//item.child.child && { ...item.child.child, ...clearedProps, ...deeperClearedProps } || {}
-        } || {}
-      }))
-      debugger
-      const slotsHaveChanged = this.slotsCopy !== slotsExport
-      console.log('rendering', JSON.stringify(slotsExport))
+      const discardProps = ['$options', '$parent', '$root', '$el',
+        '$refs', '$slots', '$scopedSlots', '$vnode', '_data',
+        '_self', '_vnode', '_watcher', '_watchers', '_computedWatchers', '_renderProxy', 'vnodes',
+        'container', 'Ctor', 'context', 'parent', 'componentInstance', 'componentOptions']
 
-      if (slotsHaveChanged) this.slotsCopy = slotsExport
+      const slotsExport = JSON.stringify(this.$slots.default, (name, val) => {
+        // Discard the properties listed in array to prevent circular reference.
+        return discardProps.indexOf(name) > -1 ? undefined : val
+      })
+
+      const slotsHaveChanged = this.slotsCopy !== JSON.stringify(slotsExport)
+
+      if (slotsHaveChanged) this.slotsCopy = JSON.stringify(slotsExport)
 
       // Create the panes and splitters arrays each time the slots are updated.
       if (this.slotsCount !== this.$slots.default.length || slotsHaveChanged) {

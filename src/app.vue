@@ -153,7 +153,7 @@
         a(href="#horizontal-layout") # Horizontal layout &amp; push other panes
         a(name="horizontal-layout")
       p You can also double click a splitter to maximize the next pane! (First pane splitter will be an option soon)
-      //- splitpanes.default-theme.example(horizontal style="height:400px")
+      splitpanes.default-theme.example(horizontal style="height:400px")
         span(splitpanes-min="25") 1#[br]#[em.specs I have a min height of 25%]
         span 2
         span 3
@@ -174,7 +174,7 @@
         If you provide a default width or height, make sure you provide it for all the panes and the total equals 100%.#[br]
         Note that default value is different than setting a min or max value.
 
-      //- splitpanes.default-theme.example(horizontal style="height:400px")
+      splitpanes.default-theme.example(horizontal style="height:400px")
         span(splitpanes-default="65") 1
         span(splitpanes-default="10") 2
         span(splitpanes-default="25") 3
@@ -193,7 +193,7 @@
       p
         | try it yourself:
         a(href="https://codepen.io/antoniandre/pen/PypgKY" target="_blank" class="ml-2") //codepen.io/antoniandre/pen/PypgKY #[v-icon(small color="primary") open_in_new]
-      //- splitpanes.default-theme.example(horizontal :push-other-panes="false" style="height:400px")
+      splitpanes.default-theme.example(horizontal :push-other-panes="false" style="height:400px")
         span 1
         splitpanes(:push-other-panes="false")
           span 2
@@ -216,7 +216,7 @@
       h3.mt-5.mb-2.subheading
         a(href="#lots-of-splitters") # Lots of splitters &amp; push other panes - all panes have a min width of 5%
         a(name="lots-of-splitters")
-      //- splitpanes.default-theme.example(style="height:400px")
+      splitpanes.default-theme.example(style="height:400px")
         span(v-for="i in 8" :key="i" splitpanes-min="5") {{ i }}
 
       ssh-pre(language="html-vue" label="HTML" v-pre).
@@ -233,12 +233,9 @@
         v-btn(color="primary" small @click="panesNumber++")
           v-icon add
           | Add pane
-        v-btn(color="primary" small @click="message += '.'")
-          v-icon add
-          | Update message
 
       splitpanes.default-theme.example(style="height:400px")
-        span(v-for="i in panesNumber" :key="i") {{ i }} {{ message }}
+        span(v-for="i in panesNumber" :key="i") {{ i }}
 
       ssh-pre(language="html-vue" label="HTML" v-pre).
         &lt;button @click="panesNumber++"&gt;Add pane&lt;/button&gt;
@@ -255,6 +252,80 @@
 
       //- Example.
       h3.mt-5.mb-2.subheading
+        a(href="#in-depth-reactivity") # In-depth reactivity
+        a(name="in-depth-reactivity")
+      p
+        | This example shows the reactivity when you modify anything in your component inside splitpanes.#[br]
+        | If a reactive property is set outside of splitpanes it will be updated inside splitpanes, and accessible from all the panes.#[br]
+        | You can also update a property that resides outside of splitpanes from inside a pane like in this example.
+        v-btn(color="primary" small @click="generateRandomNumber")
+          v-icon.mr-1(size="20") sync
+          | Generate 3 random numbers
+        v-btn(color="primary" small @click="incrementNumber(3)")
+          v-icon.mr-1(size="20") add
+          | Increment pane #3
+      splitpanes.default-theme.example(style="height:400px" horizontal)
+        splitpanes
+          div.text-xs-center(v-for="i in 3" :key="i")
+            span {{ i }}#[br]
+            em Number is: {{ randomNums[i] }}#[br]
+            em(v-if="i === 2").
+              Number on the left is: {{ randomNums[1] }}#[br]
+              Number on the right is: {{ randomNums[3] }}#[br]
+            v-btn.align-center(v-if="i !== 2" small color="primary" @click="randomNums[i] = randomNums[i] + 1" style="min-width: 0")
+              v-icon(size="20") add
+              | 1
+        div.text-xs-center
+          span 4#[br]
+          em.
+            - Nested splitpanes -#[br]
+            [{{ randomNums[1] }}, {{ randomNums[2] }}, {{ randomNums[3] }}]
+
+      ssh-pre(language="html-vue" label="HTML" v-pre).
+        &lt;v-btn @click="generateRandomNumber"&gt;Generate 3 random numbers&lt;/v-btn&gt;
+        &lt;v-btn @click="incrementNumber(3)"&gt;Increment pane #3&lt;/v-btn&gt;
+
+        &lt;splitpanes horizontal class="default-theme" style="height:400px"&gt;
+          &lt;splitpanes&gt;
+            &lt;div v-for="i in 3" :key="i"&gt;
+              &lt;span&gt;{{ i }}&lt;/span&gt;&lt;br&gt;
+              &lt;em&gt;Number is: {{ randomNums[i] }}&lt;/em&gt;&lt;br&gt;
+              &lt;em v-if="i === 2"&gt;
+                Number on the left is: {{ randomNums[1] }}&lt;br&gt;
+                Number on the right is: {{ randomNums[3] }}&lt;br&gt;
+              &lt;/em&gt;
+              &lt;v-btn(v-if="i !== 2" @click="randomNums[i] = randomNums[i] + 1"&gt;+1&lt;/v-btn&gt;
+            &lt;/div&gt;
+          &lt;/splitpanes&gt;
+        &lt;/splitpanes&gt;
+          &lt;div&gt;
+            &lt;span&gt;4&lt;/span&gt;&lt;br&gt;
+            &lt;em&gt;
+              - Nested splitpanes -&lt;br&gt;
+              [{{ randomNums[1] }}, {{ randomNums[2] }}, {{ randomNums[3] }}]
+            &lt;/em&gt;
+          &lt;/div&gt;
+
+      ssh-pre(language="js" label="Javascript" v-pre).
+        // In your Vue component.
+        data: () => ({
+          randomNums: { 1: 0, 2: 0, 3: 0 }
+        }),
+        methods: {
+          generateRandomNumber () {
+            this.randomNums = Object.assign(this.randomNums, {
+              1: Math.round(Math.random() * 100),
+              2: Math.round(Math.random() * 100),
+              3: Math.round(Math.random() * 100)
+            })
+          },
+          incrementNumber (i) {
+            this.randomNums[i]++
+          }
+        }
+
+      //- Example.
+      h3.mt-5.mb-2.subheading
         a(href="#emitted-events") # Listening to emitted events
         a(name="emitted-events")
       p.
@@ -266,7 +337,7 @@
       li #[span.code pane-maximize] returns the maximized pane object with its dimensions.#[br]
       p Try resizing panes and check the logs bellow.
 
-      //- splitpanes.default-theme.example(style="height:400px" @resize="log('resize', $event)" @pane-maximize="log('pane-maximize', $event)" @pane-click="log('pane-click', $event)" @ready="log('ready', $event)")
+      splitpanes.default-theme.example(style="height:400px" @resize="log('resize', $event)" @pane-maximize="log('pane-maximize', $event)" @pane-click="log('pane-click', $event)" @ready="log('ready', $event)")
         span(v-for="i in 3" :key="i" splitpanes-min="10") {{ i }}
 
       pre.ssh-pre(data-label="Logs")
@@ -291,8 +362,8 @@
         | try it yourself:
         a(href="https://codepen.io/antoniandre/pen/XxRZmB" target="_blank" class="ml-2") //codepen.io/antoniandre/pen/XxRZmB #[v-icon(small color="primary") open_in_new]
 
-      //- splitpanes.touch-example(horizontal style="height:400px")
-        //- splitpanes.touch-example
+      splitpanes.touch-example(horizontal style="height:400px")
+        splitpanes.touch-example
           span 1
           span 2
           span 3
@@ -338,7 +409,7 @@
         | try it yourself:
         a(href="https://codepen.io/antoniandre/pen/mzGZXR" target="_blank" class="ml-2") //codepen.io/antoniandre/pen/mzGZXR #[v-icon(small color="primary") open_in_new]
 
-      //- splitpanes.example-own-style(horizontal style="height: 400px")
+      splitpanes.example-own-style(horizontal style="height: 400px")
         splitpanes(vertical)
           span 1
           span 2
@@ -391,11 +462,21 @@ export default {
   data: () => ({
     panesNumber: 3,
     logs: [],
-    message: '-'
+    randomNums: { 1: 0, 2: 0, 3: 0 }
   }),
   methods: {
     log (eventName, eventParams) {
       this.logs.push({ name: eventName, params: JSON.stringify(eventParams) })
+    },
+    generateRandomNumber () {
+      this.randomNums = Object.assign(this.randomNums, {
+        1: Math.round(Math.random() * 100),
+        2: Math.round(Math.random() * 100),
+        3: Math.round(Math.random() * 100)
+      })
+    },
+    incrementNumber (i) {
+      this.randomNums[i]++
     }
   }
 }
