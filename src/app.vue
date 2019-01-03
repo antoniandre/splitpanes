@@ -470,7 +470,7 @@
         a(name="release-notes")
 
       div
-        | #[strong Version 1.8.0] Emit event on resize &amp; watch slots optional
+        | #[strong Version 1.9.0] Emit event on resize &amp; watch slots optional
         highlight-message(type="success")
           strong.
             The #[span.code resize] event - previously firing after resize end - is now firing on resize.#[br]
@@ -480,6 +480,8 @@
           strong.
             By default and for performance, the reactivity is now limited to slot deletion and slot creation.#[br]
             With the option #[span.code watchSlots] you can also track any change on the slots.#[br]
+      div.
+        #[strong Version 1.8.0] Watch slots
       div.
         #[strong Version 1.7.0] Double click splitter to maximize next pane
       div.

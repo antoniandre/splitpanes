@@ -30,7 +30,8 @@ ___
 
 ## Release Notes
 
-- __Version 1.8.0__ Emit event on resize &amp; watch slots optional
+- __Version 1.9.0__ Emit event on resize &amp; watch slots optional
+- __Version 1.8.0__ Watch slots
 - __Version 1.7.0__ Double click splitter to maximize next pane
 - __Version 1.6.0__ Emit events
 - __Version 1.5.0__ Add default size feature on panes (max feature coming soon!)
