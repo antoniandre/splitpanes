@@ -1,6 +1,10 @@
 <script>
 export default {
   props: {
+    watchSlots: {
+      type: Boolean,
+      default: false
+    },
     horizontal: {
       type: Boolean,
       default: false
@@ -43,12 +47,13 @@ export default {
 
         this.touch.dragging = true
         this.calculatePanesSize(this.getCurrentMouseDrag(e))
+        this.$emit('resize', this.panes.map(pane => ({ min: pane.min, max: pane.max, width: pane.width })))
       }
     },
 
     onMouseUp () {
       if (this.touch.dragging) {
-        this.$emit('resize', this.panes.map(pane => ({ min: pane.min, max: pane.max, width: pane.width })))
+        this.$emit('resized', this.panes.map(pane => ({ min: pane.min, max: pane.max, width: pane.width })))
       }
 
       this.touch.mouseDown = false
@@ -280,19 +285,23 @@ export default {
 
     if (!this.$slots.default) splitPanesChildren.push(createEl('div', 'Splitpanes needs some content here.'))
     else {
-      const discardProps = ['$options', '$parent', '$root', '$el',
-        '$refs', '$slots', '$scopedSlots', '$vnode', '_data', '__vue__',
-        '_self', '_vnode', '_watcher', '_watchers', '_computedWatchers', '_renderProxy', 'vnodes',
-        'container', 'Ctor', 'context', 'parent', 'componentInstance', 'componentOptions']
+      let slotsHaveChanged = false
 
-      const slotsExport = JSON.stringify(this.$slots.default, (name, val) => {
-        // Discard the properties listed in array to prevent circular reference.
-        return discardProps.indexOf(name) > -1 ? undefined : val
-      })
+      if (this.watchSlots) {
+        const discardProps = ['$options', '$parent', '$root', '$el',
+          '$refs', '$slots', '$scopedSlots', '$vnode', '_data', '__vue__',
+          '_self', '_vnode', '_watcher', '_watchers', '_computedWatchers', '_renderProxy', 'vnodes',
+          'container', 'Ctor', 'context', 'parent', 'componentInstance', 'componentOptions']
 
-      const slotsHaveChanged = this.slotsCopy !== JSON.stringify(slotsExport)
+        const slotsExport = JSON.stringify(this.$slots.default, (name, val) => {
+          // Discard the properties listed in array to prevent circular reference.
+          return discardProps.indexOf(name) > -1 ? undefined : val
+        })
 
-      if (slotsHaveChanged) this.slotsCopy = JSON.stringify(slotsExport)
+        slotsHaveChanged = this.slotsCopy !== slotsExport
+
+        if (slotsHaveChanged) this.slotsCopy = slotsExport
+      }
 
       // Create the panes and splitters arrays each time the slots are updated.
       if (this.slotsCount !== this.$slots.default.length || slotsHaveChanged) {

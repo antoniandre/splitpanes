@@ -256,6 +256,9 @@
         a(name="in-depth-reactivity")
       p
         | This example shows the reactivity when you modify anything in your component inside splitpanes.#[br]
+        strong.
+          By default and for performance, the reactivity is limited to slot deletion and slot creation.#[br]
+          With the option #[span.code watchSlots] you can also track any change on the slots.#[br]
         | If a reactive property is set outside of splitpanes it will be updated inside splitpanes, and accessible from all the panes.#[br]
         | You can also update a property that resides outside of splitpanes from inside a pane like in this example.
         v-btn(color="primary" small @click="generateRandomNumber")
@@ -264,8 +267,8 @@
         v-btn(color="primary" small @click="incrementNumber(3)")
           v-icon.mr-1(size="20") add
           | Increment pane #3
-      splitpanes.default-theme.example(style="height:400px" horizontal)
-        splitpanes
+      splitpanes.default-theme.example(style="height:400px" horizontal watch-slots)
+        splitpanes(watch-slots)
           div.text-xs-center(v-for="i in 3" :key="i")
             span {{ i }}#[br]
             em Number is: {{ randomNums[i] }}#[br]
@@ -285,8 +288,8 @@
         &lt;v-btn @click="generateRandomNumber"&gt;Generate 3 random numbers&lt;/v-btn&gt;
         &lt;v-btn @click="incrementNumber(3)"&gt;Increment pane #3&lt;/v-btn&gt;
 
-        &lt;splitpanes horizontal class="default-theme" style="height:400px"&gt;
-          &lt;splitpanes&gt;
+        &lt;splitpanes watch-slots horizontal class="default-theme" style="height:400px"&gt;
+          &lt;splitpanes watch-slots&gt;
             &lt;div v-for="i in 3" :key="i"&gt;
               &lt;span&gt;{{ i }}&lt;/span&gt;&lt;br&gt;
               &lt;em&gt;Number is: {{ randomNums[i] }}&lt;/em&gt;&lt;br&gt;
@@ -332,12 +335,19 @@
         Four events are currently emitted from splitpanes: #[span.code ready], #[span.code resize], #[span.code pane-click] &amp; #[span.code pane-maximize].
       ul
       li #[span.code ready] has no parameter and fires when splitpanes is ready
-      li #[span.code resize] returns an array of all the panes objects with their dimensions, and fires once when the resizing stops (on mouseup/touchend)
+      li #[span.code resize] returns an array of all the panes objects with their dimensions, and fires while resizing (on mousemove/touchmove)
+      li #[span.code resized] returns an array of all the panes objects with their dimensions, and fires once when the resizing stops (on mouseup/touchend)
       li #[span.code pane-click] returns the clicked pane object with its dimensions.
       li #[span.code pane-maximize] returns the maximized pane object with its dimensions.#[br]
       p Try resizing panes and check the logs bellow.
 
-      splitpanes.default-theme.example(style="height:400px" @resize="log('resize', $event)" @pane-maximize="log('pane-maximize', $event)" @pane-click="log('pane-click', $event)" @ready="log('ready', $event)")
+      splitpanes.default-theme.example(
+        @resize="log('resize', $event)"
+        @resized="log('resized', $event)"
+        @pane-maximize="log('pane-maximize', $event)"
+        @pane-click="log('pane-click', $event)"
+        @ready="log('ready', $event)"
+        style="height:400px")
         span(v-for="i in 3" :key="i" splitpanes-min="10") {{ i }}
 
       pre.ssh-pre(data-label="Logs")
@@ -350,7 +360,14 @@
           span {{ event.params }}
 
       ssh-pre(language="html-vue" label="HTML" v-pre).
-        &lt;splitpanes class="default-theme" style="height:400px" @resize="log('resize', $event)" @pane-maximize="log('pane-maximize', $event)" @pane-click="log('pane-click', $event)" @ready="log('ready', $event)"&gt;
+        &lt;splitpanes
+          class="default-theme"
+          @resize="log('resize', $event)"
+          @resized="log('resized', $event)"
+          @pane-maximize="log('pane-maximize', $event)"
+          @pane-click="log('pane-click', $event)"
+          @ready="log('ready', $event)"
+          style="height:400px"&gt;
           &lt;span v-for="i in 3" :key="i" splitpanes-min="10"&gt;{{ i }}&lt;/span&gt;
         &lt;/splitpanes&gt;
 
@@ -448,6 +465,47 @@
           background: linear-gradient(0deg, #ccc, #111);
         }
 
+      h2.headline.mt-5.pt-5.mb-2
+        a(href="#release-notes") Release Notes
+        a(name="release-notes")
+
+      div
+        | #[strong Version 1.8.0] Emit event on resize &amp; watch slots optional
+        highlight-message(type="success")
+          strong.
+            The #[span.code resize] event - previously firing after resize end - is now firing on resize.#[br]
+            A new #[span.code resized] event is emitted on resize end. Check out the
+            #[a(href="#emitted-events") # Listening to emitted events] example.
+        highlight-message(type="success")
+          strong.
+            By default and for performance, the reactivity is now limited to slot deletion and slot creation.#[br]
+            With the option #[span.code watchSlots] you can also track any change on the slots.#[br]
+      div.
+        #[strong Version 1.7.0] Double click splitter to maximize next pane
+      div.
+        #[strong Version 1.6.0] Emit events
+      div.
+        #[strong Version 1.5.0] Add default size feature on panes
+      div.
+        #[strong Version 1.4.0] Add minimum size feature on panes (max feature coming soon!)
+      div.
+        #[strong Version 1.3.0] Splitpanes slots are now reactive (add/remove on the fly)
+      div.
+        #[strong Version 1.2.0] Add a `default-theme` CSS class to load default theme
+      div.
+        #[strong Version 1.1.0] Allow pushing other panes while dragging splitter
+      div.
+        #[strong Version 1.0.0] First public release
+
+    v-footer.mt-5.pa-2.mb-3(color="white")
+      v-layout.max-widthed(row wrap align-center justify-center)
+        v-flex.xs12.sm6.text-xs-center.text-sm-left.copyright.
+          Copyright © {{ (new Date()).getFullYear() }} Antoni André, all rights reserved.
+        v-flex.xs12.sm6.text-xs-center.text-sm-right.made-with
+          div.mb-1.
+            This documentation is made with #[v-icon(small) fab fa-vuejs], #[v-icon(small) fab fa-html5], #[v-icon(small) fab fa-css3],
+            #[v-icon(small) fab fa-sass] &amp; #[v-icon.heart(small) favorite]
+          | View project on #[a(href="https://github.com/antoniandre/splitpanes" target="_blank") #[v-icon(small) fab fa-github] Github].</template>
 </template>
 
 <script>
