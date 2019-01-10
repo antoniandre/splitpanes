@@ -25,16 +25,19 @@ export default {
       slotsCopy: ''
     }
   },
-
+  beforeDestroy() {
+    document.removeEventListener(this.hasTouch ? 'touchmove' : 'mousemove', this.onMouseMove, {
+      passive: false
+    });
+    document.removeEventListener(this.hasTouch ? 'touchend' : 'mouseup', this.onMouseUp);
+  },
   methods: {
     bindEvents () {
-      const hasTouch = 'ontouchstart' in window
-
+      this.hasTouch = 'ontouchstart' in window
       // Passive: false to prevent scrolling while touch dragging.
-      document.addEventListener(hasTouch ? 'touchmove' : 'mousemove', this.onMouseMove, { passive: false })
-      document.addEventListener(hasTouch ? 'touchend' : 'mouseup', this.onMouseUp)
+      document.addEventListener(this.hasTouch ? 'touchmove' : 'mousemove', this.onMouseMove, { passive: false })
+      document.addEventListener(this.hasTouch ? 'touchend' : 'mouseup', this.onMouseUp)
     },
-
     onMouseDown (e, splitterIndex) {
       this.touch.mouseDown = true
       this.touch.activeSplitter = splitterIndex
