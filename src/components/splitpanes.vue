@@ -25,18 +25,18 @@ export default {
       slotsCopy: ''
     }
   },
-  beforeDestroy() {
-    document.removeEventListener(this.hasTouch ? 'touchmove' : 'mousemove', this.onMouseMove, {
-      passive: false
-    });
-    document.removeEventListener(this.hasTouch ? 'touchend' : 'mouseup', this.onMouseUp);
+  beforeDestroy () {
+    document.removeEventListener('touchmove', this.onMouseMove, { passive: false })
+    document.removeEventListener('mousemove', this.onMouseMove, { passive: false })
+    document.removeEventListener('touchend', this.onMouseUp)
+    document.removeEventListener('mouseup', this.onMouseUp)
   },
   methods: {
     bindEvents () {
-      this.hasTouch = 'ontouchstart' in window
+      let hasTouch = 'ontouchstart' in window
       // Passive: false to prevent scrolling while touch dragging.
-      document.addEventListener(this.hasTouch ? 'touchmove' : 'mousemove', this.onMouseMove, { passive: false })
-      document.addEventListener(this.hasTouch ? 'touchend' : 'mouseup', this.onMouseUp)
+      document.addEventListener(hasTouch ? 'touchmove' : 'mousemove', this.onMouseMove, { passive: false })
+      document.addEventListener(hasTouch ? 'touchend' : 'mouseup', this.onMouseUp)
     },
     onMouseDown (e, splitterIndex) {
       this.touch.mouseDown = true
@@ -146,17 +146,36 @@ export default {
 
       // If not pushing other panes, panes to resize are right before and right after splitter.
       let panesToResize = [splitterIndex, splitterIndex + 1]
+      let paneBefore = this.panes[panesToResize[0]] || null
+      let paneAfter = this.panes[panesToResize[1]] || null
+
+      const paneBeforeMaxReached = paneBefore.max < 100 && (dragPercentage >= (paneBefore.max + sums.prevPanesSize))
+      const paneAfterMaxReached = paneAfter.max < 100 && (dragPercentage <= 100 - (paneAfter.max + this.sumNextPanesSize(splitterIndex + 1)))
+      // Prevent dragging beyond pane max.
+      if (paneBeforeMaxReached || paneAfterMaxReached) {
+        if (paneBeforeMaxReached) {
+          paneBefore.width = paneBefore.max
+          paneAfter.width = Math.max(100 - paneBefore.max - sums.prevPanesSize - sums.nextPanesSize, 0)
+        } else {
+          paneBefore.width = Math.max(100 - paneAfter.max - sums.prevPanesSize - this.sumNextPanesSize(splitterIndex + 1), 0)
+          paneAfter.width = paneAfter.max
+        }
+
+        return
+      }
 
       // When pushOtherPanes = true, find the closest expanded pane on each side of the splitter.
       if (this.pushOtherPanes) {
         let vars = this.doPushOtherPanes(sums, dragPercentage)
 
         if (!vars) return // Prevent other calculation.
-        else ({ sums, panesToResize } = vars)
+        else {
+          ({ sums, panesToResize } = vars)
+          paneBefore = this.panes[panesToResize[0]] || null
+          paneAfter = this.panes[panesToResize[1]] || null
+        }
       }
 
-      let paneBefore = this.panes[panesToResize[0]] || null
-      let paneAfter = this.panes[panesToResize[1]] || null
 
       if (paneBefore !== null) {
         paneBefore.width = Math.min(Math.max(dragPercentage - sums.prevPanesSize - sums.prevReachedMinPanes, paneBefore.min), paneBefore.max)

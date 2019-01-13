@@ -150,19 +150,19 @@
 
       //- Example.
       h3.mb-2.subheading
-        a(href="#horizontal-layout") # Horizontal layout &amp; push other panes
+        a(href="#horizontal-layout") # Horizontal layout, push other panes, min &amp; max use
         a(name="horizontal-layout")
       p You can also double click a splitter to maximize the next pane! (First pane splitter will be an option soon)
       splitpanes.default-theme.example(horizontal style="height:400px")
-        span(splitpanes-min="25") 1#[br]#[em.specs I have a min height of 25%]
+        span(splitpanes-min="20" splitpanes-max="70") 1#[br]#[em.specs I have a min height of 20% &amp; max height of 70%]
         span 2
-        span 3
+        span(splitpanes-max="70") 3#[br]#[em.specs I have a max height of 70%]
 
       ssh-pre(language="html-vue" label="HTML").
         &lt;splitpanes class="default-theme" horizontal style="height:400px"&gt;
-          &lt;span&gt;1&lt;/span&gt;
+          &lt;span splitpanes-min="20" splitpanes-max="70"&gt;1&lt;/span&gt;
           &lt;span&gt;2&lt;/span&gt;
-          &lt;span&gt;3&lt;/span&gt;
+          &lt;span splitpanes-max="70"&gt;3&lt;/span&gt;
         &lt;/splitpanes&gt;
 
       //- Example.
@@ -470,6 +470,8 @@
         a(name="release-notes")
 
       div
+        | #[strong Version 1.10.0] Add maximum size feature on panes
+      div
         | #[strong Version 1.9.0] Emit event on resize &amp; watch slots optional
         highlight-message(type="success")
           strong.
@@ -489,7 +491,7 @@
       div.
         #[strong Version 1.5.0] Add default size feature on panes
       div.
-        #[strong Version 1.4.0] Add minimum size feature on panes (max feature coming soon!)
+        #[strong Version 1.4.0] Add minimum size feature on panes
       div.
         #[strong Version 1.3.0] Splitpanes slots are now reactive (add/remove on the fly)
       div.
