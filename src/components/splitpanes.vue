@@ -176,7 +176,6 @@ export default {
         }
       }
 
-
       if (paneBefore !== null) {
         paneBefore.width = Math.min(Math.max(dragPercentage - sums.prevPanesSize - sums.prevReachedMinPanes, paneBefore.min), paneBefore.max)
       }

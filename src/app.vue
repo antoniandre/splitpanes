@@ -39,7 +39,7 @@
               | Simple yet efficient
             li
               v-icon.mr-2(color="primary" size="20") check
-              | More features to come: max-width, pane labels.
+              | More features to come, like pane labels.
 
         div
           div.mt-5.mb-3.title Github project
@@ -60,7 +60,7 @@
           span 4
         span 5
 
-      ssh-pre(language="html-vue" label="HTML Vue Template" v-pre).
+      ssh-pre(language="html-vue" label="HTML Vue Template").
         &lt;splitpanes style="height: 400px"&gt;
           &lt;span splitpanes-min="20"&gt;1&lt;/span&gt;
           &lt;splitpanes horizontal&gt;
@@ -70,7 +70,7 @@
           &lt;/splitpanes&gt;
           &lt;span&gt;5&lt;/span&gt;
         &lt;/splitpanes&gt;
-      ssh-pre(language="css" label="CSS" v-pre).
+      ssh-pre(language="css" label="CSS").
         .splitpanes__pane {
           justify-content: center;
           align-items: center;
@@ -119,9 +119,9 @@
       p.
         Once included in your project, use as follows.
 
-      ssh-pre(language="html-vue" label="HTML Vue Template" v-pre).
+      ssh-pre(language="html-vue" label="HTML Vue Template").
         &lt;splitpanes class="default-theme"&gt;
-          &lt;div v-for="i in 3" :key="i"&gt;{{ i }}&lt;/div&gt;
+          &lt;div v-for="i in 3" :key="i"&gt;{{ '\{\{ i \}\}' }}&lt;/div&gt;
         &lt;/splitpanes&gt;
 
       highlight-message(type="success")
@@ -219,9 +219,9 @@
       splitpanes.default-theme.example(style="height:400px")
         span(v-for="i in 8" :key="i" splitpanes-min="5") {{ i }}
 
-      ssh-pre(language="html-vue" label="HTML" v-pre).
+      ssh-pre(language="html-vue" label="HTML").
         &lt;splitpanes class="default-theme" style="height:400px"&gt;
-          &lt;span v-for="i in 8" :key="i" splitpanes-min="5"&gt;{{ i }}&lt;/span&gt;
+          &lt;span v-for="i in 8" :key="i" splitpanes-min="5"&gt;{{ '\{\{ i \}\}' }}&lt;/span&gt;
         &lt;/splitpanes&gt;
 
       //- Example.
@@ -237,14 +237,14 @@
       splitpanes.default-theme.example(style="height:400px")
         span(v-for="i in panesNumber" :key="i") {{ i }}
 
-      ssh-pre(language="html-vue" label="HTML" v-pre).
+      ssh-pre(language="html-vue" label="HTML").
         &lt;button @click="panesNumber++"&gt;Add pane&lt;/button&gt;
 
         &lt;splitpanes class="default-theme" style="height:400px"&gt;
-          &lt;span v-for="i in panesNumber" :key="i"&gt;{{ i }}&lt;/span&gt;
+          &lt;span v-for="i in panesNumber" :key="i"&gt;{{ '\{\{ i \}\}' }}&lt;/span&gt;
         &lt;/splitpanes&gt;
 
-      ssh-pre(language="js" label="Javascript" v-pre).
+      ssh-pre(language="js" label="Javascript").
         // In your Vue component.
         data: () =&gt; ({
           panesNumber: 3
@@ -284,18 +284,18 @@
             - Nested splitpanes -#[br]
             [{{ randomNums[1] }}, {{ randomNums[2] }}, {{ randomNums[3] }}]
 
-      ssh-pre(language="html-vue" label="HTML" v-pre).
+      ssh-pre(language="html-vue" label="HTML").
         &lt;v-btn @click="generateRandomNumber"&gt;Generate 3 random numbers&lt;/v-btn&gt;
         &lt;v-btn @click="incrementNumber(3)"&gt;Increment pane #3&lt;/v-btn&gt;
 
         &lt;splitpanes watch-slots horizontal class="default-theme" style="height:400px"&gt;
           &lt;splitpanes watch-slots&gt;
             &lt;div v-for="i in 3" :key="i"&gt;
-              &lt;span&gt;{{ i }}&lt;/span&gt;&lt;br&gt;
-              &lt;em&gt;Number is: {{ randomNums[i] }}&lt;/em&gt;&lt;br&gt;
+              &lt;span&gt;{{ '\{\{ i \}\}' }}&lt;/span&gt;&lt;br&gt;
+              &lt;em&gt;Number is: {{ '\{\{ randomNums[i] \}\}' }}&lt;/em&gt;&lt;br&gt;
               &lt;em v-if="i === 2"&gt;
-                Number on the left is: {{ randomNums[1] }}&lt;br&gt;
-                Number on the right is: {{ randomNums[3] }}&lt;br&gt;
+                Number on the left is: {{ '\{\{ randomNums[1] \}\}' }}&lt;br&gt;
+                Number on the right is: {{ '\{\{ randomNums[3] \}\}' }}&lt;br&gt;
               &lt;/em&gt;
               &lt;v-btn(v-if="i !== 2" @click="randomNums[i] = randomNums[i] + 1"&gt;+1&lt;/v-btn&gt;
             &lt;/div&gt;
@@ -305,11 +305,11 @@
             &lt;span&gt;4&lt;/span&gt;&lt;br&gt;
             &lt;em&gt;
               - Nested splitpanes -&lt;br&gt;
-              [{{ randomNums[1] }}, {{ randomNums[2] }}, {{ randomNums[3] }}]
+              [{{ '\{\{ randomNums[1] \}\}' }}, {{ '\{\{ randomNums[2] \}\}' }}, {{ '\{\{ randomNums[1] \}\}' }}]
             &lt;/em&gt;
           &lt;/div&gt;
 
-      ssh-pre(language="js" label="Javascript" v-pre).
+      ssh-pre(language="js" label="Javascript").
         // In your Vue component.
         data: () => ({
           randomNums: { 1: 0, 2: 0, 3: 0 }
@@ -359,7 +359,7 @@
           strong {{ event.name }}:&nbsp;
           span {{ event.params }}
 
-      ssh-pre(language="html-vue" label="HTML" v-pre).
+      ssh-pre(language="html-vue" label="HTML").
         &lt;splitpanes
           class="default-theme"
           @resize="log('resize', $event)"
@@ -368,7 +368,7 @@
           @pane-click="log('pane-click', $event)"
           @ready="log('ready', $event)"
           style="height:400px"&gt;
-          &lt;span v-for="i in 3" :key="i" splitpanes-min="10"&gt;{{ i }}&lt;/span&gt;
+          &lt;span v-for="i in 3" :key="i" splitpanes-min="10"&gt;{{ '\{\{ i \}\}' }}&lt;/span&gt;
         &lt;/splitpanes&gt;
 
       //- Example.
@@ -514,13 +514,13 @@
 
 <script>
 import Splitpanes from '@/components/splitpanes'
-import highlightMessage from '@/components/highlight-message'
-import { simpleSyntaxHighlighter } from 'simple-syntax-highlighter'
-import 'simple-syntax-highlighter/dist/simple-syntax-highlighter.min.css'
+import HighlightMessage from '@/components/highlight-message'
+import Sshpre from 'simple-syntax-highlighter'
+import 'simple-syntax-highlighter/dist/sshpre.css'
 
 export default {
   name: 'app',
-  components: { Splitpanes, sshPre: simpleSyntaxHighlighter, highlightMessage },
+  components: { Splitpanes, sshPre: Sshpre, HighlightMessage },
   data: () => ({
     panesNumber: 3,
     logs: [],
