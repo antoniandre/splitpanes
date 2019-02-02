@@ -361,7 +361,7 @@ export default {
 
           this.$set(this.panes, i, {
             // ! \\ Reapply saved width (if any) after slots have changed.
-            width: (this.panes[i] && this.panes[i].savedWidth) || parseFloat(Default),
+            width: (this.panes[i] && (this.panes[i].savedWidth || this.panes[i].savedWidth === 0)) || parseFloat(Default),
             index: i,
             min: parseFloat(min),
             max: parseFloat(max)
