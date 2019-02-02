@@ -10,7 +10,7 @@
 ## Installation
 
 ```
-npm i splitpanes --save-dev
+npm i splitpanes --save
 ```
 
 ## Demo & Documentation
