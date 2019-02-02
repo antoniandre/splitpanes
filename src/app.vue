@@ -470,6 +470,8 @@
         a(name="release-notes")
 
       div
+        | #[strong Version 1.11.0] Persist panes size after slots changed
+      div
         | #[strong Version 1.10.0] Add maximum size feature on panes
       div
         | #[strong Version 1.9.0] Emit event on resize &amp; watch slots optional

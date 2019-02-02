@@ -14,23 +14,16 @@ export default {
       default: true
     }
   },
-  data () {
-    return {
-      container: { vnode: null, offsetLeft: null, offsetTop: null },
-      slotsCount: 0,
-      vnodes: [],
-      panes: [],
-      splitters: [],
-      touch: { mouseDown: false, dragging: false, activeSplitter: null },
-      slotsCopy: ''
-    }
-  },
-  beforeDestroy () {
-    document.removeEventListener('touchmove', this.onMouseMove, { passive: false })
-    document.removeEventListener('mousemove', this.onMouseMove, { passive: false })
-    document.removeEventListener('touchend', this.onMouseUp)
-    document.removeEventListener('mouseup', this.onMouseUp)
-  },
+  data: () => ({
+    container: { vnode: null, offsetLeft: null, offsetTop: null },
+    slotsCount: 0,
+    vnodes: [],
+    panes: [],
+    splitters: [],
+    touch: { mouseDown: false, dragging: false, activeSplitter: null },
+    slotsCopy: ''
+  }),
+
   methods: {
     bindEvents () {
       let hasTouch = 'ontouchstart' in window
@@ -38,6 +31,7 @@ export default {
       document.addEventListener(hasTouch ? 'touchmove' : 'mousemove', this.onMouseMove, { passive: false })
       document.addEventListener(hasTouch ? 'touchend' : 'mouseup', this.onMouseUp)
     },
+
     onMouseDown (e, splitterIndex) {
       this.touch.mouseDown = true
       this.touch.activeSplitter = splitterIndex
@@ -295,9 +289,35 @@ export default {
     this.$emit('ready')
   },
 
+  beforeDestroy () {
+    document.removeEventListener('touchmove', this.onMouseMove, { passive: false })
+    document.removeEventListener('mousemove', this.onMouseMove, { passive: false })
+    document.removeEventListener('touchend', this.onMouseUp)
+    document.removeEventListener('mouseup', this.onMouseUp)
+  },
+
   computed: {
     defaultWidth () {
       return 100 / this.vnodes.length
+    }
+  },
+
+  beforeUpdate () {
+    // Not the first time but all the others, save the current width before re-render and
+    // reapply on rendering.
+    if (this.panes.length) {
+      this.$slots.default
+        .filter(vnode => vnode.tag || (vnode.text || '').trim())
+        .forEach((vnode, i) => {
+          const { elm: { parentNode = {} } = {} } = vnode
+          let id = null
+
+          if (parentNode && parentNode.className === 'splitpanes__pane' && parentNode.style &&
+            (id = parentNode.id.replace('pane_', '')) && this.panes[id] &&
+            (parentNode.style.width || parentNode.style.height)) {
+            this.panes[id].savedWidth = parseFloat(parentNode.style.width || parentNode.style.height)
+          }
+        })
     }
   },
 
@@ -306,6 +326,8 @@ export default {
 
     if (!this.$slots.default) splitPanesChildren.push(createEl('div', 'Splitpanes needs some content here.'))
     else {
+      // Since we are adding splitter nodes in DOM, we need to keep track if slots have changed
+      // to avoid an infinite loop.
       let slotsHaveChanged = false
 
       if (this.watchSlots) {
@@ -329,9 +351,22 @@ export default {
         this.vnodes = this.$slots.default.filter(vnode => vnode.tag || (vnode.text || '').trim())
         this.vnodes.forEach((vnode, i) => {
           const { data: { attrs = {} } = {} } = vnode
-          const { 'splitpanes-min': min = 0, 'splitpanes-max': max = 100, 'splitpanes-default': Default = this.defaultWidth } = attrs
 
-          this.$set(this.panes, i, { width: parseInt(Default), index: i, min: parseFloat(min), max: parseFloat(max) })
+          // Extract min, max, default from the panes HTML attributes.
+          const {
+            'splitpanes-min': min = 0,
+            'splitpanes-max': max = 100,
+            'splitpanes-default': Default = this.defaultWidth
+          } = attrs
+
+          this.$set(this.panes, i, {
+            // ! \\ Reapply saved width (if any) after slots have changed.
+            width: (this.panes[i] && this.panes[i].savedWidth) || parseFloat(Default),
+            index: i,
+            min: parseFloat(min),
+            max: parseFloat(max)
+          })
+
           if (i) this.$set(this.splitters, i - 1, { id: `splitter-${i - 1}`, index: i - 1 })
         })
 
@@ -355,7 +390,9 @@ export default {
 
         // Pane.
         let paneAttributes = {
-          id: i,
+          attrs: {
+            id: `pane_${i}`
+          },
           class: 'splitpanes__pane',
           style: {
             ...(this.horizontal ? { height: `${this.panes[i].width}%` } : null),
