@@ -90,7 +90,7 @@
 
       p You have two options: #[em NPM] #[strong.mx-2 or] #[span.code &lt;script&gt;] tag.
       h3 Via NPM
-      ssh-pre(language="shell" label="Shell") npm install splitpanes --save-dev
+      ssh-pre(language="shell" label="Shell") npm i --S splitpanes
       p Then import the component and CSS:
       ssh-pre(language="js" label="Javascript").
         // In your VueJS component.
