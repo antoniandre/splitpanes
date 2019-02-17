@@ -334,7 +334,8 @@ export default {
         const discardProps = ['$options', '$parent', '$root', '$el',
           '$refs', '$slots', '$scopedSlots', '$vnode', '_data', '__vue__',
           '_self', '_vnode', '_watcher', '_watchers', '_computedWatchers', '_renderProxy', 'vnodes',
-          'container', 'Ctor', 'context', 'parent', 'componentInstance', 'componentOptions']
+          'container', 'Ctor', 'context', 'parent', 'componentInstance', 'componentOptions',
+          'fnContext', 'fnOptions']
 
         const slotsExport = JSON.stringify(this.$slots.default, (name, val) => {
           // Discard the properties listed in array to prevent circular reference.
