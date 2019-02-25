@@ -153,7 +153,8 @@
         a(href="#horizontal-layout") # Horizontal layout, push other panes, min &amp; max use
         a(name="horizontal-layout")
       p You can also double click a splitter to maximize the next pane! (First pane splitter will be an option soon)
-      splitpanes.default-theme.example(horizontal style="height:400px")
+      p If you want to disable the 'double click splitter to maximize' behavior, you can add this attribute: #[span.code :dbl-click-splitter="false"].
+      splitpanes.default-theme.example(horizontal style="height:400px" :dbl-click-splitter="false")
         span(splitpanes-min="20" splitpanes-max="70") 1#[br]#[em.specs I have a min height of 20% &amp; max height of 70%]
         span 2
         span(splitpanes-max="70") 3#[br]#[em.specs I have a max height of 70%]
@@ -469,6 +470,8 @@
         a(href="#release-notes") Release Notes
         a(name="release-notes")
 
+      div
+        | #[strong Version 1.12.0] double click splitter to maximize is now an option
       div
         | #[strong Version 1.11.0] Persist panes size after slots changed
       div

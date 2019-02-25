@@ -12,6 +12,10 @@ export default {
     pushOtherPanes: {
       type: Boolean,
       default: true
+    },
+    dblClickSplitter: {
+      type: Boolean,
+      default: true
     }
   },
   data: () => ({
@@ -383,7 +387,7 @@ export default {
             ref: `splitter-${i - 1}`,
             on: {
               ['ontouchstart' in window ? 'touchstart' : 'mousedown']: e => this.onMouseDown(e, i - 1),
-              dblclick: e => this.onSplitterDblClick(e, i)
+              ...(this.dblClickSplitter ? { dblclick: e => this.onSplitterDblClick(e, i) } : {})
             }
           }
           splitPanesChildren.push(createEl('div', splitterAttributes))
