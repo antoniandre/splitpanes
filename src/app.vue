@@ -520,12 +520,12 @@
 <script>
 import Splitpanes from '@/components/splitpanes'
 import HighlightMessage from '@/components/highlight-message'
-import Sshpre from 'simple-syntax-highlighter'
+import SshPre from 'simple-syntax-highlighter'
 import 'simple-syntax-highlighter/dist/sshpre.css'
 
 export default {
   name: 'app',
-  components: { Splitpanes, sshPre: Sshpre, HighlightMessage },
+  components: { Splitpanes, SshPre, HighlightMessage },
   data: () => ({
     panesNumber: 3,
     logs: [],
