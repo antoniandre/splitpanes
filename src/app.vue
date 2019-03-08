@@ -340,6 +340,7 @@
       li #[span.code resized] returns an array of all the panes objects with their dimensions, and fires once when the resizing stops (on mouseup/touchend)
       li #[span.code pane-click] returns the clicked pane object with its dimensions.
       li #[span.code pane-maximize] returns the maximized pane object with its dimensions.#[br]
+      li #[span.code splitter-click] returns the pane object of the clicked splitter with its dimensions.
       p Try resizing panes and check the logs bellow.
 
       splitpanes.default-theme.example(
@@ -348,6 +349,7 @@
         @pane-maximize="log('pane-maximize', $event)"
         @pane-click="log('pane-click', $event)"
         @ready="log('ready', $event)"
+        @splitter-click="log('splitter-clicked', $event)"
         style="height:400px")
         span(v-for="i in 3" :key="i" splitpanes-min="10") {{ i }}
 
@@ -368,6 +370,7 @@
           @pane-maximize="log('pane-maximize', $event)"
           @pane-click="log('pane-click', $event)"
           @ready="log('ready', $event)"
+          @splitter-click="log('splitter-clicked', $event)"
           style="height:400px"&gt;
           &lt;span v-for="i in 3" :key="i" splitpanes-min="10"&gt;{{ '\{\{ i \}\}' }}&lt;/span&gt;
         &lt;/splitpanes&gt;
