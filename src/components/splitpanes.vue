@@ -30,10 +30,14 @@ export default {
 
   methods: {
     bindEvents () {
-      let hasTouch = 'ontouchstart' in window
+      if ('ontouchstart' in window) {
+        document.addEventListener('touchmove', this.onMouseMove, { passive: false })
+        document.addEventListener('touchend', this.onMouseUp)
+      }
+
       // Passive: false to prevent scrolling while touch dragging.
-      document.addEventListener(hasTouch ? 'touchmove' : 'mousemove', this.onMouseMove, { passive: false })
-      document.addEventListener(hasTouch ? 'touchend' : 'mouseup', this.onMouseUp)
+      document.addEventListener('mousemove', this.onMouseMove, { passive: false })
+      document.addEventListener('mouseup', this.onMouseUp)
     },
 
     onMouseDown (e, splitterIndex) {
@@ -74,9 +78,9 @@ export default {
       this.$emit('pane-maximize', this.panes[splitterIndex])
     },
 
-    getCurrentMouseDrag: (e) => ({
-      x: 'ontouchstart' in window ? e.touches[0].clientX : e.clientX,
-      y: 'ontouchstart' in window ? e.touches[0].clientY : e.clientY
+    getCurrentMouseDrag: e => ({
+      x: e.touches ? e.touches[0].clientX : e.clientX,
+      y: e.touches ? e.touches[0].clientY : e.clientY
     }),
 
     // Recursively sum all the offsetTop values from current element up the tree until body.
@@ -386,7 +390,8 @@ export default {
             class: 'splitpanes__splitter',
             ref: `splitter-${i - 1}`,
             on: {
-              ['ontouchstart' in window ? 'touchstart' : 'mousedown']: e => this.onMouseDown(e, i - 1),
+              ...('ontouchstart' in window ? { touchstart: e => this.onMouseDown(e, i - 1) } : {}),
+              mousedown: e => this.onMouseDown(e, i - 1),
               ...(this.dblClickSplitter ? { dblclick: e => this.onSplitterDblClick(e, i) } : {})
             }
           }
