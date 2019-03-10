@@ -34,10 +34,14 @@ export default {
 
   methods: {
     bindEvents () {
-      let hasTouch = 'ontouchstart' in window
+      if ('ontouchstart' in window) {
+        document.addEventListener('touchmove', this.onMouseMove, { passive: false })
+        document.addEventListener('touchend', this.onMouseUp)
+      }
+
       // Passive: false to prevent scrolling while touch dragging.
-      document.addEventListener(hasTouch ? 'touchmove' : 'mousemove', this.onMouseMove, { passive: false })
-      document.addEventListener(hasTouch ? 'touchend' : 'mouseup', this.onMouseUp)
+      document.addEventListener('mousemove', this.onMouseMove, { passive: false })
+      document.addEventListener('mouseup', this.onMouseUp)
     },
 
     onMouseDown (e, splitterIndex) {
@@ -64,7 +68,20 @@ export default {
       this.touch.mouseDown = false
     },
 
-    // On splitter dbl click maximize this pane.
+    // If touch device, detect double click manually (2 clicks separated by less than 500ms).
+    onSplitterTap (e, splitterIndex) {
+      e.preventDefault()
+      let { timeoutId, splitter } = this.splitterTaps
+
+      if (splitter !== splitterIndex) {
+        splitter = splitterIndex
+        timeoutId = setTimeout(() => (splitter = null), 500)
+      }
+
+      else this.onSplitterDblClick(e, splitterIndex)
+    },
+
+    // On splitter dbl click or dbl tap maximize this pane.
     onSplitterDblClick (e, splitterIndex) {
       let totalMinWidths = 0
       this.touch.clicked = 2
@@ -96,9 +113,9 @@ export default {
       this.touch.dragging = false
     },
 
-    getCurrentMouseDrag: (e) => ({
-      x: 'ontouchstart' in window ? e.touches[0].clientX : e.clientX,
-      y: 'ontouchstart' in window ? e.touches[0].clientY : e.clientY
+    getCurrentMouseDrag: e => ({
+      x: e.touches ? e.touches[0].clientX : e.clientX,
+      y: e.touches ? e.touches[0].clientY : e.clientY
     }),
 
     // Recursively sum all the offsetTop values from current element up the tree until body.
@@ -465,6 +482,8 @@ export default {
     overflow: hidden;
   }
 
+  // Disable default zoom behavior on touch device when double tapping splitter.
+  &__splitter {touch-action: none;}
   &--vertical > .splitpanes__splitter {min-width: 1px;cursor: col-resize;}
   &--horizontal > .splitpanes__splitter {min-height: 1px;cursor: row-resize;}
 }
