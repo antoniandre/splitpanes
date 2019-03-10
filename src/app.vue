@@ -9,7 +9,7 @@
       v-layout(row)
         v-flex
           h2.mt-5.mb-2.title Features
-          ul
+          ul.checklist
             li
               v-icon.mr-2(color="primary" size="20") check
               | Nesting supported
@@ -335,12 +335,14 @@
       p.
         Four events are currently emitted from splitpanes: #[span.code ready], #[span.code resize], #[span.code pane-click] &amp; #[span.code pane-maximize].
       ul
-      li #[span.code ready] has no parameter and fires when splitpanes is ready
-      li #[span.code resize] returns an array of all the panes objects with their dimensions, and fires while resizing (on mousemove/touchmove)
-      li #[span.code resized] returns an array of all the panes objects with their dimensions, and fires once when the resizing stops (on mouseup/touchend)
-      li #[span.code pane-click] returns the clicked pane object with its dimensions.
-      li #[span.code pane-maximize] returns the maximized pane object with its dimensions.#[br]
-      li #[span.code splitter-click] returns the pane object of the clicked splitter with its dimensions.
+        li #[span.code ready] has no parameter and fires when splitpanes is ready
+        li #[span.code resize] returns an array of all the panes objects with their dimensions, and fires while resizing (on mousemove/touchmove)
+        li #[span.code resized] returns an array of all the panes objects with their dimensions, and fires once when the resizing stops (on mouseup/touchend)
+        li #[span.code pane-click] returns the clicked pane object with its dimensions.
+        li #[span.code pane-maximize] returns the maximized pane object with its dimensions.
+        li.
+          #[span.code splitter-click] returns the next pane object (with its dimensions) directly after the clicked splitter.#[br]
+          This event is only emitted if dragging did not occur between mousedown and mouseup.
       p Try resizing panes and check the logs bellow.
 
       splitpanes.default-theme.example(
@@ -349,7 +351,7 @@
         @pane-maximize="log('pane-maximize', $event)"
         @pane-click="log('pane-click', $event)"
         @ready="log('ready', $event)"
-        @splitter-click="log('splitter-clicked', $event)"
+        @splitter-click="log('splitter-click', $event)"
         style="height:400px")
         span(v-for="i in 3" :key="i" splitpanes-min="10") {{ i }}
 
@@ -370,7 +372,7 @@
           @pane-maximize="log('pane-maximize', $event)"
           @pane-click="log('pane-click', $event)"
           @ready="log('ready', $event)"
-          @splitter-click="log('splitter-clicked', $event)"
+          @splitter-click="log('splitter-click', $event)"
           style="height:400px"&gt;
           &lt;span v-for="i in 3" :key="i" splitpanes-min="10"&gt;{{ '\{\{ i \}\}' }}&lt;/span&gt;
         &lt;/splitpanes&gt;
@@ -576,7 +578,7 @@ a {
   &:hover {color: $secondary-color;}
 }
 
-ul {
+ul.checklist {
   list-style-type: none;
   padding: 0;
 }
