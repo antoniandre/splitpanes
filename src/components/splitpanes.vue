@@ -16,6 +16,10 @@ export default {
     dblClickSplitter: {
       type: Boolean,
       default: true
+    },
+    singleClickSplitter: {
+      type: Boolean,
+      default: true
     }
   },
   data: () => ({
@@ -24,9 +28,7 @@ export default {
     vnodes: [],
     panes: [],
     splitters: [],
-    touch: { mouseDown: false, dragging: false, activeSplitter: null },
-    // Detect double click on touch devices.
-    splitterTaps: { splitter: null, timeoutId: null },
+    touch: { mouseDown: false, dragging: false, activeSplitter: null, clicked: 0 },
     slotsCopy: ''
   }),
 
@@ -64,7 +66,6 @@ export default {
       }
 
       this.touch.mouseDown = false
-      this.touch.dragging = false
     },
 
     // If touch device, detect double click manually (2 clicks separated by less than 500ms).
@@ -83,6 +84,7 @@ export default {
     // On splitter dbl click or dbl tap maximize this pane.
     onSplitterDblClick (e, splitterIndex) {
       let totalMinWidths = 0
+      this.touch.clicked = 2
       this.panes = this.panes.map((pane, i) => {
         pane.width = i === splitterIndex ? pane.max : pane.min
         if (i !== splitterIndex) totalMinWidths += pane.min
@@ -91,6 +93,24 @@ export default {
       })
       this.panes[splitterIndex].width -= totalMinWidths
       this.$emit('pane-maximize', this.panes[splitterIndex])
+    },
+    // On splitter single click.
+    // Allows 200 ms for double click to happen,
+    // If no dbl click registere, initiate click
+    onSplitterSingleClick (e, splitterIndex) {
+      if (this.singleClickSplitter && !this.touch.dragging) {
+        if (this.touch.clicked < 1) {
+          this.touch.clicked = 1
+          let that = this
+          setTimeout(function () {
+            if (that.touch.clicked === 1) {
+              that.$emit('splitter-click', that.panes[splitterIndex])
+            }
+            that.touch.clicked = 0
+          }, 200)
+        }
+      }
+      this.touch.dragging = false
     },
 
     getCurrentMouseDrag: e => ({
@@ -405,11 +425,9 @@ export default {
             class: 'splitpanes__splitter',
             ref: `splitter-${i - 1}`,
             on: {
-              ...('ontouchstart' in window ? { touchstart: e => this.onMouseDown(e, i - 1) } : {}),
-              // If touch device, detect double click manually (2 clicks separated by less than 500ms).
-              ...('ontouchstart' in window ? { click: e => this.onSplitterTap(e, i) } : {}),
-              mousedown: e => this.onMouseDown(e, i - 1),
-              ...(this.dblClickSplitter ? { dblclick: e => this.onSplitterDblClick(e, i) } : {})
+              ['ontouchstart' in window ? 'touchstart' : 'mousedown']: e => this.onMouseDown(e, i - 1),
+              ...(this.dblClickSplitter ? { dblclick: e => this.onSplitterDblClick(e, i) } : {}),
+              ...({ click: e => this.onSplitterSingleClick(e, i) })
             }
           }
           splitPanesChildren.push(createEl('div', splitterAttributes))
