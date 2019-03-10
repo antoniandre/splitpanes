@@ -30,7 +30,8 @@ ___
 
 ## Release Notes
 
-- __Version 1.12.0__ double click splitter to maximize is now an option
+- __Version 1.13.0__ Emit event on splitter click
+- __Version 1.12.0__ Double click splitter to maximize is now an option
 - __Version 1.11.0__ Persist panes size after slots changed
 - __Version 1.10.0__ Add maximum size feature on panes
 - __Version 1.9.0__ Emit event on resize &amp; watch slots optional

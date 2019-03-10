@@ -475,12 +475,10 @@
         a(href="#release-notes") Release Notes
         a(name="release-notes")
 
-      div
-        | #[strong Version 1.12.0] double click splitter to maximize is now an option
-      div
-        | #[strong Version 1.11.0] Persist panes size after slots changed
-      div
-        | #[strong Version 1.10.0] Add maximum size feature on panes
+      div #[strong Version 1.13.0] Emit event on splitter click
+      div #[strong Version 1.12.0] double click splitter to maximize is now an option
+      div #[strong Version 1.11.0] Persist panes size after slots changed
+      div #[strong Version 1.10.0] Add maximum size feature on panes
       div
         | #[strong Version 1.9.0] Emit event on resize &amp; watch slots optional
         highlight-message(type="success")
@@ -492,24 +490,15 @@
           strong.
             By default and for performance, the reactivity is now limited to slot deletion and slot creation.#[br]
             With the option #[span.code watchSlots] you can also track any change on the slots.#[br]
-      div.
-        #[strong Version 1.8.0] Watch slots
-      div.
-        #[strong Version 1.7.0] Double click splitter to maximize next pane
-      div.
-        #[strong Version 1.6.0] Emit events
-      div.
-        #[strong Version 1.5.0] Add default size feature on panes
-      div.
-        #[strong Version 1.4.0] Add minimum size feature on panes
-      div.
-        #[strong Version 1.3.0] Splitpanes slots are now reactive (add/remove on the fly)
-      div.
-        #[strong Version 1.2.0] Add a `default-theme` CSS class to load default theme
-      div.
-        #[strong Version 1.1.0] Allow pushing other panes while dragging splitter
-      div.
-        #[strong Version 1.0.0] First public release
+      div #[strong Version 1.8.0] Watch slots
+      div #[strong Version 1.7.0] Double click splitter to maximize next pane
+      div #[strong Version 1.6.0] Emit events
+      div #[strong Version 1.5.0] Add default size feature on panes
+      div #[strong Version 1.4.0] Add minimum size feature on panes
+      div #[strong Version 1.3.0] Splitpanes slots are now reactive (add/remove on the fly)
+      div #[strong Version 1.2.0] Add a `default-theme` CSS class to load default theme
+      div #[strong Version 1.1.0] Allow pushing other panes while dragging splitter
+      div #[strong Version 1.0.0] First public release
 
     v-footer.mt-5.pa-2.mb-3(color="white")
       v-layout.max-widthed(row wrap align-center justify-center)
