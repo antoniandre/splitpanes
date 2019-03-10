@@ -25,6 +25,8 @@ export default {
     panes: [],
     splitters: [],
     touch: { mouseDown: false, dragging: false, activeSplitter: null },
+    // Detect double click on touch devices.
+    splitterTaps: { splitter: null, timeoutId: null },
     slotsCopy: ''
   }),
 
@@ -65,7 +67,20 @@ export default {
       this.touch.dragging = false
     },
 
-    // On splitter dbl click maximize this pane.
+    // If touch device, detect double click manually (2 clicks separated by less than 500ms).
+    onSplitterTap (e, splitterIndex) {
+      e.preventDefault()
+      let { timeoutId, splitter } = this.splitterTaps
+
+      if (splitter !== splitterIndex) {
+        splitter = splitterIndex
+        timeoutId = setTimeout(() => (splitter = null), 500)
+      }
+
+      else this.onSplitterDblClick(e, splitterIndex)
+    },
+
+    // On splitter dbl click or dbl tap maximize this pane.
     onSplitterDblClick (e, splitterIndex) {
       let totalMinWidths = 0
       this.panes = this.panes.map((pane, i) => {
@@ -391,6 +406,8 @@ export default {
             ref: `splitter-${i - 1}`,
             on: {
               ...('ontouchstart' in window ? { touchstart: e => this.onMouseDown(e, i - 1) } : {}),
+              // If touch device, detect double click manually (2 clicks separated by less than 500ms).
+              ...('ontouchstart' in window ? { click: e => this.onSplitterTap(e, i) } : {}),
               mousedown: e => this.onMouseDown(e, i - 1),
               ...(this.dblClickSplitter ? { dblclick: e => this.onSplitterDblClick(e, i) } : {})
             }
@@ -447,6 +464,8 @@ export default {
     overflow: hidden;
   }
 
+  // Disable default zoom behavior on touch device when double tapping splitter.
+  &__splitter {touch-action: none;}
   &--vertical > .splitpanes__splitter {min-width: 1px;cursor: col-resize;}
   &--horizontal > .splitpanes__splitter {min-height: 1px;cursor: row-resize;}
 }
