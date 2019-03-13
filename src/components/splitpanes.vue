@@ -467,6 +467,9 @@ export default {
     width: 100%;
     height: 100%;
     overflow: hidden;
+    transition: width 0.2s ease-out, height 0.2s ease-out;
+
+    .splitpanes--dragging & {transition: none;}
   }
 
   // Disable default zoom behavior on touch device when double tapping splitter.
