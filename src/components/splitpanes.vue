@@ -341,7 +341,6 @@ export default {
 
         if (className === 'splitpanes__pane' && (id = id.replace('pane_', '')) && this.panes[id] &&
           (width || height)) {
-
           // Before saving computed css width or height into `savedWidth` check if `splitpanes-size` has changed.
           // If so save this value instead (means size has changed programmatically).
           const {
@@ -394,7 +393,7 @@ export default {
 
           this.$set(this.panes, i, {
             // ! \\ Reapply saved width (if any) after slots have changed.
-            width: this.panes[i] && (this.panes[i].savedWidth || this.panes[i].savedWidth === 0) || parseFloat(Default),
+            width: this.panes[i] && ((this.panes[i].savedWidth || this.panes[i].savedWidth === 0) || parseFloat(Default)),
             index: i,
             min: parseFloat(min),
             max: parseFloat(max)
