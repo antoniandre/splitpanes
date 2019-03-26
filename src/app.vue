@@ -4,7 +4,7 @@
       div.text-xs-center
         img(alt="Vue logo" src="./assets/logo.png" height="40")
         h1.mb-3.headline Vue Split Panes
-        p.subheading A Vue JS reliable, simple and touch-ready panes splitter / resizer.
+        p.mb-5.subheading A Vue JS reliable, simple and touch-ready panes splitter / resizer.
 
       v-layout(row)
         v-flex
@@ -28,6 +28,9 @@
             li
               v-icon.mr-2(color="primary" size="20") check
               | Double click a splitter to maximize pane
+            li
+              v-icon.mr-2(color="primary" size="20") check
+              | Programmatically set pane width or height
             li
               v-icon.mr-2(color="primary" size="20") check
               | Adding panes on the fly automatically adds splitters
@@ -172,19 +175,19 @@
         a(name="default-pane-width")
       p.
         Provide dimension of your panes when they first load (will be used for the width or height respectively for the vertical or horizontal layout).#[br]
-        If you provide a default width or height, make sure you provide it for all the panes and the total equals 100%.#[br]
-        Note that default value is different than setting a min or max value.
+        #[strong If you provide a default width or height, make sure you provide it for all the panes and the total equals 100%.]#[br]
+        Note that setting a default value is different than setting a min or max value.
 
-      splitpanes.default-theme.example(horizontal style="height:400px")
-        span(splitpanes-default="65") 1
-        span(splitpanes-default="10") 2
-        span(splitpanes-default="25") 3
+      splitpanes.default-theme.example(horizontal style="height: 400px")
+        span(splitpanes-size="65") 1
+        span(splitpanes-size="10") 2
+        span(splitpanes-size="25") 3
 
       ssh-pre(language="html-vue" label="HTML").
-        &lt;splitpanes class="default-theme" horizontal style="height:400px"&gt;
-          &lt;span splitpanes-default="65"&gt;1&lt;/span&gt;
-          &lt;span splitpanes-default="10"&gt;2&lt;/span&gt;
-          &lt;span splitpanes-default="25"&gt;3&lt;/span&gt;
+        &lt;splitpanes class="default-theme" horizontal style="height: 400px"&gt;
+          &lt;span splitpanes-size="65"&gt;1&lt;/span&gt;
+          &lt;span splitpanes-size="10"&gt;2&lt;/span&gt;
+          &lt;span splitpanes-size="25"&gt;3&lt;/span&gt;
         &lt;/splitpanes&gt;
 
       //- Example.
@@ -330,6 +333,30 @@
 
       //- Example.
       h3.mt-5.mb-2.subheading
+        a(href="#programmatic-resizing") # Programmatic resizing
+        a(name="programmatic-resizing")
+      p.mb-4 This example shows the programmatic way of resizing panes.
+      v-slider(v-model="paneSize" label="First pane size" thumb-label="always" thumb-size="25" :min="0" :max="100")
+      splitpanes.default-theme.example(watch-slots style="height: 400px")
+        span(:splitpanes-size="paneSize") {{ paneSize }}%
+        span(:splitpanes-size="100 - paneSize") {{ 100 - paneSize }}%
+
+      ssh-pre(language="html-vue" label="HTML").
+        &lt;v-slider v-model="paneSize" label="First pane size" :min="0" :max="100"&gt;
+        &lt;splitpanes class="default-theme" watch-slots style="height: 400px"&gt;
+            &lt;span :splitpanes-size="paneSize"&gt;{{ '\{\{ paneSize \}\}' }}%&lt;/span&gt;
+            &lt;span :splitpanes-size="100 - paneSize"&gt;{{ '\{\{ 100 - paneSize \}\}' }}%&lt;/span&gt;
+        &lt;/splitpanes&gt;
+
+      ssh-pre(language="js" label="Javascript").
+        // In your Vue component.
+        data: () => ({
+          paneSize: 50
+        }),
+        }
+
+      //- Example.
+      h3.mt-5.mb-2.subheading
         a(href="#emitted-events") # Listening to emitted events
         a(name="emitted-events")
       p.
@@ -471,38 +498,17 @@
           background: linear-gradient(0deg, #ccc, #111);
         }
 
-      //- Example.
-      h3.mt-5.mb-2.subheading
-        a(href="#dynamic-resizing") # Dynamic resizing
-        a(name="dynamic-resizing")
-      p
-        | This example shows the dynamic/programmatic resizing for splitpanese.#[br]
-        v-slider(v-model='paneSize' label="Change pane size" :min='0' :max='100')
-      splitpanes.default-theme.example(style="height:400px" watch-slots)
-        span(:splitpanes-dynamic="paneSize") 1
-        span(:splitpanes-dynamic="100-paneSize") 2
-
-      ssh-pre(language="html-vue" label="HTML").
-
-        &lt;v-slider v-model="paneSize" label="Change pane size" :min='0' :max='100'&gt;
-        &lt;splitpanes watch-slots class="default-theme" style="height:400px"&gt;
-            &lt;span :splitpanes-dynamic="paneSize"&gt;1
-            &lt;/span&gt;
-            &lt;span :splitpanes-dynamic="100 - paneSize"&gt;2
-            &lt;/span&gt;
-        &lt;/splitpanes&gt;
-
-      ssh-pre(language="js" label="Javascript").
-        // In your Vue component.
-        data: () => ({
-          paneSize: 50
-        }),
-        }
-
       h2.headline.mt-5.pt-5.mb-2
         a(href="#release-notes") Release Notes
         a(name="release-notes")
 
+      div
+        | #[strong Version 1.14.0] Programmatically set pane size
+        highlight-message(type="success")
+          strong.
+            The attribute #[span.code `splitpanes-size`] is now replaced with
+            #[span.code `splitpanes-size`]. You can use it to set a default pane width or height,
+            or to programmatically change a pane width or height.
       div #[strong Version 1.13.0] Emit event on splitter click
       div #[strong Version 1.12.0] double click splitter to maximize is now an option
       div #[strong Version 1.11.0] Persist panes size after slots changed
@@ -511,13 +517,13 @@
         | #[strong Version 1.9.0] Emit event on resize &amp; watch slots optional
         highlight-message(type="success")
           strong.
-            The #[span.code resize] event - previously firing after resize end - is now firing on resize.#[br]
-            A new #[span.code resized] event is emitted on resize end. Check out the
+            The #[span.code `resize`] event - previously firing after resize end - is now firing on resize.#[br]
+            A new #[span.code `resized`] event is emitted on resize end. Check out the
             #[a(href="#emitted-events") # Listening to emitted events] example.
         highlight-message(type="success")
           strong.
             By default and for performance, the reactivity is now limited to slot deletion and slot creation.#[br]
-            With the option #[span.code watchSlots] you can also track any change on the slots.#[br]
+            With the option #[span.code `watchSlots`] you can also track any change on the slots.#[br]
       div #[strong Version 1.8.0] Watch slots
       div #[strong Version 1.7.0] Double click splitter to maximize next pane
       div #[strong Version 1.6.0] Emit events
