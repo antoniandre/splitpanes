@@ -333,18 +333,23 @@ export default {
     // Not the first time but all the others, save the current width before re-render and
     // reapply on rendering.
     if (this.panes.length) {
-      this.$slots.default
-        .filter(vnode => vnode.tag || (vnode.text || '').trim())
-        .forEach((vnode, i) => {
-          const { elm: { parentNode = {} } = {} } = vnode
-          let id = null
+      this.$slots.default.forEach(vnode => {
+        // Discard empty text nodes.
+        if (!vnode.tag || !(vnode.text || '').trim()) return
 
-          if (parentNode && parentNode.className === 'splitpanes__pane' && parentNode.style &&
-            (id = parentNode.id.replace('pane_', '')) && this.panes[id] &&
-            (parentNode.style.width || parentNode.style.height)) {
-            this.panes[id].savedWidth = parseFloat(parentNode.style.width || parentNode.style.height)
-          }
-        })
+        let { elm: { parentNode: { id, className, style: { width, height } = {} } = {} } = {} } = vnode
+
+        if (className === 'splitpanes__pane' && (id = id.replace('pane_', '')) && this.panes[id] &&
+          (width || height)) {
+
+          // Before saving computed css width or height into `savedWidth` check if `splitpanes-size` has changed.
+          // If so save this value instead (means size has changed programmatically).
+          const {
+            elm: { attributes: { 'splitpanes-size': { value: paneSizeInDOM } = {} } } = { attributes: {} }
+          } = vnode
+          this.panes[id].savedWidth = parseFloat(paneSizeInDOM != this.defaultWidth ? paneSizeInDOM : (width || height))
+        }
+      })
     }
   },
 
@@ -380,17 +385,16 @@ export default {
         this.vnodes.forEach((vnode, i) => {
           const { data: { attrs = {} } = {} } = vnode
 
-          // Extract min, max, default from the panes HTML attributes.
+          // Extract min, max & default size from the panes HTML attributes.
           const {
             'splitpanes-min': min = 0,
             'splitpanes-max': max = 100,
-            'splitpanes-default': Default = this.defaultWidth,
-            'splitpanes-dynamic': Dynamic = undefined
+            'splitpanes-size': Default = this.defaultWidth
           } = attrs
 
           this.$set(this.panes, i, {
             // ! \\ Reapply saved width (if any) after slots have changed.
-            width: (this.panes[i] && (Dynamic || this.panes[i].savedWidth || this.panes[i].savedWidth === 0)) || parseFloat(Default),
+            width: this.panes[i] && (this.panes[i].savedWidth || this.panes[i].savedWidth === 0) || parseFloat(Default),
             index: i,
             min: parseFloat(min),
             max: parseFloat(max)
