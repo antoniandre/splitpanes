@@ -73,6 +73,7 @@ export default {
     onSplitterClick (e, splitterIndex) {
       if ('ontouchstart' in window) {
         e.preventDefault()
+        // eslint-disable-next-line
         let { timeoutId, splitter } = this.splitterTaps
 
         if (splitter !== splitterIndex) {
@@ -335,7 +336,7 @@ export default {
     if (this.panes.length) {
       this.$slots.default.forEach(vnode => {
         // Discard empty text nodes.
-        if (!vnode.tag || !(vnode.text || '').trim()) return
+        if (!vnode.tag && !(vnode.text || '').trim()) return
 
         let { elm: { parentNode: { id, className, style: { width, height } = {} } = {} } = {} } = vnode
 
@@ -344,9 +345,11 @@ export default {
           // Before saving computed css width or height into `savedWidth` check if `splitpanes-size` has changed.
           // If so save this value instead (means size has changed programmatically).
           const {
-            elm: { attributes: { 'splitpanes-size': { value: paneSizeInDOM } = {} } } = { attributes: {} }
+            elm: { attributes: { 'splitpanes-size': { value: paneSizeInDOM } = {} } = {} } = {}
           } = vnode
-          this.panes[id].savedWidth = parseFloat(paneSizeInDOM != this.defaultWidth ? paneSizeInDOM : (width || height))
+
+          if (paneSizeInDOM !== undefined) this.panes[id].savedWidth = parseFloat(paneSizeInDOM)
+          else this.panes[id].savedWidth = parseFloat(width || height)
         }
       })
     }
@@ -391,9 +394,11 @@ export default {
             'splitpanes-size': Default = this.defaultWidth
           } = attrs
 
+          const savedWidth = this.panes[i] && this.panes[i].savedWidth !== undefined ? this.panes[i].savedWidth : null
+
           this.$set(this.panes, i, {
             // ! \\ Reapply saved width (if any) after slots have changed.
-            width: this.panes[i] && ((this.panes[i].savedWidth || this.panes[i].savedWidth === 0) || parseFloat(Default)),
+            width: savedWidth !== null ? savedWidth : parseFloat(Default),
             index: i,
             min: parseFloat(min),
             max: parseFloat(max)
