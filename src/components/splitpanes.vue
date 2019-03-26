@@ -78,9 +78,7 @@ export default {
         if (splitter !== splitterIndex) {
           splitter = splitterIndex
           timeoutId = setTimeout(() => (splitter = null), 500)
-        }
-
-        else this.onSplitterDblClick(e, splitterIndex)
+        } else this.onSplitterDblClick(e, splitterIndex)
       }
 
       if (!this.touch.dragging) this.$emit('splitter-click', this.panes[splitterIndex])
@@ -386,12 +384,13 @@ export default {
           const {
             'splitpanes-min': min = 0,
             'splitpanes-max': max = 100,
-            'splitpanes-default': Default = this.defaultWidth
+            'splitpanes-default': Default = this.defaultWidth,
+            'splitpanes-dynamic': Dynamic = undefined
           } = attrs
 
           this.$set(this.panes, i, {
             // ! \\ Reapply saved width (if any) after slots have changed.
-            width: (this.panes[i] && (this.panes[i].savedWidth || this.panes[i].savedWidth === 0)) || parseFloat(Default),
+            width: (this.panes[i] && (Dynamic || this.panes[i].savedWidth || this.panes[i].savedWidth === 0)) || parseFloat(Default),
             index: i,
             min: parseFloat(min),
             max: parseFloat(max)

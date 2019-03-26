@@ -471,6 +471,34 @@
           background: linear-gradient(0deg, #ccc, #111);
         }
 
+      //- Example.
+      h3.mt-5.mb-2.subheading
+        a(href="#dynamic-resizing") # Dynamic resizing
+        a(name="dynamic-resizing")
+      p
+        | This example shows the dynamic/programmatic resizing for splitpanese.#[br]
+        v-slider(v-model='paneSize' label="Change pane size" :min='0' :max='100')
+      splitpanes.default-theme.example(style="height:400px" watch-slots)
+        span(:splitpanes-dynamic="paneSize") 1
+        span(:splitpanes-dynamic="100-paneSize") 2
+
+      ssh-pre(language="html-vue" label="HTML").
+
+        &lt;v-slider v-model="paneSize" label="Change pane size" :min='0' :max='100'&gt;
+        &lt;splitpanes watch-slots class="default-theme" style="height:400px"&gt;
+            &lt;span :splitpanes-dynamic="paneSize"&gt;1
+            &lt;/span&gt;
+            &lt;span :splitpanes-dynamic="100 - paneSize"&gt;2
+            &lt;/span&gt;
+        &lt;/splitpanes&gt;
+
+      ssh-pre(language="js" label="Javascript").
+        // In your Vue component.
+        data: () => ({
+          paneSize: 50
+        }),
+        }
+
       h2.headline.mt-5.pt-5.mb-2
         a(href="#release-notes") Release Notes
         a(name="release-notes")
@@ -523,7 +551,8 @@ export default {
   data: () => ({
     panesNumber: 3,
     logs: [],
-    randomNums: { 1: 0, 2: 0, 3: 0 }
+    randomNums: { 1: 0, 2: 0, 3: 0 },
+    paneSize: 50
   }),
   methods: {
     log (eventName, eventParams) {
