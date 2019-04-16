@@ -98,52 +98,18 @@ export default {
       this.$emit('pane-maximize', this.panes[splitterIndex])
     },
 
-    getCurrentMouseDrag: e => ({
-      x: e.touches ? e.touches[0].clientX : e.clientX,
-      y: e.touches ? e.touches[0].clientY : e.clientY
-    }),
-
-    // Recursively sum all the offsetTop values from current element up the tree until body.
-    // By doing so a padding or margin on a parent won't cause a wrong calculation.
-    getContainerOffsetTop (force = false) {
-      if (this.container.offsetTop === null || force) {
-        let el = this.container.vnode
-        let top = el.offsetTop
-
-        while ((el = el.offsetParent)) {
-          top += el.offsetTop
-        }
-
-        this.container.offsetTop = top
-      }
-
-      return this.container.offsetTop
-    },
-
-    // Recursively sum all the offsetTop values from current element up the tree until body.
-    getContainerOffsetLeft (force = false) {
-      if (this.container.offsetLeft === null || force) {
-        let el = this.container.vnode
-        let left = el.offsetLeft
-
-        while ((el = el.offsetParent)) {
-          left += el.offsetLeft
-        }
-
-        this.container.offsetLeft = left
-      }
-
-      return this.container.offsetLeft
+    // Get the cursor position relative to the splitpane container.
+    getCurrentMouseDrag (e) {
+      const rect = this.container.vnode.getBoundingClientRect()
+      const { clientX, clientY } = 'ontouchstart' in window && e.touches ? e.touches[0] : e
+      return { x: clientX - rect.left, y: clientY - rect.top }
     },
 
     // Returns the drag percentage of the splitter relative to the 2 panes it's inbetween.
     // if the sum of width of the 2 cells  is 60%, the dragPercentage range will be 0 to 100% of this 60%.
     getCurrentDragPercentage (drag) {
       const splitterIndex = this.touch.activeSplitter
-      const doc = document.documentElement
-      const scrollTop = this.horizontal ? (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0) : null
-      const offset = this[`getContainerOffset${this.horizontal ? 'Top' : 'Left'}`]()
-      drag = drag[this.horizontal ? 'y' : 'x'] - offset + scrollTop
+      drag = drag[this.horizontal ? 'y' : 'x']
 
       // In the code bellow 'size' refers to 'width' for vertical and 'height' for horizontal layout.
       const containerSize = this.container.vnode[this.horizontal ? 'clientHeight' : 'clientWidth']
