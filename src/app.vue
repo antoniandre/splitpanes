@@ -382,11 +382,11 @@
         style="height:400px")
         span(v-for="i in 3" :key="i" splitpanes-min="10") {{ i }}
 
-      pre.ssh-pre(data-label="Logs")
+      pre.ssh-pre.logs-box(data-label="Logs")
         div.grey--text
           | //&nbsp;
           strong Event name:&nbsp;
-          span Event params
+          span Event params &nbsp; (Last event on top)
         div(v-for="(event, i) in logs" :key="i")
           strong {{ event.name }}:&nbsp;
           span {{ event.params }}
@@ -562,7 +562,7 @@ export default {
   }),
   methods: {
     log (eventName, eventParams) {
-      this.logs.push({ name: eventName, params: JSON.stringify(eventParams) })
+      this.logs.unshift({ name: eventName, params: JSON.stringify(eventParams) })
     },
     generateRandomNumber () {
       this.randomNums = Object.assign(this.randomNums, {
@@ -637,6 +637,11 @@ em.specs {
   left: 0;
   right: 0;
   text-align: center;
+}
+
+.logs-box {
+  height: 400px;
+  overflow: auto;
 }
 
 // Touch example.
