@@ -317,6 +317,10 @@ export default {
           if (paneSizeInDOM !== undefined) this.panes[id].savedWidth = parseFloat(paneSizeInDOM)
           else this.panes[id].savedWidth = parseFloat(width || height)
         }
+        this.panes = this.panes.map(pane => {
+          pane.savedWidth = pane.width
+          return pane
+        })
       })
     }
   },
