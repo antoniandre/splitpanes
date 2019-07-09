@@ -317,6 +317,10 @@ export default {
           if (paneSizeInDOM !== undefined) this.panes[id].savedWidth = parseFloat(paneSizeInDOM)
           else this.panes[id].savedWidth = parseFloat(width || height)
         }
+        this.panes = this.panes.map(pane => {
+          pane.savedWidth = pane.width
+          return pane
+        })
       })
     }
   },
@@ -384,7 +388,7 @@ export default {
             class: 'splitpanes__splitter',
             ref: `splitter-${i - 1}`,
             on: {
-              ...('ontouchstart' in window ? { touchstart: e => this.onMouseDown(e, i - 1) } : {}),
+              ...(((typeof window !== 'undefined') && 'ontouchstart' in window) ? { touchstart: e => this.onMouseDown(e, i - 1) } : {}),
               mousedown: e => this.onMouseDown(e, i - 1),
               click: e => this.onSplitterClick(e, i),
               ...(this.dblClickSplitter ? { dblclick: e => this.onSplitterDblClick(e, i) } : {})
