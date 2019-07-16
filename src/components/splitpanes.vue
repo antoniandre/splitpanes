@@ -374,6 +374,7 @@ export default {
         })
 
         this.slotsCount = this.$slots.default.length
+        if(this.slotsCount < this.panes.length) this.panes.length = this.slotsCount;
       }
 
       this.vnodes.forEach((vnode, i) => {
