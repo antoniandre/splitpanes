@@ -361,7 +361,8 @@ export default {
           const {
             'splitpanes-min': min = 0,
             'splitpanes-max': max = 100,
-            'splitpanes-size': Default = this.defaultWidth
+            'splitpanes-size': Default = this.defaultWidth,
+            'splitpanes-class': customClass = ""
           } = attrs
 
           const savedWidth = this.panes[i] && this.panes[i].savedWidth !== undefined ? this.panes[i].savedWidth : null
@@ -371,7 +372,8 @@ export default {
             width: savedWidth !== null ? savedWidth : parseFloat(Default),
             index: i,
             min: parseFloat(min),
-            max: parseFloat(max)
+            max: parseFloat(max),
+            customClass: customClass
           })
 
           if (i) this.$set(this.splitters, i - 1, { id: `splitter-${i - 1}`, index: i - 1 })
@@ -402,7 +404,7 @@ export default {
           attrs: {
             id: `pane_${i}`
           },
-          class: 'splitpanes__pane',
+          class: 'splitpanes__pane' + ' ' + this.panes[i].customClass,
           style: {
             ...(this.horizontal ? { height: `${this.panes[i].width}%` } : null),
             ...(!this.horizontal ? { width: `${this.panes[i].width}%` } : null)
