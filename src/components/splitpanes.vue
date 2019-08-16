@@ -341,10 +341,24 @@ export default {
           'container', 'Ctor', 'context', 'parent', 'componentInstance', 'componentOptions',
           'fnContext', 'fnOptions']
 
-        const slotsExport = JSON.stringify(this.$slots.default, (name, val) => {
-          // Discard the properties listed in array to prevent circular reference.
-          return discardProps.indexOf(name) > -1 ? undefined : val
-        })
+	  
+        const getCircularReplacer = () => {
+          const seen = new WeakSet();
+          return (key, value) => {
+            if(discardProps.indexOf(key) > -1) {
+              return;
+            }
+            if (typeof value === "object" && value !== null) {
+              if (seen.has(value)) {
+                return;
+              }
+              seen.add(value);
+            }
+            return value;
+          };
+        };
+	  
+        const slotsExport = JSON.stringify(this.$slots.default, getCircularReplacer());
 
         slotsHaveChanged = this.slotsCopy !== slotsExport
 
