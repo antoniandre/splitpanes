@@ -341,24 +341,19 @@ export default {
           'container', 'Ctor', 'context', 'parent', 'componentInstance', 'componentOptions',
           'fnContext', 'fnOptions']
 
-	  
         const getCircularReplacer = () => {
-          const seen = new WeakSet();
+          const seen = new WeakSet()
           return (key, value) => {
-            if(discardProps.indexOf(key) > -1) {
-              return;
-            }
+            if (discardProps.indexOf(key) > -1) return
             if (typeof value === "object" && value !== null) {
-              if (seen.has(value)) {
-                return;
-              }
-              seen.add(value);
+              if (seen.has(value)) return
+              seen.add(value)
             }
-            return value;
-          };
-        };
-	  
-        const slotsExport = JSON.stringify(this.$slots.default, getCircularReplacer());
+            return value
+          }
+        }
+
+        const slotsExport = JSON.stringify(this.$slots.default, getCircularReplacer())
 
         slotsHaveChanged = this.slotsCopy !== slotsExport
 
