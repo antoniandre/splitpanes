@@ -318,7 +318,7 @@ export default {
           else this.panes[id].savedWidth = parseFloat(width || height)
         }
         this.panes = this.panes.map(pane => {
-          pane.savedWidth = pane.width
+          if (!pane.savedWidth) pane.savedWidth = parseFloat(pane.width)
           return pane
         })
       })
@@ -344,8 +344,8 @@ export default {
         const getCircularReplacer = () => {
           const seen = new WeakSet()
           return (key, value) => {
-            if (discardProps.indexOf(key) > -1) return
-            if (typeof value === "object" && value !== null) {
+            if (discardProps.contains(key)) return
+            if (typeof value === 'object' && value !== null) {
               if (seen.has(value)) return
               seen.add(value)
             }
