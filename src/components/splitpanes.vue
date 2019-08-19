@@ -344,7 +344,7 @@ export default {
         const getCircularReplacer = () => {
           const seen = new WeakSet()
           return (key, value) => {
-            if (discardProps.contains(key)) return
+            if (discardProps.includes(key)) return
             if (typeof value === 'object' && value !== null) {
               if (seen.has(value)) return
               seen.add(value)
