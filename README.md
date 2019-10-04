@@ -30,6 +30,7 @@ ___
 
 ## Release Notes
 
+- __Version 2.0.0__ Fix reactivity issues
 - __Version 1.14.0__ Programmatically set pane size
 - __Version 1.13.0__ Emit event on splitter click
 - __Version 1.12.0__ Double click splitter to maximize is now an option

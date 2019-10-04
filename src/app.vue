@@ -36,9 +36,6 @@
               | Adding panes on the fly automatically adds splitters
             li
               v-icon.mr-2(color="primary" size="20") check
-              | Don't bother with verbose children syntax, it's automatic
-            li
-              v-icon.mr-2(color="primary" size="20") check
               | Simple yet efficient
             li
               v-icon.mr-2(color="primary" size="20") check
@@ -56,22 +53,40 @@
           v-icon(small color="primary") open_in_new
 
       splitpanes.default-theme.example.example1(style="height:400px")
-        span(splitpanes-min="20") 1#[br]#[em.specs I have a min width of 20%]
-        splitpanes.default-theme.example(horizontal)
-          span 2
-          span 3
-          span 4
-        span 5
+        pane(min-size="20")
+          span 1#[br]#[em.specs I have a min width of 20%]
+        pane
+          splitpanes.default-theme.example(horizontal)
+            pane
+              span 2
+            pane
+              span 3
+            pane
+              span 4
+        pane
+          span 5
 
       ssh-pre(language="html-vue" label="HTML Vue Template").
         &lt;splitpanes style="height: 400px"&gt;
-          &lt;span splitpanes-min="20"&gt;1&lt;/span&gt;
-          &lt;splitpanes horizontal&gt;
-            &lt;span&gt;2&lt;/span&gt;
-            &lt;span&gt;3&lt;/span&gt;
-            &lt;span&gt;4&lt;/span&gt;
-          &lt;/splitpanes&gt;
-          &lt;span&gt;5&lt;/span&gt;
+          &lt;pane min-size="20"&gt;
+            &lt;span&gt;1&lt;/span&gt;
+          &lt;/pane&gt;
+          &lt;pane&gt;
+            &lt;splitpanes horizontal&gt;
+              &lt;pane&gt;
+                &lt;span&gt;2&lt;/span&gt;
+              &lt;/pane&gt;
+              &lt;pane&gt;
+                &lt;span&gt;3&lt;/span&gt;
+              &lt;/pane&gt;
+              &lt;pane&gt;
+                &lt;span&gt;4&lt;/span&gt;
+              &lt;pane&gt;
+            &lt;/splitpanes&gt;
+          &lt;/pane&gt;
+          &lt;pane&gt;
+            &lt;span&gt;5&lt;/span&gt;
+          &lt;/pane&gt;
         &lt;/splitpanes&gt;
       ssh-pre(language="css" label="CSS").
         .splitpanes__pane {
@@ -97,11 +112,11 @@
       p Then import the component and CSS:
       ssh-pre(language="js" label="Javascript").
         // In your VueJS component.
-        import Splitpanes from 'splitpanes'
+        import { Splitpanes, Pane } from 'splitpanes'
         import 'splitpanes/dist/splitpanes.css'
 
         export default {
-          components: { Splitpanes },
+          components: { Splitpanes, Pane },
           ...
         }
 
@@ -124,16 +139,16 @@
 
       ssh-pre(language="html-vue" label="HTML Vue Template").
         &lt;splitpanes class="default-theme"&gt;
-          &lt;div v-for="i in 3" :key="i"&gt;{{ '\{\{ i \}\}' }}&lt;/div&gt;
+          &lt;pane v-for="i in 3" :key="i"&gt;
+            &lt;div&gt;{{ '\{\{ i \}\}' }}&lt;/div&gt;
+          &lt;/pane&gt;
         &lt;/splitpanes&gt;
 
       highlight-message(type="success")
         strong.
-          Have you noticed? No splitter tags and just use your own tags as you want,
-          splitpanes will do the rest!#[br]
+          Have you noticed? No splitter tags!#[br]
         span.
-          All the direct children of the #[span.code &lt;splitpanes&gt;] tag will be
-          wrapped into panes &amp; the splitters will be added automatically between them.
+          The splitters will be added automatically between the #[span.code &lt;pane&gt;] tags.
 
       highlight-message(type="tips").
         By default the layout is 'column' (vertical), if you need you can set the attribute
@@ -158,15 +173,24 @@
       p You can also double click a splitter to maximize the next pane! (First pane splitter will be an option soon)
       p If you want to disable the 'double click splitter to maximize' behavior, you can add this attribute: #[span.code :dbl-click-splitter="false"].
       splitpanes.default-theme.example(horizontal style="height:400px")
-        span(splitpanes-min="20" splitpanes-max="70") 1#[br]#[em.specs I have a min height of 20% &amp; max height of 70%]
-        span 2
-        span(splitpanes-max="70") 3#[br]#[em.specs I have a max height of 70%]
+        pane(min-size="20", max-size="70")
+          span 1#[br]#[em.specs I have a min height of 20% &amp; max height of 70%]
+        pane
+          span 2
+        pane(max-size="70")
+          span 3#[br]#[em.specs I have a max height of 70%]
 
       ssh-pre(language="html-vue" label="HTML").
         &lt;splitpanes class="default-theme" horizontal style="height:400px"&gt;
-          &lt;span splitpanes-min="20" splitpanes-max="70"&gt;1&lt;/span&gt;
-          &lt;span&gt;2&lt;/span&gt;
-          &lt;span splitpanes-max="70"&gt;3&lt;/span&gt;
+          &lt;pane min-size="20" max-size="70"&gt;
+            &lt;span&gt;1&lt;/span&gt;
+          &lt;/pane&gt;
+          &lt;pane&gt;
+            &lt;span&gt;2&lt;/span&gt;
+          &lt;/pane&gt;
+          &lt;pane max-size="70"&gt;
+            &lt;span&gt;3&lt;/span&gt;
+          &lt;/pane&gt;
         &lt;/splitpanes&gt;
 
       //- Example.
@@ -175,19 +199,28 @@
         a(name="default-pane-width")
       p.
         Provide dimension of your panes when they first load (will be used for the width or height respectively for the vertical or horizontal layout).#[br]
-        #[strong If you provide a default width or height, make sure you provide it for all the panes and the total equals 100%.]#[br]
+        #[strong If you provide a default width or height, make sure you provide it for all the panes and the total equals 100%. If a pane is missing a default width or height, then all the panes will have the same width or height.]#[br]
         Note that setting a default value is different than setting a min or max value.
 
       splitpanes.default-theme.example(horizontal style="height: 400px")
-        span(splitpanes-size="65") 1
-        span(splitpanes-size="10") 2
-        span(splitpanes-size="25") 3
+        pane(size="65")
+          span 1
+        pane(size="10")
+          span 2
+        pane(size="25")
+          span 3
 
       ssh-pre(language="html-vue" label="HTML").
         &lt;splitpanes class="default-theme" horizontal style="height: 400px"&gt;
-          &lt;span splitpanes-size="65"&gt;1&lt;/span&gt;
-          &lt;span splitpanes-size="10"&gt;2&lt;/span&gt;
-          &lt;span splitpanes-size="25"&gt;3&lt;/span&gt;
+          &lt;pane size="65"&gt;
+            &lt;span&gt;1&lt;/span&gt;
+          &lt;/pane&gt;
+          &lt;pane size="10"&gt;
+            &lt;span&gt;2&lt;/span&gt;
+          &lt;/pane&gt;
+          &lt;pane size="25"&gt;
+            &lt;span&gt;3&lt;/span&gt;
+          &lt;/pane&gt;
         &lt;/splitpanes&gt;
 
       //- Example.
@@ -198,22 +231,40 @@
         | try it yourself:
         a(href="https://codepen.io/antoniandre/pen/PypgKY" target="_blank" class="ml-2") //codepen.io/antoniandre/pen/PypgKY #[v-icon(small color="primary") open_in_new]
       splitpanes.default-theme.example(horizontal :push-other-panes="false" style="height:400px")
-        span 1
-        splitpanes(:push-other-panes="false")
-          span 2
-          span 3
-          span 4
-        span 5
+        pane
+          span 1
+        pane
+          splitpanes(:push-other-panes="false")
+            pane
+              span 2
+            pane
+              span 3
+            pane
+              span 4
+        pane
+          span 5
 
       ssh-pre(language="html-vue" label="HTML").
         &lt;splitpanes class="default-theme" horizontal :push-other-panes="false" style="height:400px"&gt;
-          &lt;span&gt;1&lt;/span&gt;
-          &lt;splitpanes :push-other-panes="false"&gt;
-            &lt;span&gt;2&lt;/span&gt;
-            &lt;span&gt;3&lt;/span&gt;
-            &lt;span&gt;4&lt;/span&gt;
-          &lt;/splitpanes&gt;
-          &lt;span&gt;5&lt;/span&gt;
+          &lt;pane&gt;
+            &lt;span&gt;1&lt;/span&gt;
+          &lt;/pane&gt;
+          &lt;pane&gt;
+            &lt;splitpanes :push-other-panes="false"&gt;
+              &lt;pane&gt;
+                &lt;span&gt;2&lt;/span&gt;
+              &lt;/pane&gt;
+              &lt;pane&gt;
+                &lt;span&gt;3&lt;/span&gt;
+              &lt;/pane&gt;
+              &lt;pane&gt;
+                &lt;span&gt;4&lt;/span&gt;
+              &lt;/pane&gt;
+            &lt;/splitpanes&gt;
+          &lt;/pane&gt;
+          &lt;pane&gt;
+            &lt;span&gt;5&lt;/span&gt;
+          &lt;/pane&gt;
         &lt;/splitpanes&gt;
 
       //- Example.
@@ -221,11 +272,14 @@
         a(href="#lots-of-splitters") # Lots of splitters &amp; push other panes - all panes have a min width of 5%
         a(name="lots-of-splitters")
       splitpanes.default-theme.example(style="height:400px")
-        span(v-for="i in 8" :key="i" splitpanes-min="5") {{ i }}
+        pane(v-for="i in 8" :key="i" :min-size="5")
+          span {{ i }}
 
       ssh-pre(language="html-vue" label="HTML").
         &lt;splitpanes class="default-theme" style="height:400px"&gt;
-          &lt;span v-for="i in 8" :key="i" splitpanes-min="5"&gt;{{ '\{\{ i \}\}' }}&lt;/span&gt;
+          &lt;pane v-for="i in 8" :key="i" min-size="5"&gt;
+            &lt;span&gt;{{ '\{\{ i \}\}' }}&lt;/span&gt;
+          &lt;/pane&gt;
         &lt;/splitpanes&gt;
 
       //- Example.
@@ -239,13 +293,16 @@
           | Add pane
 
       splitpanes.default-theme.example(style="height:400px")
-        span(v-for="i in panesNumber" :key="i") {{ i }}
+        pane(v-for="i in panesNumber" :key="i")
+          span {{ i }}
 
       ssh-pre(language="html-vue" label="HTML").
         &lt;button @click="panesNumber++"&gt;Add pane&lt;/button&gt;
 
         &lt;splitpanes class="default-theme" style="height:400px"&gt;
-          &lt;span v-for="i in panesNumber" :key="i"&gt;{{ '\{\{ i \}\}' }}&lt;/span&gt;
+          &lt;pane v-for="i in panesNumber" :key="i"&gt;
+            &lt;span&gt;{{ '\{\{ i \}\}' }}&lt;/span&gt;
+          &lt;/pane&gt;
         &lt;/splitpanes&gt;
 
       ssh-pre(language="js" label="Javascript").
@@ -260,58 +317,62 @@
         a(name="in-depth-reactivity")
       p
         | This example shows the reactivity when you modify anything in your component inside splitpanes.#[br]
-        strong.
-          By default and for performance, the reactivity is limited to slot deletion and slot creation.#[br]
-          With the option #[span.code watchSlots] you can also track any change on the slots.#[br]
-        | If a reactive property is set outside of splitpanes it will be updated inside splitpanes, and accessible from all the panes.#[br]
-        | You can also update a property that resides outside of splitpanes from inside a pane like in this example.
         v-btn(color="primary" small @click="generateRandomNumber")
           v-icon.mr-1(size="20") sync
           | Generate 3 random numbers
         v-btn(color="primary" small @click="incrementNumber(3)")
           v-icon.mr-1(size="20") add
           | Increment pane #3
-      splitpanes.default-theme.example(style="height:400px" horizontal watch-slots)
-        splitpanes(watch-slots)
-          div.text-xs-center(v-for="i in 3" :key="i")
-            span {{ i }}#[br]
-            em Number is: {{ randomNums[i] }}#[br]
-            em(v-if="i === 2").
-              Number on the left is: {{ randomNums[1] }}#[br]
-              Number on the right is: {{ randomNums[3] }}#[br]
-            v-btn.align-center(v-if="i !== 2" small color="primary" @click="randomNums[i] = randomNums[i] + 1" style="min-width: 0")
-              v-icon(size="20") add
-              | 1
-        div.text-xs-center
-          span 4#[br]
-          em.
-            - Nested splitpanes -#[br]
-            [{{ randomNums[1] }}, {{ randomNums[2] }}, {{ randomNums[3] }}]
+      splitpanes.default-theme.example(style="height:400px" horizontal)
+        pane
+          splitpanes
+            pane(v-for="i in 3" :key="i")
+              div.text-xs-center
+                span {{ i }}#[br]
+                em Number is: {{ randomNums[i] }}#[br]
+                em(v-if="i === 2").
+                  Number on the left is: {{ randomNums[1] }}#[br]
+                  Number on the right is: {{ randomNums[3] }}#[br]
+                v-btn.align-center(v-if="i !== 2" small color="primary" @click="randomNums[i] = randomNums[i] + 1" style="min-width: 0")
+                  v-icon(size="20") add
+                  | 1
+        pane
+          div.text-xs-center
+            span 4#[br]
+            em.
+              - Nested splitpanes -#[br]
+              [{{ randomNums[1] }}, {{ randomNums[2] }}, {{ randomNums[3] }}]
 
       ssh-pre(language="html-vue" label="HTML").
         &lt;v-btn @click="generateRandomNumber"&gt;Generate 3 random numbers&lt;/v-btn&gt;
         &lt;v-btn @click="incrementNumber(3)"&gt;Increment pane #3&lt;/v-btn&gt;
 
-        &lt;splitpanes watch-slots horizontal class="default-theme" style="height:400px"&gt;
-          &lt;splitpanes watch-slots&gt;
-            &lt;div v-for="i in 3" :key="i"&gt;
-              &lt;span&gt;{{ '\{\{ i \}\}' }}&lt;/span&gt;&lt;br&gt;
-              &lt;em&gt;Number is: {{ '\{\{ randomNums[i] \}\}' }}&lt;/em&gt;&lt;br&gt;
-              &lt;em v-if="i === 2"&gt;
-                Number on the left is: {{ '\{\{ randomNums[1] \}\}' }}&lt;br&gt;
-                Number on the right is: {{ '\{\{ randomNums[3] \}\}' }}&lt;br&gt;
+        &lt;splitpanes horizontal class="default-theme" style="height:400px"&gt;
+          &lt;pane&gt;
+            &lt;splitpanes&gt;
+              &lt;pane v-for="i in 3" :key="i"&gt;
+                &lt;div&gt;
+                  &lt;span&gt;{{ '\{\{ i \}\}' }}&lt;/span&gt;&lt;br&gt;
+                  &lt;em&gt;Number is: {{ '\{\{ randomNums[i] \}\}' }}&lt;/em&gt;&lt;br&gt;
+                  &lt;em v-if="i === 2"&gt;
+                    Number on the left is: {{ '\{\{ randomNums[1] \}\}' }}&lt;br&gt;
+                    Number on the right is: {{ '\{\{ randomNums[3] \}\}' }}&lt;br&gt;
+                  &lt;/em&gt;
+                  &lt;v-btn(v-if="i !== 2" @click="randomNums[i] = randomNums[i] + 1"&gt;+1&lt;/v-btn&gt;
+                &lt;/div&gt;
+              &lt;/pane&gt;
+            &lt;/splitpanes&gt;
+          &lt;/pane&gt;
+          &lt;pane&gt;
+            &lt;div&gt;
+              &lt;span&gt;4&lt;/span&gt;&lt;br&gt;
+              &lt;em&gt;
+                - Nested splitpanes -&lt;br&gt;
+                [{{ '\{\{ randomNums[1] \}\}' }}, {{ '\{\{ randomNums[2] \}\}' }}, {{ '\{\{ randomNums[1] \}\}' }}]
               &lt;/em&gt;
-              &lt;v-btn(v-if="i !== 2" @click="randomNums[i] = randomNums[i] + 1"&gt;+1&lt;/v-btn&gt;
             &lt;/div&gt;
-          &lt;/splitpanes&gt;
+          &lt;/pane&gt;
         &lt;/splitpanes&gt;
-          &lt;div&gt;
-            &lt;span&gt;4&lt;/span&gt;&lt;br&gt;
-            &lt;em&gt;
-              - Nested splitpanes -&lt;br&gt;
-              [{{ '\{\{ randomNums[1] \}\}' }}, {{ '\{\{ randomNums[2] \}\}' }}, {{ '\{\{ randomNums[1] \}\}' }}]
-            &lt;/em&gt;
-          &lt;/div&gt;
 
       ssh-pre(language="js" label="Javascript").
         // In your Vue component.
@@ -337,15 +398,21 @@
         a(name="programmatic-resizing")
       p.mb-4 This example shows the programmatic way of resizing panes.
       v-slider(v-model="paneSize" label="First pane size" thumb-label="always" thumb-size="25" :min="0" :max="100")
-      splitpanes.default-theme.example(watch-slots style="height: 400px")
-        span(:splitpanes-size="paneSize") {{ paneSize }}%
-        span(:splitpanes-size="100 - paneSize") {{ 100 - paneSize }}%
+      splitpanes.default-theme.example(style="height: 400px")
+        pane(:size="paneSize")
+          span {{ paneSize }}%
+        pane(:size="100 - paneSize")
+          span {{ 100 - paneSize }}%
 
       ssh-pre(language="html-vue" label="HTML").
         &lt;v-slider v-model="paneSize" label="First pane size" :min="0" :max="100"&gt;
-        &lt;splitpanes class="default-theme" watch-slots style="height: 400px"&gt;
-            &lt;span :splitpanes-size="paneSize"&gt;{{ '\{\{ paneSize \}\}' }}%&lt;/span&gt;
-            &lt;span :splitpanes-size="100 - paneSize"&gt;{{ '\{\{ 100 - paneSize \}\}' }}%&lt;/span&gt;
+        &lt;splitpanes class="default-theme" style="height: 400px"&gt;
+          &lt;pane :size="paneSize"&gt;
+            &lt;span&gt;{{ '\{\{ paneSize \}\}' }}%&lt;/span&gt;
+          &lt;/pane&gt;
+          &lt;pane :size="100 - paneSize"&gt;
+            &lt;span&gt;{{ '\{\{ 100 - paneSize \}\}' }}%&lt;/span&gt;
+          &lt;/pane&gt;
         &lt;/splitpanes&gt;
 
       ssh-pre(language="js" label="Javascript").
@@ -380,7 +447,8 @@
         @ready="log('ready', $event)"
         @splitter-click="log('splitter-click', $event)"
         style="height:400px")
-        span(v-for="i in 3" :key="i" splitpanes-min="10") {{ i }}
+        pane(v-for="i in 3" :key="i" :min-size="10")
+          span {{ i }}
 
       pre.ssh-pre.logs-box(data-label="Logs")
         div.grey--text
@@ -401,7 +469,9 @@
           @ready="log('ready', $event)"
           @splitter-click="log('splitter-click', $event)"
           style="height:400px"&gt;
-          &lt;span v-for="i in 3" :key="i" splitpanes-min="10"&gt;{{ '\{\{ i \}\}' }}&lt;/span&gt;
+          &lt;pane v-for="i in 3" :key="i" min-size="10"&gt;
+            &lt;span&gt;{{ '\{\{ i \}\}' }}&lt;/span&gt;
+          &lt;/pane&gt;
         &lt;/splitpanes&gt;
 
       //- Example.
@@ -413,23 +483,38 @@
         a(href="https://codepen.io/antoniandre/pen/XxRZmB" target="_blank" class="ml-2") //codepen.io/antoniandre/pen/XxRZmB #[v-icon(small color="primary") open_in_new]
 
       splitpanes.touch-example(horizontal style="height:400px")
-        splitpanes.touch-example
-          span 1
-          span 2
-          span 3
-        div.text
-          p.
-            In this example the splitters are thin lines but the reactive touch zone is spread to 30 pixels all around!
-            #[em Hover a splitter to see the Fat-fingers reactive zone. ]
+        pane
+          splitpanes.touch-example
+            pane
+              span 1
+            pane
+              span 2
+            pane
+              span 3
+        pane
+          div.text
+            p.
+              In this example the splitters are thin lines but the reactive touch zone is spread to 30 pixels all around!
+              #[em Hover a splitter to see the Fat-fingers reactive zone. ]
 
       ssh-pre(language="html-vue" label="HTML").
         &lt;splitpanes class="default-theme touch-example" horizontal style="height:400px"&gt;
-          &lt;splitpanes :push-other-panes="false"&gt;
-            &lt;span&gt;1&lt;/span&gt;
-            &lt;span&gt;2&lt;/span&gt;
-            &lt;span&gt;3&lt;/span&gt;
-          &lt;/splitpanes&gt;
-          &lt;p&gt;In this example the splitters are thin lines but the reactive touch zone is spread to 30 pixels all around!&lt;/p&gt;
+          &lt;pane&gt;
+            &lt;splitpanes :push-other-panes="false"&gt;
+              &lt;pane&gt;
+                &lt;span&gt;1&lt;/span&gt;
+              &lt;/pane&gt;
+              &lt;pane&gt;
+                &lt;span&gt;2&lt;/span&gt;
+              &lt;/pane&gt;
+              &lt;pane&gt;
+                &lt;span&gt;3&lt;/span&gt;
+              &lt;/pane&gt;
+            &lt;/splitpanes&gt;
+          &lt;/pane&gt;
+          &lt;pane&gt;
+            &lt;p&gt;In this example the splitters are thin lines but the reactive touch zone is spread to 30 pixels all around!&lt;/p&gt;
+          &lt;/pane&gt;
         &lt;/splitpanes&gt;
 
       ssh-pre(language="css" label="CSS").
@@ -460,20 +545,35 @@
         a(href="https://codepen.io/antoniandre/pen/mzGZXR" target="_blank" class="ml-2") //codepen.io/antoniandre/pen/mzGZXR #[v-icon(small color="primary") open_in_new]
 
       splitpanes.example-own-style(horizontal style="height: 400px")
-        splitpanes(vertical)
-          span 1
-          span 2
-          span 3
-        span 4
+        pane
+          splitpanes
+            pane
+              span 1
+            pane
+              span 2
+            pane
+              span 3
+        pane
+          span 4
 
       ssh-pre(language="html-vue" label="HTML").
         &lt;splitpanes horizontal style="height:400px"&gt;
-          &lt;splitpanes vertical&gt;
-            &lt;span&gt;1&lt;/span&gt;
-            &lt;span&gt;2&lt;/span&gt;
-            &lt;span&gt;3&lt;/span&gt;
-          &lt;/splitpanes&gt;
-          &lt;span&gt;4&lt;/span&gt;
+          &lt;pane&gt;
+            &lt;splitpanes vertical&gt;
+              &lt;pane&gt;
+                &lt;span&gt;1&lt;/span&gt;
+              &lt;/pane&gt;
+              &lt;pane&gt;
+                &lt;span&gt;2&lt;/span&gt;
+              &lt;/pane&gt;
+              &lt;pane&gt;
+                &lt;span&gt;3&lt;/span&gt;
+              &lt;/pane&gt;
+            &lt;/splitpanes&gt;
+          &lt;/pane&gt;
+          &lt;pane&gt;
+            &lt;span&gt;4&lt;/span&gt;
+          &lt;/pane&gt;
         &lt;/splitpanes&gt;
 
       ssh-pre(language="css" label="CSS").
@@ -503,6 +603,10 @@
         a(name="release-notes")
 
       div
+        | #[strong Version 2.0.0] Fix reactivity issues.
+        highlight-message(type="success")
+          strong.
+            Children now must be wrapped into a #[span.code `pane`] component.
         | #[strong Version 1.14.0] Programmatically set pane size
         highlight-message(type="success")
           strong.
@@ -533,27 +637,17 @@
       div #[strong Version 1.2.0] Add a `default-theme` CSS class to load default theme
       div #[strong Version 1.1.0] Allow pushing other panes while dragging splitter
       div #[strong Version 1.0.0] First public release
-
-    v-footer.mt-5.pa-2.mb-3(color="white")
-      v-layout.max-widthed(row wrap align-center justify-center)
-        v-flex.xs12.sm6.text-xs-center.text-sm-left.copyright.
-          Copyright © {{ (new Date()).getFullYear() }} Antoni André, all rights reserved.
-        v-flex.xs12.sm6.text-xs-center.text-sm-right.made-with
-          div.mb-1.
-            This documentation is made with #[v-icon(small) fab fa-vuejs], #[v-icon(small) fab fa-html5], #[v-icon(small) fab fa-css3],
-            #[v-icon(small) fab fa-sass] &amp; #[v-icon.heart(small) favorite]
-          | View project on #[a(href="https://github.com/antoniandre/splitpanes" target="_blank") #[v-icon(small) fab fa-github] Github].</template>
 </template>
 
 <script>
-import Splitpanes from '@/components/splitpanes'
+import { Splitpanes, Pane } from '@/components/splitpanes/index'
 import HighlightMessage from '@/components/highlight-message'
 import SshPre from 'simple-syntax-highlighter'
 import 'simple-syntax-highlighter/dist/sshpre.css'
 
 export default {
   name: 'app',
-  components: { Splitpanes, SshPre, HighlightMessage },
+  components: { Splitpanes, Pane, SshPre, HighlightMessage },
   data: () => ({
     panesNumber: 3,
     logs: [],
