@@ -318,9 +318,9 @@
       h3.mt-5.mb-2.subheading
         a(href="#programmatic-resizing") # Programmatic resizing
         a(name="programmatic-resizing")
-      p.mb-4 This example shows the programmatic way of resizing panes.
+      p.mb-4 This example shows the programmatic way of resizing panes. And how it works both ways.
       v-slider(v-model="paneSize" label="First pane size" thumb-label="always" thumb-size="25" :min="0" :max="100")
-      splitpanes.default-theme.example(style="height: 400px")
+      splitpanes.default-theme.example(@resize="paneSize = $event[0].size" style="height: 400px")
         pane(:size="paneSize")
           span {{ paneSize }}%
         pane(:size="100 - paneSize")
@@ -328,7 +328,7 @@
 
       ssh-pre(language="html-vue" label="HTML").
         &lt;v-slider v-model="paneSize" label="First pane size" :min="0" :max="100"&gt;
-        &lt;splitpanes class="default-theme" style="height: 400px"&gt;
+        &lt;splitpanes class="default-theme" @resize="paneSize = $event[0].size" style="height: 400px"&gt;
           &lt;pane :size="paneSize"&gt;
             &lt;span&gt;{{ '\{\{ paneSize \}\}' }}%&lt;/span&gt;
           &lt;/pane&gt;
