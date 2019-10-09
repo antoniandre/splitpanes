@@ -52,7 +52,7 @@
         a.ml-2.d-inline-flex.align-center(href="https://codepen.io/antoniandre/pen/XybPKP" target="_blank") //codepen.io/antoniandre/pen/XybPKP
           v-icon(small color="primary") open_in_new
 
-      splitpanes.default-theme.example.example1(style="height:400px")
+      splitpanes.default-theme.example.example1(style="height: 400px")
         pane(min-size="20")
           span 1#[br]#[em.specs I have a min width of 20%]
         pane
@@ -172,7 +172,7 @@
         a(name="horizontal-layout")
       p You can also double click a splitter to maximize the next pane! (First pane splitter will be an option soon)
       p If you want to disable the 'double click splitter to maximize' behavior, you can add this attribute: #[span.code :dbl-click-splitter="false"].
-      splitpanes.default-theme.example(horizontal style="height:400px")
+      splitpanes.default-theme.example(horizontal style="height: 400px")
         pane(min-size="20", max-size="70")
           span 1#[br]#[em.specs I have a min height of 20% &amp; max height of 70%]
         pane
@@ -181,7 +181,7 @@
           span 3#[br]#[em.specs I have a max height of 70%]
 
       ssh-pre(language="html-vue" label="HTML").
-        &lt;splitpanes class="default-theme" horizontal style="height:400px"&gt;
+        &lt;splitpanes class="default-theme" horizontal style="height: 400px"&gt;
           &lt;pane min-size="20" max-size="70"&gt;
             &lt;span&gt;1&lt;/span&gt;
           &lt;/pane&gt;
@@ -197,10 +197,12 @@
       h3.mt-5.mb-2.subheading
         a(href="#default-pane-width") # Default pane width or height
         a(name="default-pane-width")
-      p.
-        Provide dimension of your panes when they first load (will be used for the width or height respectively for the vertical or horizontal layout).#[br]
-        #[strong If you provide a default width or height, make sure you provide it for all the panes and the total equals 100%. If a pane is missing a default width or height, then all the panes will have the same width or height.]#[br]
-        Note that setting a default value is different than setting a min or max value.
+      p
+        | Provide dimension of your panes when they first load (will be used for the width or height respectively for the vertical or horizontal layout).#[br]
+        strong.
+          If you provide a default width or height, make sure you provide it for all the panes and the total equals 100%.#[br]
+          If a pane is missing a default width or height, then all the panes will have the same width or height.#[br]
+        | Note that setting a default value is different than setting a min or max value.
 
       splitpanes.default-theme.example(horizontal style="height: 400px")
         pane(size="65")
@@ -230,7 +232,7 @@
       p
         | try it yourself:
         a(href="https://codepen.io/antoniandre/pen/PypgKY" target="_blank" class="ml-2") //codepen.io/antoniandre/pen/PypgKY #[v-icon(small color="primary") open_in_new]
-      splitpanes.default-theme.example(horizontal :push-other-panes="false" style="height:400px")
+      splitpanes.default-theme.example(horizontal :push-other-panes="false" style="height: 400px")
         pane
           span 1
         pane
@@ -245,7 +247,7 @@
           span 5
 
       ssh-pre(language="html-vue" label="HTML").
-        &lt;splitpanes class="default-theme" horizontal :push-other-panes="false" style="height:400px"&gt;
+        &lt;splitpanes class="default-theme" horizontal :push-other-panes="false" style="height: 400px"&gt;
           &lt;pane&gt;
             &lt;span&gt;1&lt;/span&gt;
           &lt;/pane&gt;
@@ -271,12 +273,12 @@
       h3.mt-5.mb-2.subheading
         a(href="#lots-of-splitters") # Lots of splitters &amp; push other panes - all panes have a min width of 5%
         a(name="lots-of-splitters")
-      splitpanes.default-theme.example(style="height:400px")
+      splitpanes.default-theme.example(style="height: 400px")
         pane(v-for="i in 8" :key="i" :min-size="5")
           span {{ i }}
 
       ssh-pre(language="html-vue" label="HTML").
-        &lt;splitpanes class="default-theme" style="height:400px"&gt;
+        &lt;splitpanes class="default-theme" style="height: 400px"&gt;
           &lt;pane v-for="i in 8" :key="i" min-size="5"&gt;
             &lt;span&gt;{{ '\{\{ i \}\}' }}&lt;/span&gt;
           &lt;/pane&gt;
@@ -292,14 +294,14 @@
           v-icon add
           | Add pane
 
-      splitpanes.default-theme.example(style="height:400px")
+      splitpanes.default-theme.example(style="height: 400px")
         pane(v-for="i in panesNumber" :key="i")
           span {{ i }}
 
       ssh-pre(language="html-vue" label="HTML").
         &lt;button @click="panesNumber++"&gt;Add pane&lt;/button&gt;
 
-        &lt;splitpanes class="default-theme" style="height:400px"&gt;
+        &lt;splitpanes class="default-theme" style="height: 400px"&gt;
           &lt;pane v-for="i in panesNumber" :key="i"&gt;
             &lt;span&gt;{{ '\{\{ i \}\}' }}&lt;/span&gt;
           &lt;/pane&gt;
@@ -310,87 +312,6 @@
         data: () =&gt; ({
           panesNumber: 3
         })
-
-      //- Example.
-      h3.mt-5.mb-2.subheading
-        a(href="#in-depth-reactivity") # In-depth reactivity
-        a(name="in-depth-reactivity")
-      p
-        | This example shows the reactivity when you modify anything in your component inside splitpanes.#[br]
-        v-btn(color="primary" small @click="generateRandomNumber")
-          v-icon.mr-1(size="20") sync
-          | Generate 3 random numbers
-        v-btn(color="primary" small @click="incrementNumber(3)")
-          v-icon.mr-1(size="20") add
-          | Increment pane #3
-      splitpanes.default-theme.example(style="height:400px" horizontal)
-        pane
-          splitpanes
-            pane(v-for="i in 3" :key="i")
-              div.text-xs-center
-                span {{ i }}#[br]
-                em Number is: {{ randomNums[i] }}#[br]
-                em(v-if="i === 2").
-                  Number on the left is: {{ randomNums[1] }}#[br]
-                  Number on the right is: {{ randomNums[3] }}#[br]
-                v-btn.align-center(v-if="i !== 2" small color="primary" @click="randomNums[i] = randomNums[i] + 1" style="min-width: 0")
-                  v-icon(size="20") add
-                  | 1
-        pane
-          div.text-xs-center
-            span 4#[br]
-            em.
-              - Nested splitpanes -#[br]
-              [{{ randomNums[1] }}, {{ randomNums[2] }}, {{ randomNums[3] }}]
-
-      ssh-pre(language="html-vue" label="HTML").
-        &lt;v-btn @click="generateRandomNumber"&gt;Generate 3 random numbers&lt;/v-btn&gt;
-        &lt;v-btn @click="incrementNumber(3)"&gt;Increment pane #3&lt;/v-btn&gt;
-
-        &lt;splitpanes horizontal class="default-theme" style="height:400px"&gt;
-          &lt;pane&gt;
-            &lt;splitpanes&gt;
-              &lt;pane v-for="i in 3" :key="i"&gt;
-                &lt;div&gt;
-                  &lt;span&gt;{{ '\{\{ i \}\}' }}&lt;/span&gt;&lt;br&gt;
-                  &lt;em&gt;Number is: {{ '\{\{ randomNums[i] \}\}' }}&lt;/em&gt;&lt;br&gt;
-                  &lt;em v-if="i === 2"&gt;
-                    Number on the left is: {{ '\{\{ randomNums[1] \}\}' }}&lt;br&gt;
-                    Number on the right is: {{ '\{\{ randomNums[3] \}\}' }}&lt;br&gt;
-                  &lt;/em&gt;
-                  &lt;v-btn(v-if="i !== 2" @click="randomNums[i] = randomNums[i] + 1"&gt;+1&lt;/v-btn&gt;
-                &lt;/div&gt;
-              &lt;/pane&gt;
-            &lt;/splitpanes&gt;
-          &lt;/pane&gt;
-          &lt;pane&gt;
-            &lt;div&gt;
-              &lt;span&gt;4&lt;/span&gt;&lt;br&gt;
-              &lt;em&gt;
-                - Nested splitpanes -&lt;br&gt;
-                [{{ '\{\{ randomNums[1] \}\}' }}, {{ '\{\{ randomNums[2] \}\}' }}, {{ '\{\{ randomNums[1] \}\}' }}]
-              &lt;/em&gt;
-            &lt;/div&gt;
-          &lt;/pane&gt;
-        &lt;/splitpanes&gt;
-
-      ssh-pre(language="js" label="Javascript").
-        // In your Vue component.
-        data: () => ({
-          randomNums: { 1: 0, 2: 0, 3: 0 }
-        }),
-        methods: {
-          generateRandomNumber () {
-            this.randomNums = Object.assign(this.randomNums, {
-              1: Math.round(Math.random() * 100),
-              2: Math.round(Math.random() * 100),
-              3: Math.round(Math.random() * 100)
-            })
-          },
-          incrementNumber (i) {
-            this.randomNums[i]++
-          }
-        }
 
       //- Example.
       h3.mt-5.mb-2.subheading
@@ -424,6 +345,148 @@
 
       //- Example.
       h3.mt-5.mb-2.subheading
+        a(href="#in-depth-reactivity") # In-depth reactivity
+        a(name="in-depth-reactivity")
+      p
+        | This example shows the reactivity when you modify anything in your component inside splitpanes.#[br]
+        v-btn(color="primary" small @click="generateRandomNumber")
+          v-icon.mr-1(size="20") sync
+          | Generate 3 random numbers
+        v-btn(color="primary" small @click="incrementNumber(3)")
+          v-icon.mr-1(size="20") add
+          | Increment pane #3
+      splitpanes.default-theme.example(style="height: 400px" horizontal)
+        pane
+          splitpanes
+            pane.layout.column.text-xs-center(v-for="i in 3" :key="i")
+              span {{ i }}#[br]
+              em Number is: {{ randomNums[i] }}#[br]
+              em(v-if="i === 2").
+                Number on the left is: {{ randomNums[1] }}#[br]
+                Number on the right is: {{ randomNums[3] }}#[br]
+              v-btn.align-center(v-if="i !== 2" small color="primary" @click="randomNums[i] = randomNums[i] + 1" style="min-width: 0")
+                v-icon(size="20") add
+                | 1
+        pane.layout.column.text-xs-center
+          span 4#[br]
+          em.
+            - Nested splitpanes -#[br]
+            [{{ randomNums[1] }}, {{ randomNums[2] }}, {{ randomNums[3] }}]
+
+      ssh-pre(language="html-vue" label="HTML").
+        &lt;button @click="generateRandomNumber"&gt;Generate 3 random numbers&lt;/button&gt;
+        &lt;button @click="incrementNumber(3)"&gt;Increment pane #3&lt;/button&gt;
+
+        &lt;splitpanes horizontal class="default-theme" style="height: 400px"&gt;
+          &lt;pane&gt;
+            &lt;splitpanes&gt;
+              &lt;pane v-for="i in 3" :key="i"&gt;
+                &lt;span&gt;{{ '\{\{ i \}\}' }}&lt;/span&gt;&lt;br&gt;
+                &lt;em&gt;Number is: {{ '\{\{ randomNums[i] \}\}' }}&lt;/em&gt;&lt;br&gt;
+                &lt;em v-if="i === 2"&gt;
+                  Number on the left is: {{ '\{\{ randomNums[1] \}\}' }}&lt;br&gt;
+                  Number on the right is: {{ '\{\{ randomNums[3] \}\}' }}&lt;br&gt;
+                &lt;/em&gt;
+                &lt;button(v-if="i !== 2" @click="randomNums[i] = randomNums[i] + 1"&gt;+1&lt;/button&gt;
+              &lt;/pane&gt;
+            &lt;/splitpanes&gt;
+          &lt;/pane&gt;
+          &lt;pane&gt;
+            &lt;span&gt;4&lt;/span&gt;&lt;br&gt;
+            &lt;em&gt;
+              - Nested splitpanes -&lt;br&gt;
+              [{{ '\{\{ randomNums[1] \}\}' }}, {{ '\{\{ randomNums[2] \}\}' }}, {{ '\{\{ randomNums[1] \}\}' }}]
+            &lt;/em&gt;
+          &lt;/pane&gt;
+        &lt;/splitpanes&gt;
+
+      ssh-pre(language="js" label="Javascript").
+        // In your Vue component.
+        data: () => ({
+          randomNums: { 1: 0, 2: 0, 3: 0 }
+        }),
+        methods: {
+          generateRandomNumber () {
+            this.randomNums = Object.assign(this.randomNums, {
+              1: Math.round(Math.random() * 100),
+              2: Math.round(Math.random() * 100),
+              3: Math.round(Math.random() * 100)
+            })
+          },
+          incrementNumber (i) {
+            this.randomNums[i]++
+          }
+        }
+
+      //- Example.
+      h3.mt-5.mb-2.subheading
+        a(href="#vue-router") # Vue Router inside splitpanes
+        a(name="vue-router")
+      p.mb-1.
+        This is another reactivity example of a rather common case: Vue Router inside splitpanes.#[br]
+        The navigation is in the left pane, but you can also access from outside of splitpanes, through those buttons:
+      v-btn.example-vue-router.ml-0(color="primary" small to="example-home-view") Home view
+      v-btn.example-vue-router(color="primary" small to="example-another-view") Another view
+
+      splitpanes.default-theme.example-vue-router.mt-2(style="height: 400px")
+        pane.layout.column.fill-height(min-size="20")
+          .flex.pa-2
+            p.headline Navigation
+            ul
+              li
+                router-link(to="example-home-view") Home view
+              li
+                router-link(to="example-another-view") Another view
+          em.ma-auto.grey--text I have a min width of 20%
+        pane.layout.column.fill-height
+          em.d-flex.justify-center.grey--text.code.pa-2 router-view
+          router-view.flex
+        pane.layout.align-center.justify-center
+          span.ma-auto 3#[br]
+
+      ssh-pre(language="html-vue" label="HTML").
+        &lt;button to="home-view"&gt;Home view&lt;/button&gt;
+        &lt;button to="another-view"&gt;Another view&lt;/button&gt;
+
+        &lt;splitpanes horizontal class="default-theme" style="height: 400px"&gt;
+          &lt;pane min-size="20"&gt;
+            &lt;p&gt;Navigation&lt;/p&gt;
+            &lt;ul&gt;
+              &lt;li&gt;&lt;router-link to="home-view"&gt;Home view&lt;/li&gt;
+              &lt;li&gt;&lt;router-link to="another-view"&gt;Another view&lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/pane&gt;
+          &lt;pane&gt;
+            &lt;em&gt;router-view&lt;/em&gt;
+            &lt;router-view /&gt;
+          &lt;/pane&gt;
+          &lt;pane&gt;
+            &lt;span&gt;3&lt;/span&gt;
+          &lt;/pane&gt;
+        &lt;/splitpanes&gt;
+
+      ssh-pre(language="js" label="router.js").
+        // Vue Router routes.
+        routes: [
+          {
+            path: '/home-view',
+            component: () => import(/* webpackChunkName: "home-view" */ './components/home-view.vue')
+          },
+          {
+            path: '/another-view',
+            component: () => import(/* webpackChunkName: "another-view" */ './components/another-view.vue')
+          }
+        ]
+
+      ssh-pre(language="html-vue" label="home-view.vue").
+        &lt;template&gt;
+          &lt;div class="green"&gt;
+            &lt;div&gt;This is home&lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/template&gt;
+
+      //- Example.
+      h3.mt-5.mb-2.subheading
         a(href="#emitted-events") # Listening to emitted events
         a(name="emitted-events")
       p.
@@ -446,7 +509,7 @@
         @pane-click="log('pane-click', $event)"
         @ready="log('ready', $event)"
         @splitter-click="log('splitter-click', $event)"
-        style="height:400px")
+        style="height: 400px")
         pane(v-for="i in 3" :key="i" :min-size="10")
           span {{ i }}
 
@@ -468,7 +531,7 @@
           @pane-click="log('pane-click', $event)"
           @ready="log('ready', $event)"
           @splitter-click="log('splitter-click', $event)"
-          style="height:400px"&gt;
+          style="height: 400px"&gt;
           &lt;pane v-for="i in 3" :key="i" min-size="10"&gt;
             &lt;span&gt;{{ '\{\{ i \}\}' }}&lt;/span&gt;
           &lt;/pane&gt;
@@ -482,7 +545,7 @@
         | try it yourself:
         a(href="https://codepen.io/antoniandre/pen/XxRZmB" target="_blank" class="ml-2") //codepen.io/antoniandre/pen/XxRZmB #[v-icon(small color="primary") open_in_new]
 
-      splitpanes.touch-example(horizontal style="height:400px")
+      splitpanes.touch-example(horizontal style="height: 400px")
         pane
           splitpanes.touch-example
             pane
@@ -498,7 +561,7 @@
               #[em Hover a splitter to see the Fat-fingers reactive zone. ]
 
       ssh-pre(language="html-vue" label="HTML").
-        &lt;splitpanes class="default-theme touch-example" horizontal style="height:400px"&gt;
+        &lt;splitpanes class="default-theme touch-example" horizontal style="height: 400px"&gt;
           &lt;pane&gt;
             &lt;splitpanes :push-other-panes="false"&gt;
               &lt;pane&gt;
@@ -557,7 +620,7 @@
           span 4
 
       ssh-pre(language="html-vue" label="HTML").
-        &lt;splitpanes horizontal style="height:400px"&gt;
+        &lt;splitpanes horizontal style="height: 400px"&gt;
           &lt;pane&gt;
             &lt;splitpanes vertical&gt;
               &lt;pane&gt;
@@ -734,8 +797,15 @@ em.specs {
 }
 
 .logs-box {
-  height: 400px;
+  height: 300px;
   overflow: auto;
+}
+
+// Vue Router example.
+//---------------
+.example-vue-router {
+  &.v-btn--active {background-color: darken($primary-color, 10) !important;}
+  .router-link-active {color: darken($primary-color, 10);}
 }
 
 // Touch example.
@@ -761,10 +831,10 @@ em.specs {
     z-index: 1;
   }
   .splitpanes__splitter:hover:before {opacity: 1;}
-}
-.touch-example.splitpanes--vertical > .splitpanes__splitter:before {left: -30px;right: -30px;height: 100%;}
-.touch-example.splitpanes--horizontal > .splitpanes__splitter:before {top: -30px;bottom: -30px;width: 100%;}
-.splitpanes.touch-example {
+
+  &.splitpanes--vertical > .splitpanes__splitter:before {left: -30px;right: -30px;height: 100%;}
+  &.splitpanes--horizontal > .splitpanes__splitter:before {top: -30px;bottom: -30px;width: 100%;}
+
   .text {
     color: #999;
     opacity: 1;
@@ -782,8 +852,12 @@ em.specs {
       text-align: center;
     }
   }
+
+  span {opacity: 1;}
 }
 
+// Own style example.
+//---------------
 .example-own-style.splitpanes {
   background: linear-gradient(-45deg, #EE7752, #E73C7E, #23A6D5, #23D5AB);
 
