@@ -5,6 +5,7 @@
         img(alt="Vue logo" src="./assets/logo.png" height="40")
         h1.mb-3.headline Vue Split Panes
         p.mb-5.subheading A Vue JS reliable, simple and touch-ready panes splitter / resizer.
+        highlight-message(type="success" no-icon).subheading.pa-4 #[strong Version 2 is out], Check the #[a(href="#release-notes") Release Notes]!
 
       v-layout(row)
         v-flex
@@ -668,8 +669,11 @@
       div
         | #[strong Version 2.0.0] Fix reactivity issues.
         highlight-message(type="success")
-          strong.
-            Children now must be wrapped into a #[span.code `pane`] component.
+          ul
+            li
+              strong.
+                Children now must be wrapped into a #[span.code `pane`] component.
+            li you can still add CSS classes on the #[span.code `pane`] component tag.
         | #[strong Version 1.14.0] Programmatically set pane size
         highlight-message(type="success")
           strong.

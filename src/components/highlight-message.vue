@@ -1,6 +1,6 @@
 <template lang="pug">
   component(:class="`highlight ${type}`" :is="tag")
-    v-icon {{ icon }}
+    v-icon(v-if="!noIcon") {{ icon }}
     slot
 </template>
 
@@ -14,6 +14,10 @@ export default {
     type: {
       type: String,
       default: 'info'
+    },
+    noIcon: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
