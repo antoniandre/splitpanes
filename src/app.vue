@@ -562,9 +562,9 @@
               #[em Hover a splitter to see the Fat-fingers reactive zone. ]
 
       ssh-pre(language="html-vue" label="HTML").
-        &lt;splitpanes class="default-theme touch-example" horizontal style="height: 400px"&gt;
+        &lt;splitpanes horizontal style="height: 400px"&gt;
           &lt;pane&gt;
-            &lt;splitpanes :push-other-panes="false"&gt;
+            &lt;splitpanes&gt;
               &lt;pane&gt;
                 &lt;span&gt;1&lt;/span&gt;
               &lt;/pane&gt;
