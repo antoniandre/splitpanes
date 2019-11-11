@@ -1,15 +1,15 @@
 <template lang="pug">
   v-app.white
     v-container
-      div.text-xs-center
+      div.text-center
         img(alt="Vue logo" src="./assets/logo.png" height="40")
         h1.mb-3.headline Vue Split Panes
-        p.mb-5.subheading A Vue JS reliable, simple and touch-ready panes splitter / resizer.
-        highlight-message(type="success" no-icon).subheading.pa-4 #[strong Version 2 is out], Check the #[a(href="#release-notes") Release Notes]!
+        p.mb-12.subtitle-1 A Vue JS reliable, simple and touch-ready panes splitter / resizer.
+        highlight-message(type="success" no-icon).subtitle-1.pa-8 #[strong Version 2 is out], Check the #[a(href="#release-notes") Release Notes]!
 
-      v-layout(row)
+      v-layout
         v-flex
-          h2.mt-5.mb-2.title Features
+          h2.mt-12.mb-2.title Features
           ul.checklist
             li
               v-icon.mr-2(color="primary" size="20") check
@@ -43,12 +43,12 @@
               | More features to come, like pane labels.
 
         div
-          div.mt-5.mb-3.title Github project
-          v-layout.mb-5(align-center shrink)
-            v-icon.pr-4.lightgrey--text(x-large) fab fa-github
+          div.mt-12.mb-3.title Github project
+          v-layout.mb-12(align-center shrink)
+            v-icon.pr-8.lightgrey--text(x-large) fab fa-github
             a(href="https://github.com/antoniandre/splitpanes" target="_blank") //github.com/antoniandre/splitpanes #[v-icon(small color="primary") open_in_new]
 
-      h2.mt-5.mb-2.subheading
+      h2.mt-12.mb-2.subtitle-1
         | # Demo - try it yourself:
         a.ml-2.d-inline-flex.align-center(href="https://codepen.io/antoniandre/pen/XybPKP" target="_blank") //codepen.io/antoniandre/pen/XybPKP
           v-icon(small color="primary") open_in_new
@@ -103,7 +103,7 @@
           opacity: 0.6;
         }
 
-      h2.mt-5.mb-2.headline
+      h2.mt-12.mb-2.headline
         a(href="#installation") Installation
         a(name="installation")
 
@@ -131,7 +131,7 @@
           &lt;link href="https://unpkg.com/splitpanes/dist/splitpanes.css" rel="stylesheet"&gt;
         &lt;/head&gt;
 
-      h2.mt-5.mb-2
+      h2.mt-12.mb-2
         a.headline(href="#how-to-use") How to use
         a(name="how-to-use")
 
@@ -163,12 +163,12 @@
 
       //- Examples.
       //-------------------------------------------------------//
-      h2.mt-5.mb-2.headline
+      h2.mt-12.mb-2.headline
         a(href="#more-examples") More examples
         a(name="more-examples")
 
       //- Example.
-      h3.mb-2.subheading
+      h3.mb-2.subtitle-1
         a(href="#horizontal-layout") # Horizontal layout, push other panes, min &amp; max use
         a(name="horizontal-layout")
       p You can also double click a splitter to maximize the next pane! (First pane splitter will be an option soon)
@@ -195,7 +195,7 @@
         &lt;/splitpanes&gt;
 
       //- Example.
-      h3.mt-5.mb-2.subheading
+      h3.mt-12.pt-8.mb-2.subtitle-1
         a(href="#default-pane-width") # Default pane width or height
         a(name="default-pane-width")
       p
@@ -227,7 +227,7 @@
         &lt;/splitpanes&gt;
 
       //- Example.
-      h3.mt-5.mb-2.subheading
+      h3.mt-12.pt-8.mb-2.subtitle-1
         a(href="#nested-splitpanes") # Mix layout with nested splitpanes &amp; prevent pushing other panes
         a(name="nested-splitpanes")
       p
@@ -271,7 +271,7 @@
         &lt;/splitpanes&gt;
 
       //- Example.
-      h3.mt-5.mb-2.subheading
+      h3.mt-12.pt-8.mb-2.subtitle-1
         a(href="#lots-of-splitters") # Lots of splitters &amp; push other panes - all panes have a min width of 5%
         a(name="lots-of-splitters")
       splitpanes.default-theme.example(style="height: 400px")
@@ -286,13 +286,13 @@
         &lt;/splitpanes&gt;
 
       //- Example.
-      h3.mt-5.mb-2.subheading
+      h3.mt-12.pt-8.mb-2.subtitle-1
         a(href="#adding-splitters-on-the-fly") # Adding splitters on the fly
         a(name="adding-splitters-on-the-fly")
       p
         | This example shows the reactivity when you add a new element dynamically in splitpanes.
-        v-btn(color="primary" small @click="panesNumber++")
-          v-icon add
+        v-btn.ml-2(color="primary" small @click="panesNumber++")
+          v-icon.mr-1 add
           | Add pane
 
       splitpanes.default-theme.example(style="height: 400px")
@@ -315,10 +315,10 @@
         })
 
       //- Example.
-      h3.mt-5.mb-2.subheading
+      h3.mt-12.pt-8.mb-2.subtitle-1
         a(href="#programmatic-resizing") # Programmatic resizing
         a(name="programmatic-resizing")
-      p.mb-4 This example shows the programmatic way of resizing panes. And how it works both ways.
+      p.mb-6 This example shows the programmatic way of resizing panes. And how it works both ways.
       v-slider(v-model="paneSize" label="First pane size" thumb-label="always" thumb-size="25" :min="0" :max="100")
       splitpanes.default-theme.example(@resize="paneSize = $event[0].size" style="height: 400px")
         pane(:size="paneSize")
@@ -345,21 +345,21 @@
         }
 
       //- Example.
-      h3.mt-5.mb-2.subheading
+      h3.mt-12.pt-8.mb-2.subtitle-1
         a(href="#in-depth-reactivity") # In-depth reactivity
         a(name="in-depth-reactivity")
       p
         | This example shows the reactivity when you modify anything in your component inside splitpanes.#[br]
-        v-btn(color="primary" small @click="generateRandomNumber")
+        v-btn.mt-2.mr-2(color="primary" small @click="generateRandomNumber")
           v-icon.mr-1(size="20") sync
           | Generate 3 random numbers
-        v-btn(color="primary" small @click="incrementNumber(3)")
+        v-btn.mt-2(color="primary" small @click="incrementNumber(3)")
           v-icon.mr-1(size="20") add
           | Increment pane #3
       splitpanes.default-theme.example(style="height: 400px" horizontal)
         pane
           splitpanes
-            pane.layout.column.text-xs-center(v-for="i in 3" :key="i")
+            pane.layout.column.text-center(v-for="i in 3" :key="i")
               span {{ i }}#[br]
               em Number is: {{ randomNums[i] }}#[br]
               em(v-if="i === 2").
@@ -368,7 +368,7 @@
               v-btn.align-center(v-if="i !== 2" small color="primary" @click="randomNums[i] = randomNums[i] + 1" style="min-width: 0")
                 v-icon(size="20") add
                 | 1
-        pane.layout.column.text-xs-center
+        pane.layout.column.text-center
           span 4#[br]
           em.
             - Nested splitpanes -#[br]
@@ -420,14 +420,14 @@
         }
 
       //- Example.
-      h3.mt-5.mb-2.subheading
+      h3.mt-12.pt-8.mb-2.subtitle-1
         a(href="#vue-router") # Vue Router inside splitpanes
         a(name="vue-router")
       p.mb-1.
         This is another reactivity example of a rather common case: Vue Router inside splitpanes.#[br]
         The navigation is in the left pane, but you can also access from outside of splitpanes, through those buttons:
-      v-btn.example-vue-router.ml-0(color="primary" small to="example-home-view") Home view
-      v-btn.example-vue-router(color="primary" small to="example-another-view") Another view
+      v-btn.example-vue-router.my-1.mr-1(color="primary" small to="example-home-view") Home view
+      v-btn.example-vue-router.my-1(color="primary" small to="example-another-view") Another view
 
       splitpanes.default-theme.example-vue-router.mt-2(style="height: 400px")
         pane.layout.column.fill-height(min-size="20")
@@ -487,7 +487,7 @@
         &lt;/template&gt;
 
       //- Example.
-      h3.mt-5.mb-2.subheading
+      h3.mt-12.pt-8.mb-2.subtitle-1
         a(href="#emitted-events") # Listening to emitted events
         a(name="emitted-events")
       p.
@@ -539,7 +539,7 @@
         &lt;/splitpanes&gt;
 
       //- Example.
-      h3.mt-5.mb-2.subheading
+      h3.mt-12.pt-8.mb-2.subtitle-1
         a(href="#increased-touch-zone") # Increased reactive touch zone for touch devices
         a(name="increased-touch-zone")
       p
@@ -600,7 +600,7 @@
         .splitpanes--horizontal &gt; .splitpanes__splitter:before {top: -30px;bottom: -30px;width: 100%;}
 
       //- Example.
-      h3.mt-5.mb-2.subheading
+      h3.mt-12.pt-8.mb-2.subtitle-1
         a(href="#do-your-own-style") # Do your own style
         a(name="do-your-own-style")
       p If you don't want to use the default style, here is how to do your own.
@@ -662,7 +662,7 @@
           background: linear-gradient(0deg, #ccc, #111);
         }
 
-      h2.headline.mt-5.pt-5.mb-2
+      h2.headline.mt-12.pt-12.mb-2
         a(href="#release-notes") Release Notes
         a(name="release-notes")
 
@@ -747,19 +747,22 @@ $secondary-color: #78cfa8;
 //------------------------
 * {margin: 0;padding: 0;}
 
+html {font-size: 14px;}
+
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
   margin-top: 60px;
+  background-color: #fff !important;
 }
 
 a {
   text-decoration: none;
   transition: 0.3s;
 
-  h3 & {color: #333;font-size: 1.5em;}
+  .v-application h3 & {color: #333;font-size: 1.5em;}
   &:hover {color: $secondary-color;}
 }
 
@@ -768,9 +771,7 @@ ul.checklist {
   padding: 0;
 }
 
-.code {
-  font-family: monospace;
-}
+.code {font-family: monospace;}
 
 .splitpanes.example {
   .splitpanes__pane {
@@ -782,7 +783,7 @@ ul.checklist {
   }
 }
 
-.splitpanes span {
+.splitpanes__pane > span {
   font-family: Helvetica, Arial, sans-serif;
   color: #fff;
   font-size: 5em;
