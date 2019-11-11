@@ -1,84 +1,67 @@
 <script>
-
 export default {
-  'name': 'splitpanes',
-  'props': {
-    'horizontal': {
-      'type': Boolean,
-      'required': false,
-      'default': false
-    },
-    'pushOtherPanes': {
-      'type': Boolean,
-      'required': false,
-      'default': true
-    },
-    'dblClickSplitter': {
-      'type': Boolean,
-      'required': false,
-      'default': true
-    }
+  name: 'splitpanes',
+  props: {
+    horizontal: { type: Boolean, default: false },
+    pushOtherPanes: { type: Boolean, default: true },
+    dblClickSplitter: { type: Boolean, default: true }
   },
-  'data': () => ({
-    'container': null,
-    'panes': [],
-    'touch': {
-      'mouseDown': false,
-      'dragging': false,
-      'activeSplitter': null
+  data: () => ({
+    container: null,
+    panes: [],
+    touch: {
+      mouseDown: false,
+      dragging: false,
+      activeSplitter: null
     },
-    'splitterTaps': { // Used to detect double click on touch devices.
-      'splitter': null,
-      'timeoutId': null
+    splitterTaps: { // Used to detect double click on touch devices.
+      splitter: null,
+      timeoutId: null
     }
   }),
-  'watch': {
-    'panes': { // Every time a pane is updated, update the panes accordingly.
-      'deep': true,
-      'immediate': false,
-      handler () {
-        this.updatePanesStyle()
-      }
+
+  watch: {
+    panes: { // Every time a pane is updated, update the panes accordingly.
+      deep: true,
+      immediate: false,
+      handler () { this.updatePanesStyle() }
     },
     direction () {
       this.updatePanesStyle()
     },
     dblClickSplitter (enable) {
       const splitters = [...this.container.querySelectorAll('.splitpanes__splitter')]
-      if (enable) {
-        splitters.forEach((splitter, index) => {
-          splitter.ondblclick = (event) => this.onSplitterDblClick(event, index)
-        })
-      } else {
-        splitters.forEach((splitter) => {
-          splitter.ondblclick = undefined
-        })
-      }
+      splitters.forEach((splitter, i) => {
+        splitter.ondblclick = enable ? event => this.onSplitterDblClick(event, i) : undefined
+      })
     }
   },
-  'methods': {
+
+  methods: {
     updatePanesStyle () {
       // Using `this.$children` here rather than `this.$slots.default` because the latter is sometimes not initialized yet (eg. when this method is called
       // whereas the component is not mounted yet).
       const children = this.$children
-      this.panes.forEach((pane) => {
+      this.panes.forEach(pane => {
         children[pane.index].update({
           [this.horizontal ? 'height' : 'width']: `${pane.size}%`
         })
       })
     },
     bindEvents () {
-      document.addEventListener('mousemove', this.onMouseMove, { 'passive': false })
+      document.addEventListener('mousemove', this.onMouseMove, { passive: false })
       document.addEventListener('mouseup', this.onMouseUp)
+
       // Passive: false to prevent scrolling while touch dragging.
       if ('ontouchstart' in window) {
-        document.addEventListener('touchmove', this.onMouseMove, { 'passive': false })
+        document.addEventListener('touchmove', this.onMouseMove, { passive: false })
         document.addEventListener('touchend', this.onMouseUp)
       }
     },
     unbindEvents () {
       document.removeEventListener('mousemove', this.onMouseMove)
       document.removeEventListener('mouseup', this.onMouseUp)
+
       if ('ontouchstart' in window) {
         document.removeEventListener('touchmove', this.onMouseMove)
         document.removeEventListener('touchend', this.onMouseUp)
@@ -95,12 +78,12 @@ export default {
         event.preventDefault()
         this.touch.dragging = true
         this.calculatePanesSize(this.getCurrentMouseDrag(event))
-        this.$emit('resize', this.panes.map((pane) => ({ 'min': pane.min, 'max': pane.max, 'size': pane.size })))
+        this.$emit('resize', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
       }
     },
     onMouseUp () {
       if (this.touch.dragging) {
-        this.$emit('resized', this.panes.map((pane) => ({ 'min': pane.min, 'max': pane.max, 'size': pane.size })))
+        this.$emit('resized', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
       }
       this.touch.mouseDown = false
       // Keep dragging flag until click event is finished (click happens immediately after mouseup)
@@ -114,6 +97,7 @@ export default {
     onSplitterClick (event, splitterIndex) {
       if ('ontouchstart' in window) {
         event.preventDefault()
+
         if (this.splitterTaps.splitter === splitterIndex) {
           clearTimeout(this.spltterTaps.timeoutId)
           this.splitterTaps.timeoutId = null
@@ -126,18 +110,15 @@ export default {
         }
       }
 
-      if (!this.touch.dragging) {
-        this.$emit('splitter-click', this.panes[splitterIndex])
-      }
+      if (!this.touch.dragging) this.$emit('splitter-click', this.panes[splitterIndex])
     },
     // On splitter dbl click or dbl tap maximize this pane.
     onSplitterDblClick (event, splitterIndex) {
       let totalMinSizes = 0
       this.panes = this.panes.map((pane, i) => {
         pane.size = i === splitterIndex ? pane.max : pane.min
-        if (i !== splitterIndex) {
-          totalMinSizes += pane.min
-        }
+        if (i !== splitterIndex) totalMinSizes += pane.min
+
         return pane
       })
       this.panes[splitterIndex].size -= totalMinSizes
@@ -151,8 +132,8 @@ export default {
       const rect = this.container.getBoundingClientRect()
       const { clientX, clientY } = ('ontouchstart' in window && event.touches) ? event.touches[0] : event
       return {
-        'x': clientX - rect.left,
-        'y': clientY - rect.top
+        x: clientX - rect.left,
+        y: clientY - rect.top
       }
     },
     // Returns the drag percentage of the splitter relative to the 2 panes it's inbetween.
@@ -166,10 +147,10 @@ export default {
     calculatePanesSize (drag) {
       const splitterIndex = this.touch.activeSplitter
       let sums = {
-        'prevPanesSize': this.sumPrevPanesSize(splitterIndex),
-        'nextPanesSize': this.sumNextPanesSize(splitterIndex),
-        'prevReachedMinPanes': 0,
-        'nextReachedMinPanes': 0
+        prevPanesSize: this.sumPrevPanesSize(splitterIndex),
+        nextPanesSize: this.sumNextPanesSize(splitterIndex),
+        prevReachedMinPanes: 0,
+        nextReachedMinPanes: 0
       }
 
       const minDrag = 0 + (this.pushOtherPanes ? 0 : sums.prevPanesSize)
@@ -421,20 +402,23 @@ export default {
       })
     }
   },
+
   updated () {
     this.update()
   },
+
   mounted () {
     this.container = this.$refs.container
     this.update()
     this.$emit('ready')
   },
+
   render (h) {
     return h(
       'div',
       {
-        'ref': 'container',
-        'class': [
+        ref: 'container',
+        class: [
           'splitpanes',
           `splitpanes--${this.horizontal ? 'horizontal' : 'vertical'}`,
           {
