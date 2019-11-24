@@ -20,20 +20,9 @@ export default {
     }
   }),
 
-  watch: {
-    panes: { // Every time a pane is updated, update the panes accordingly.
-      deep: true,
-      immediate: false,
-      handler () { this.updatePanesStyle() }
-    },
-    direction () {
-      this.updatePanesStyle()
-    },
-    dblClickSplitter (enable) {
-      const splitters = [...this.container.querySelectorAll('.splitpanes__splitter')]
-      splitters.forEach((splitter, i) => {
-        splitter.ondblclick = enable ? event => this.onSplitterDblClick(event, i) : undefined
-      })
+  computed: {
+    panesCount () {
+      return this.panes.length
     }
   },
 
@@ -59,11 +48,11 @@ export default {
       }
     },
     unbindEvents () {
-      document.removeEventListener('mousemove', this.onMouseMove)
+      document.removeEventListener('mousemove', this.onMouseMove, { passive: false })
       document.removeEventListener('mouseup', this.onMouseUp)
 
       if ('ontouchstart' in window) {
-        document.removeEventListener('touchmove', this.onMouseMove)
+        document.removeEventListener('touchmove', this.onMouseMove, { passive: false })
         document.removeEventListener('touchend', this.onMouseUp)
       }
     },
@@ -102,7 +91,8 @@ export default {
           clearTimeout(this.spltterTaps.timeoutId)
           this.splitterTaps.timeoutId = null
           this.onSplitterDblClick(event, splitterIndex)
-        } else {
+        }
+        else {
           this.splitterTaps.splitter = splitterIndex
           this.splitterTaps.timeoutId = setTimeout(() => {
             this.splitterTaps.splitter = null
@@ -169,7 +159,8 @@ export default {
         if (paneBeforeMaxReached) {
           paneBefore.size = paneBefore.max
           paneAfter.size = Math.max(100 - paneBefore.max - sums.prevPanesSize - sums.nextPanesSize, 0)
-        } else {
+        }
+        else {
           paneBefore.size = Math.max(100 - paneAfter.max - sums.prevPanesSize - this.sumNextPanesSize(splitterIndex + 1), 0)
           paneAfter.size = paneAfter.max
         }
@@ -179,9 +170,8 @@ export default {
       // When pushOtherPanes = true, find the closest expanded pane on each side of the splitter.
       if (this.pushOtherPanes) {
         const vars = this.doPushOtherPanes(sums, dragPercentage)
-        if (!vars) {
-          return // Prevent other calculation.
-        }
+        if (!vars) return // Prevent other calculation.
+
         ({ sums, panesToResize } = vars)
         paneBefore = this.panes[panesToResize[0]] || null
         paneAfter = this.panes[panesToResize[1]] || null
@@ -245,14 +235,14 @@ export default {
         // If nothing else to push up, cancel dragging.
         if (panesToResize[1] === undefined) {
           sums.nextReachedMinPanes = 0
-          this.panes[this.panes.length - 1].size = this.panes[this.panes.length - 1].min
+          this.panes[this.panesCount - 1].size = this.panes[this.panesCount - 1].min
           this.panes.forEach((pane, i) => {
-            if (i < this.panes.length - 1 && i >= splitterIndex + 1) {
+            if (i < this.panesCount - 1 && i >= splitterIndex + 1) {
               pane.size = pane.min
               sums.nextReachedMinPanes += pane.min
             }
           })
-          this.panes[panesToResize[0]].size = 100 - sums.prevPanesSize - sums.nextReachedMinPanes - this.panes[this.panes.length - 1].min - sums.nextPanesSize
+          this.panes[panesToResize[0]].size = 100 - sums.prevPanesSize - sums.nextReachedMinPanes - this.panes[this.panesCount - 1].min - sums.nextPanesSize
           return null
         }
       }
@@ -266,7 +256,7 @@ export default {
     },
     // Return the previous pane from siblings which has a size (width for vert or height for horz) of more than 0.
     findPrevExpandedPane (splitterIndex) {
-      const pane = [...this.panes].reverse().find((p) => (p.index < splitterIndex && p.size > p.min))
+      const pane = [...this.panes].reverse().find(p => (p.index < splitterIndex && p.size > p.min))
       return pane || {}
     },
     // Return the next pane from siblings which has a size (width for vert or height for horz) of more than 0.
@@ -278,9 +268,11 @@ export default {
     update () {
       let lastIsPane = false
       let nbPanes = 0
-      let setPanesSizesToDefault = false;
+      let setPanesSizesToDefault = false
+      let domNodes = [...this.container.children]
+
       // Loop through children: some panes and splitters may have been reused by Vue.js recycling mechanism.
-      [...this.container.children].forEach((child) => {
+      domNodes.forEach(child => {
         if (child.classList.contains('splitpanes__pane')) { // Pane
           const paneIndex = nbPanes
 
@@ -289,13 +281,14 @@ export default {
             const elm = document.createElement('div')
             elm.classList.add('splitpanes__splitter')
             elm.setAttribute('data-splitpanes-index', splitterIndex)
-            elm.onmousedown = (event) => this.onMouseDown(event, splitterIndex)
+            elm.onmousedown = event => this.onMouseDown(event, splitterIndex)
+
             if (typeof window !== 'undefined' && 'ontouchstart' in window) {
-              elm.ontouchstart = (event) => this.onMouseDown(event, splitterIndex)
+              elm.ontouchstart = event => this.onMouseDown(event, splitterIndex)
             }
-            elm.onclick = (event) => this.onSplitterClick(event, splitterIndex + 1)
+            elm.onclick = event => this.onSplitterClick(event, splitterIndex + 1)
             if (this.dblClickSplitter) {
-              elm.ondblclick = (event) => this.onSplitterDblClick(event, splitterIndex + 1)
+              elm.ondblclick = event => this.onSplitterDblClick(event, splitterIndex + 1)
             }
 
             child.parentNode.insertBefore(elm, child)
@@ -311,29 +304,28 @@ export default {
           // Otherwise, update the pane information.
           child.setAttribute('id', `pane_${paneIndex}`)
           child.setAttribute('data-splitpanes-index', paneIndex)
-          child.onclick = (event) => this.onPaneClick(event, paneIndex)
+          child.onclick = event => this.onPaneClick(event, paneIndex)
 
           // Get pane size.
           const vm = this.$children[paneIndex]
           let size = 0
           if (!setPanesSizesToDefault) {
             if (typeof vm.size === 'undefined') {
-              // No 'size' prop set, the size will be set to "100 / nbPanes" after this loop since we don't know yet how many panes there are.
+              // No 'size' prop set, the size will be set to `100 / nbPanes` after this loop since we don't know yet how many panes there are.
               setPanesSizesToDefault = true
-            } else {
-              // The size is given in prop.
-              size = Number.parseFloat(vm.size)
             }
+            else size = parseFloat(vm.size) // The size is given in prop.
           }
 
           // Update `this.panes` with the new pane information.
           this.$set(this.panes, paneIndex, {
-            'index': paneIndex,
-            'min': (typeof vm.minSize === 'undefined') ? 0 : Number.parseFloat(vm.minSize),
-            'max': (typeof vm.maxSize === 'undefined') ? 100 : Number.parseFloat(vm.maxSize),
+            index: paneIndex,
+            min: (typeof vm.minSize === 'undefined') ? 0 : parseFloat(vm.minSize),
+            max: (typeof vm.maxSize === 'undefined') ? 100 : parseFloat(vm.maxSize),
             size
           })
-        } else { // Splitter
+        }
+        else { // Splitter
           if (!lastIsPane) {
             // The previous child is already a splitter, so we need to remove this one.
             child.onmousedown = undefined
@@ -357,19 +349,18 @@ export default {
           }
           // Update the splitter information.
           child.setAttribute('data-splitpanes-index', splitterIndex)
-          child.onmousedown = (event) => this.onMouseDown(event, splitterIndex)
-          child.onclick = (event) => this.onSplitterClick(event, splitterIndex)
+          child.onmousedown = event => this.onMouseDown(event, splitterIndex)
+          child.onclick = event => this.onSplitterClick(event, splitterIndex)
           if (this.dblClickSplitter) {
-            child.ondblclick = (event) => this.onSplitterDblClick(event, splitterIndex)
+            child.ondblclick = event => this.onSplitterDblClick(event, splitterIndex)
           }
         }
       });
 
       // Remove the trailing splitter if any.
-      [...this.container.children].reverse().some((child) => {
-        if (child.classList.contains('splitpanes__pane')) {
-          return true
-        }
+      domNodes.reverse().some(child => {
+        if (child.classList.contains('splitpanes__pane')) return true
+
         if (child.classList.contains('splitpanes__splitter')) {
           child.onmousedown = undefined
           child.onclick = undefined
@@ -380,17 +371,17 @@ export default {
         return false
       })
 
-      if (this.panes.length > nbPanes) {
+      // Removing panes.
+      if (this.panesCount > nbPanes) {
         // There are less panes than before, so we need to remove the unused ones from `this.panes`.
-        this.panes.splice(nbPanes, this.panes.length - nbPanes + 1)
+        this.panes.splice(nbPanes, this.panesCount - nbPanes + 1)
+        this.distributeEmptySpace()
       }
 
       if (setPanesSizesToDefault) {
         // If some panes have no `size` prop set, then we compute and set their default size.
-        const size = 100 / this.panes.length
-        this.panes.forEach((pane) => {
-          pane.size = size
-        })
+        const size = 100 / this.panesCount
+        this.panes.forEach(pane => (pane.size = size))
       }
     },
     // Called by pane component on programmatic resize.
@@ -399,6 +390,66 @@ export default {
       const pane = this.panes[index]
       Object.entries(args).forEach(([key, value]) => {
         pane[key] = value
+      })
+    },
+
+    distributeEmptySpace () {
+      let growablePanes = []
+      let collapsedPanesCount = 0
+      let growableAmount = 0 // Total of how much the current panes can grow to fill blank space.
+      let spaceToDistribute = 100 - this.panes.reduce((sum, pane) => (sum += pane.size) && sum, 0)
+      // Do a first loop to determine if we can distribute the new blank space between all the
+      // expandedPanes, without expanding the collapsed ones.
+      this.panes.forEach(pane => {
+        if (pane.size < pane.max) growablePanes.push(pane)
+
+        if (!pane.size) collapsedPanesCount++
+        else growableAmount += pane.max - pane.size
+      })
+
+      // If the blank space to distribute is too great for the expanded panes, also expand collapsed ones.
+      let expandCollapsedPanes = growableAmount < spaceToDistribute
+
+      // New space to distribute equally.
+      let growablePanesCount = (growablePanes.length - (expandCollapsedPanes ? 0 : collapsedPanesCount))
+      let equalSpaceToDistribute = spaceToDistribute / growablePanesCount
+      // if (growablePanesCount === 1) equalSpace = 100 / this.panesCount
+      let spaceLeftToDistribute = spaceToDistribute
+
+      // Now add the equalSpaceToDistribute to each pane size accordingly.
+      growablePanes.forEach(pane => {
+        if (pane.size < pane.max && (pane.size || (!pane.size && expandCollapsedPanes))) {
+          const newSize = Math.min(pane.size + equalSpaceToDistribute, pane.max)
+          let allocatedSpace = (newSize - pane.size)
+          spaceLeftToDistribute -= allocatedSpace
+          pane.size = newSize
+          // If the equalSpaceToDistribute is not fully added to the current pane, distribute the remainder
+          // to the next panes.
+          // Also fix decimal issue due to bites - E.g. calculating 8.33 and getting 8.3299999999999
+          if (equalSpaceToDistribute - allocatedSpace > 0.1) equalSpaceToDistribute = spaceLeftToDistribute / (--growablePanesCount)
+        }
+      })
+
+      // Fix decimal issue due to bites - if there is still space to allocate show warning message.
+      if (~~spaceLeftToDistribute) {
+        // console.warn('Splitpanes: Could not distribute all the empty space between panes due to their constraints.')
+      }
+    }
+  },
+
+  watch: {
+    panes: { // Every time a pane is updated, update the panes accordingly.
+      deep: true,
+      immediate: false,
+      handler () { this.updatePanesStyle() }
+    },
+    direction () {
+      this.updatePanesStyle()
+    },
+    dblClickSplitter (enable) {
+      const splitters = [...this.container.querySelectorAll('.splitpanes__splitter')]
+      splitters.forEach((splitter, i) => {
+        splitter.ondblclick = enable ? event => this.onSplitterDblClick(event, i) : undefined
       })
     }
   },
@@ -430,7 +481,6 @@ export default {
     )
   }
 }
-
 </script>
 
 <style lang="scss">

@@ -294,10 +294,13 @@
         v-btn.ml-2(color="primary" small @click="panesNumber++")
           v-icon.mr-1 add
           | Add pane
+        v-btn.ml-2(color="primary" small @click="panesNumber--")
+          v-icon.mr-1 remove
+          | Remove pane
 
       splitpanes.default-theme.example(style="height: 400px")
         pane(v-for="i in panesNumber" :key="i")
-          span {{ i }}
+            span {{ i }}
 
       ssh-pre(language="html-vue" label="HTML").
         &lt;button @click="panesNumber++"&gt;Add pane&lt;/button&gt;
