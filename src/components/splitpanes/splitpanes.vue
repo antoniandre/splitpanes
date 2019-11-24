@@ -298,7 +298,7 @@ export default {
               elm.ondblclick = (event) => this.onSplitterDblClick(event, splitterIndex + 1)
             }
 
-            child.before(elm)
+            child.parentNode.insertBefore(elm, child)
           }
 
           lastIsPane = true
