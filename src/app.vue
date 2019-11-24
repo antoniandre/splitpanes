@@ -676,13 +676,10 @@
             li
               strong.
                 Children now must be wrapped into a #[span.code `pane`] component.
+            li The attribute #[span.code `splitpanes-size`] is now replaced with #[span.code `size`] on the `pane` component.
             li you can still add CSS classes on the #[span.code `pane`] component tag.
         | #[strong Version 1.14.0] Programmatically set pane size
         highlight-message(type="success")
-          strong.
-            The attribute #[span.code `splitpanes-size`] is now replaced with
-            #[span.code `splitpanes-size`]. You can use it to set a default pane width or height,
-            or to programmatically change a pane width or height.
       div #[strong Version 1.13.0] Emit event on splitter click
       div #[strong Version 1.12.0] double click splitter to maximize is now an option
       div #[strong Version 1.11.0] Persist panes size after slots changed
