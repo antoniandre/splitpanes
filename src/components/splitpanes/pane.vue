@@ -1,3 +1,10 @@
+<template>
+<div class="splitpanes__pane" :style="style">
+  <slot/>
+</div>
+</template>
+
+<script>
 export default {
   name: 'pane',
   props: {
@@ -9,6 +16,23 @@ export default {
   data: () => ({
     style: {}
   }),
+
+  created () {
+    console.log('created pane!')
+    this.$parent.onPaneAdd(this)
+  },
+
+  destroyed () {
+    console.log('destroyed pane!')
+    this.$parent.onPaneRemove(this)
+  },
+
+  methods: {
+    // Called from the splitpanes component.
+    update (style) {
+      this.style = style
+    }
+  },
 
   computed: {
     sizeNumber () {
@@ -34,17 +58,12 @@ export default {
     }
   },
 
-  methods: {
-    update (style) {
-      this.style = style
-    }
-  },
-
-  render (h) {
-    return h(
-      'div',
-      { class: ['splitpanes__pane'], style: this.style },
-      this.$slots.default
-    )
-  }
+  // render (h) {
+  //   return h(
+  //     'div',
+  //     { class: ['splitpanes__pane'], style: this.style },
+  //     this.$slots.default
+  //   )
+  // }
 }
+</script>

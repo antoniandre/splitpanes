@@ -289,6 +289,7 @@ export default {
       let setPanesSizesToDefault = false
       let domNodes = [...this.container.children]
       const domNodesCount = domNodes.length
+      console.log(domNodes)
 
       // Loop through children: some panes and splitters may have been reused by Vue.js recycling mechanism.
       domNodes.forEach((child, i) => {
@@ -409,6 +410,18 @@ export default {
       Object.entries(args).forEach(([key, value]) => pane[key] = value)
     },
 
+    onPaneAdd () {
+      // 1. Add.
+      // 2. Resize the panes around.
+      // 3. Fire `pane-add` event.
+    },
+
+    onPaneRemove () {
+      // 1. Remove.
+      // 2. Resize the panes around.
+      // 3. Fire `pane-remove` event.
+    },
+
     redistributeSpaceEvenly () {
       const size = 100 / this.panesCount
       this.panes.forEach(pane => (pane.size = size))
@@ -455,7 +468,7 @@ export default {
 
       // if there is still space to allocate show warning message.
       if (~~spaceLeftToDistribute) {
-        console.warn('Splitpanes: Could not distribute all the empty space between panes due to their constraints.')
+        // console.warn('Splitpanes: Could not distribute all the empty space between panes due to their constraints.')
       }
 
       this.$emit('resized', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
