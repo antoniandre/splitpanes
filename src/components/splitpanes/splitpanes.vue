@@ -445,7 +445,7 @@ export default {
       immediate: false,
       handler () { this.updatePanesStyle() }
     },
-    direction () {
+    horizontal () {
       this.updatePanesStyle()
     },
     dblClickSplitter (enable) {
