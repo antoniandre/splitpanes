@@ -430,10 +430,12 @@ export default {
         }
       })
 
-      // Fix decimal issue due to bites - if there is still space to allocate show warning message.
+      // if there is still space to allocate show warning message.
       if (~~spaceLeftToDistribute) {
         // console.warn('Splitpanes: Could not distribute all the empty space between panes due to their constraints.')
       }
+
+      this.$emit('resized', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
     }
   },
 
