@@ -17,15 +17,15 @@ export default {
     style: {}
   }),
 
-  created () {
-    console.log('created pane!')
-    this.$parent.onPaneAdd(this)
-  },
+  // created () {
+  //   console.log('created pane!')
+  //   this.$parent.onPaneAdd(this)
+  // },
 
-  destroyed () {
-    console.log('destroyed pane!')
-    this.$parent.onPaneRemove(this)
-  },
+  // destroyed () {
+  //   console.log('destroyed pane!')
+  //   this.$parent.onPaneRemove(this)
+  // },
 
   methods: {
     // Called from the splitpanes component.
