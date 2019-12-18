@@ -297,10 +297,7 @@ div
       v-icon.mr-1 remove
       | Remove pane
 
-  splitpanes.default-theme.example(
-    @resize="log('resize', $event)"
-    @resized="log('resized', $event)"
-    style="height: 400px")
+  splitpanes.default-theme.example(style="height: 400px")
     pane(v-for="i in panesNumber" :key="i")
         span {{ i }}
 
