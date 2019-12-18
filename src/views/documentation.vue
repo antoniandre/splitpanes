@@ -346,8 +346,7 @@ div
     // In your Vue component.
     data: () => ({
       paneSize: 50
-    }),
-    }
+    })
 
   //- Example.
   h3.mt-12.pt-8.mb-2.subtitle-1
