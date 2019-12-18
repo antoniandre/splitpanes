@@ -28,8 +28,8 @@ export default {
 
   methods: {
     updatePanesStyle () {
-      // Using `this.$children` here rather than `this.$slots.default` because the latter is sometimes not initialized yet (eg. when this method is called
-      // whereas the component is not mounted yet).
+      // Using `this.$children` here rather than `this.$slots.default` because the latter might not yet be initialized.
+      // (when called before mounted)
       const children = this.$children
       this.panes.forEach(pane => {
         children[pane.index].update({
@@ -37,6 +37,7 @@ export default {
         })
       })
     },
+
     bindEvents () {
       document.addEventListener('mousemove', this.onMouseMove, { passive: false })
       document.addEventListener('mouseup', this.onMouseUp)
@@ -47,6 +48,7 @@ export default {
         document.addEventListener('touchend', this.onMouseUp)
       }
     },
+
     unbindEvents () {
       document.removeEventListener('mousemove', this.onMouseMove, { passive: false })
       document.removeEventListener('mouseup', this.onMouseUp)
@@ -56,11 +58,13 @@ export default {
         document.removeEventListener('touchend', this.onMouseUp)
       }
     },
+
     onMouseDown (event, splitterIndex) {
       this.bindEvents()
       this.touch.mouseDown = true
       this.touch.activeSplitter = splitterIndex
     },
+
     onMouseMove (event) {
       if (this.touch.mouseDown) {
         // Prevent scrolling while touch dragging (only works with an active event, eg. passive: false).
@@ -70,6 +74,7 @@ export default {
         this.$emit('resize', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
       }
     },
+
     onMouseUp () {
       if (this.touch.dragging) {
         this.$emit('resized', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
@@ -82,6 +87,7 @@ export default {
         this.unbindEvents()
       }, 100)
     },
+
     // If touch device, detect double tap manually (2 taps separated by less than 500ms).
     onSplitterClick (event, splitterIndex) {
       if ('ontouchstart' in window) {
@@ -102,6 +108,7 @@ export default {
 
       if (!this.touch.dragging) this.$emit('splitter-click', this.panes[splitterIndex])
     },
+
     // On splitter dbl click or dbl tap maximize this pane.
     onSplitterDblClick (event, splitterIndex) {
       let totalMinSizes = 0
@@ -114,9 +121,11 @@ export default {
       this.panes[splitterIndex].size -= totalMinSizes
       this.$emit('pane-maximize', this.panes[splitterIndex])
     },
+
     onPaneClick (event, paneIndex) {
       this.$emit('pane-click', this.panes[paneIndex])
     },
+
     // Get the cursor position relative to the splitpane container.
     getCurrentMouseDrag (event) {
       const rect = this.container.getBoundingClientRect()
@@ -126,6 +135,7 @@ export default {
         y: clientY - rect.top
       }
     },
+
     // Returns the drag percentage of the splitter relative to the 2 panes it's inbetween.
     // if the sum of size of the 2 cells is 60%, the dragPercentage range will be 0 to 100% of this 60%.
     getCurrentDragPercentage (drag) {
@@ -134,6 +144,7 @@ export default {
       const containerSize = this.container[this.horizontal ? 'clientHeight' : 'clientWidth']
       return drag * 100 / containerSize
     },
+
     calculatePanesSize (drag) {
       const splitterIndex = this.touch.activeSplitter
       let sums = {
@@ -184,6 +195,7 @@ export default {
         paneAfter.size = Math.min(Math.max(100 - dragPercentage - sums.nextPanesSize - sums.nextReachedMinPanes, paneAfter.min), paneAfter.max)
       }
     },
+
     doPushOtherPanes (sums, dragPercentage) {
       const splitterIndex = this.touch.activeSplitter
       const panesToResize = [splitterIndex, splitterIndex + 1]
@@ -248,35 +260,42 @@ export default {
       }
       return { sums, panesToResize }
     },
+
     sumPrevPanesSize (splitterIndex) {
       return this.panes.reduce((total, pane, i) => total + (i < splitterIndex ? pane.size : 0), 0)
     },
+
     sumNextPanesSize (splitterIndex) {
       return this.panes.reduce((total, pane, i) => total + (i > splitterIndex + 1 ? pane.size : 0), 0)
     },
+
     // Return the previous pane from siblings which has a size (width for vert or height for horz) of more than 0.
     findPrevExpandedPane (splitterIndex) {
       const pane = [...this.panes].reverse().find(p => (p.index < splitterIndex && p.size > p.min))
       return pane || {}
     },
+
     // Return the next pane from siblings which has a size (width for vert or height for horz) of more than 0.
     findNextExpandedPane (splitterIndex) {
       const pane = this.panes.find((p) => (p.index > splitterIndex + 1 && p.size > p.min))
       return pane || {}
     },
+
     // Called when the component is mounted and updated: update the panes and splitter as needed.
     update () {
-      let lastIsPane = false
+      let lastNodeIsPane = false
       let nbPanes = 0
       let setPanesSizesToDefault = false
       let domNodes = [...this.container.children]
 
       // Loop through children: some panes and splitters may have been reused by Vue.js recycling mechanism.
       domNodes.forEach(child => {
-        if (child.classList.contains('splitpanes__pane')) { // Pane
+        // The node is a Pane.
+        if (child.classList.contains('splitpanes__pane')) {
           const paneIndex = nbPanes
 
-          if (lastIsPane) { // The previous child is a pane: we need to create a new splitter in between.
+          // The previous child is a pane: we need to create a new splitter in between.
+          if (lastNodeIsPane) {
             const splitterIndex = paneIndex - 1
             const elm = document.createElement('div')
             elm.classList.add('splitpanes__splitter')
@@ -294,12 +313,10 @@ export default {
             child.parentNode.insertBefore(elm, child)
           }
 
-          lastIsPane = true
+          lastNodeIsPane = true
           nbPanes++
-          if (child.getAttribute('data-splitpanes-index') === paneIndex.toString()) {
-            // The pane has been recycled and is at the correct position: nothing to change.
-            return
-          }
+          // The pane has been recycled and is at the correct position: nothing to change.
+          if (child.getAttribute('data-splitpanes-index') === paneIndex.toString()) return
 
           // Otherwise, update the pane information.
           child.setAttribute('id', `pane_${paneIndex}`)
@@ -311,11 +328,14 @@ export default {
           let size = 0
           if (!setPanesSizesToDefault) {
             if (typeof vm.size === 'undefined') {
-              // No 'size' prop set, the size will be set to `100 / nbPanes` after this loop since we don't know yet how many panes there are.
+              // No 'size' prop set, the size will be set to `100 / nbPanes` after this loop since
+              // we don't know how many panes there are yet.
               setPanesSizesToDefault = true
             }
             else size = parseFloat(vm.size) // The size is given in prop.
           }
+
+          const paneAdded = this.ready && paneIndex && this.panes.length <= paneIndex
 
           // Update `this.panes` with the new pane information.
           this.$set(this.panes, paneIndex, {
@@ -324,9 +344,14 @@ export default {
             max: (typeof vm.maxSize === 'undefined') ? 100 : parseFloat(vm.maxSize),
             size
           })
+
+          if (paneAdded) {
+            this.$emit('pane-added', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
+          }
         }
-        else { // Splitter
-          if (!lastIsPane) {
+        // The node is a Splitter.
+        else {
+          if (!lastNodeIsPane) {
             // The previous child is already a splitter, so we need to remove this one.
             child.onmousedown = undefined
             child.onclick = undefined
@@ -335,7 +360,7 @@ export default {
             return
           }
 
-          lastIsPane = false
+          lastNodeIsPane = false
           const splitterIndex = nbPanes - 1
           if (child.hasAttribute('data-splitpanes-index')) {
             if (child.getAttribute('data-splitpanes-index') === splitterIndex.toString()) {
@@ -376,14 +401,13 @@ export default {
         // There are less panes than before, so we need to remove the unused ones from `this.panes`.
         this.panes.splice(nbPanes, this.panesCount - nbPanes + 1)
         this.distributeEmptySpace()
+        this.$emit('pane-removed', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
       }
 
-      if (setPanesSizesToDefault) {
-        // If some panes have no `size` prop set, then we compute and set their default size.
-        const size = 100 / this.panesCount
-        this.panes.forEach(pane => (pane.size = size))
-      }
+      // If some panes have no `size` prop set, then we compute and set their default size.
+      if (setPanesSizesToDefault) this.redistributeSpaceEvenly()
     },
+
     // Called by pane component on programmatic resize.
     requestUpdate ({ target, ...args }) {
       const index = target.$el.getAttribute('data-splitpanes-index')
@@ -391,6 +415,13 @@ export default {
       Object.entries(args).forEach(([key, value]) => {
         pane[key] = value
       })
+    },
+
+    redistributeSpaceEvenly () {
+      const size = 100 / this.panesCount
+      this.panes.forEach(pane => (pane.size = size))
+
+      if (this.ready) this.$emit('resized', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
     },
 
     distributeEmptySpace () {
@@ -464,6 +495,7 @@ export default {
     this.container = this.$refs.container
     this.update()
     this.$emit('ready')
+    this.ready = true
   },
 
   render (h) {
