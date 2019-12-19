@@ -5,7 +5,7 @@ export default {
     horizontal: { type: Boolean, default: false },
     pushOtherPanes: { type: Boolean, default: true },
     dblClickSplitter: { type: Boolean, default: true },
-    firstSplitter: { type: Boolean, default: true }
+    firstSplitter: { type: Boolean, default: false }
   },
   data: () => ({
     container: null,
@@ -372,7 +372,7 @@ export default {
         // There are less panes than before, so we need to remove the unused ones from `this.panes`.
         this.panes.splice(panesCount, this.panesCount - panesCount + 1)
         this.distributeEmptySpace()
-        this.$emit('pane-removed', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
+        this.$emit('pane-remove', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
       }
 
       // Remove the very first splitter (before the first pane) if only one pane.
@@ -422,7 +422,7 @@ export default {
       // 2. Resize the panes around.
       // 3. Fire `pane-add` event.
       console.log('added pane at position', index)
-      this.$emit('pane-added', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
+      this.$emit('pane-add', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
     },
 
     onPaneRemove () {
