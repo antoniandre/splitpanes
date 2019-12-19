@@ -9,6 +9,7 @@ export default {
   },
   data: () => ({
     container: null,
+    ready: false,
     panes: [],
     touch: {
       mouseDown: false,
@@ -63,10 +64,7 @@ export default {
     onMouseDown (event, splitterIndex) {
       this.bindEvents()
       this.touch.mouseDown = true
-      // this.touch.activeSplitter = splitterIndex
-      this.touch.activeSplitter = parseInt(event.currentTarget.previousSibling.getAttribute('data-splitpanes-index'))
-      // debugger
-      console.log('mousedown on splitter', this.touch.activeSplitter)
+      this.touch.activeSplitter = splitterIndex
     },
 
     onMouseMove (event) {
@@ -134,6 +132,7 @@ export default {
     getCurrentMouseDrag (event) {
       const rect = this.container.getBoundingClientRect()
       const { clientX, clientY } = ('ontouchstart' in window && event.touches) ? event.touches[0] : event
+
       return {
         x: clientX - rect.left,
         y: clientY - rect.top
@@ -161,6 +160,7 @@ export default {
       const minDrag = 0 + (this.pushOtherPanes ? 0 : sums.prevPanesSize)
       const maxDrag = 100 - (this.pushOtherPanes ? 0 : sums.nextPanesSize)
       const dragPercentage = Math.max(Math.min(this.getCurrentDragPercentage(drag), maxDrag), minDrag)
+      console.log(sums)
 
       // If not pushing other panes, panes to resize are right before and right after splitter.
       let panesToResize = [splitterIndex, splitterIndex + 1]
@@ -281,7 +281,7 @@ export default {
 
     // Return the next pane from siblings which has a size (width for vert or height for horz) of more than 0.
     findNextExpandedPane (splitterIndex) {
-      const pane = this.panes.find((p) => (p.index > splitterIndex + 1 && p.size > p.min))
+      const pane = this.panes.find(p => (p.index > splitterIndex + 1 && p.size > p.min))
       return pane || {}
     },
 
@@ -309,7 +309,7 @@ export default {
 
         // Node is a Pane.
         // ----------------------------------------------------------------- //
-        if (isPane) {
+        /* if (isPane) {
           const paneIndex = panesCount
 
           if (this.firstSplitter && !i) this.addSplitter(paneIndex, child, true)
@@ -320,11 +320,11 @@ export default {
           previousNodeIsPane = true
           panesCount++
           // The pane has been recycled and is at the correct position: nothing to change.
-          if (child.getAttribute('data-splitpanes-index') === paneIndex.toString()) return
+          // if (child.getAttribute('data-splitpanes-index') === paneIndex.toString()) return
 
           // Otherwise, update the pane information.
           child.setAttribute('id', `pane_${paneIndex}`)
-          child.setAttribute('data-splitpanes-index', paneIndex)
+          // child.setAttribute('data-splitpanes-index', paneIndex)
           child.onclick = event => this.onPaneClick(event, paneIndex)
 
           // Get pane size.
@@ -351,35 +351,37 @@ export default {
 
           if (paneAdded) this.onPaneAdd(paneIndex - 1)
           return
-        }
+        } */
 
         // Node is a Splitter.
         // ----------------------------------------------------------------- //
-        if (isSplitter) {
-          const isFirstSplitter = !i && this.firstSplitter
-          // Remove splitter if found at the last position, or directly after a splitter.
-          if (i === domNodesCount - 1 || (!previousNodeIsPane && !isFirstSplitter)) {
-            this.removeSplitter(child)
-            return
-          }
+        // if (isSplitter) {
+        //   const isFirstSplitter = !i && this.firstSplitter
+        //   // Remove splitter if found at the last position, or directly after a splitter.
+        //   if (i === domNodesCount - 1 || (!previousNodeIsPane && !isFirstSplitter)) {
+        //     this.removeSplitter(child)
+        //     return
+        //   }
 
-          previousNodeIsPane = false
-        }
+        //   previousNodeIsPane = false
+        // }
       })
 
       // A Pane has been removed.
-      if (this.panesCount > panesCount) {
-        // There are less panes than before, so we need to remove the unused ones from `this.panes`.
-        this.panes.splice(panesCount, this.panesCount - panesCount + 1)
-        this.distributeEmptySpace()
-        this.$emit('pane-remove', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
-      }
+      // if (this.panesCount > panesCount) {
+      //   // There are less panes than before, so we need to remove the unused ones from `this.panes`.
+      //   this.panes.splice(panesCount, this.panesCount - panesCount + 1)
+      //   this.distributeEmptySpace()
+      //   this.$emit('pane-remove', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
+      // }
 
       // Remove the very first splitter (before the first pane) if only one pane.
-      if (panesCount <= 1 && this.firstSplitter) this.removeSplitter(domNodes[0])
+      // if (panesCount <= 1 && this.firstSplitter) this.removeSplitter(domNodes[0])
 
       // If some panes have no `size` prop set, then we compute and set their default size.
-      if (setPanesSizesToDefault) this.redistributeSpaceEvenly()
+      // if (setPanesSizesToDefault) this.redistributeSpaceEvenly()
+
+      console.log(this.panes.map(item => item.size))
     },
 
     addSplitter (paneIndex, nextPaneNode, isVeryFirst = false) {
@@ -417,18 +419,50 @@ export default {
       Object.entries(args).forEach(([key, value]) => pane[key] = value)
     },
 
-    onPaneAdd (index) {
-      // 1. Add.
-      // 2. Resize the panes around.
-      // 3. Fire `pane-add` event.
-      console.log('added pane at position', index)
+    onPaneAdd (pane) {
+      // 1. Add pane to array.
+      // 2. Add the splitter.
+      // 3. Resize the panes.
+      // 4. Fire `pane-add` event.
+      const index = this.panes.length
+      this.panes.push({
+        id: pane._uid,
+        index,
+        min: (typeof pane.minSize === 'undefined') ? 0 : parseFloat(pane.minSize || 0),
+        max: (typeof pane.maxSize === 'undefined') ? 100 : parseFloat(pane.maxSize || 0),
+        size: parseFloat(pane.size || 0)
+      })
+
+      if (this.ready && this.sumPrevPanesSize(index) < 100) this.redistributeSpaceEvenly()
       this.$emit('pane-add', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
+      console.log('added pane at position', index, this.panes, pane, pane.$el, {ready: this.ready})
+      if (index || (!index && this.firstSplitter)) this.addSplitter(index, pane.$el)
     },
 
-    onPaneRemove () {
-      // 1. Remove.
-      // 2. Resize the panes around.
-      // 3. Fire `pane-remove` event.
+    onPaneRemove (pane) {
+      // 1. Remove the pane from array.
+      // 2. Remove the splitter.
+      // 3. Resize the panes.
+      // 4. Fire `pane-remove` event.
+      this.panes.splice(this.panes.findIndex(p => p.id === pane._uid), 1)
+
+      console.log(pane)
+      let previousNodeIsSplitter = false
+      Array.from(this.container.children).some(element => {
+        if (element.className.includes('splitpanes__splitter')) {
+          if (previousNodeIsSplitter) {
+            this.removeSplitter(element)
+            return true
+          }
+          previousNodeIsSplitter = true
+        }
+      })
+
+      // Redo indexes
+      this.panes.forEach((p, i) => p.index = i)
+
+      this.redistributeSpaceEvenly()
+      this.$emit('pane-remove', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
     },
 
     redistributeSpaceEvenly () {
@@ -508,6 +542,7 @@ export default {
   mounted () {
     this.container = this.$refs.container
     this.update()
+    this.redistributeSpaceEvenly()
     this.$emit('ready')
     this.ready = true
   },

@@ -17,15 +17,15 @@ export default {
     style: {}
   }),
 
-  // created () {
-  //   console.log('created pane!')
-  //   this.$parent.onPaneAdd(this)
-  // },
+  mounted () {
+    this.$parent.onPaneAdd(this)
+    console.log('created pane!')
+  },
 
-  // destroyed () {
-  //   console.log('destroyed pane!')
-  //   this.$parent.onPaneRemove(this)
-  // },
+  beforeDestroy () {
+    this.$parent.onPaneRemove(this)
+    console.log('destroyed pane!')
+  },
 
   methods: {
     // Called from the splitpanes component.
@@ -36,7 +36,7 @@ export default {
 
   computed: {
     sizeNumber () {
-      return parseFloat(this.size)
+      return this.size ? parseFloat(this.size) : null
     },
     minSizeNumber () {
       return parseFloat(this.minSize)
