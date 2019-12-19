@@ -324,7 +324,7 @@ div
   p When changing direction, all the panes current width or height will flip to adapt to the new layout.
   p.
     Showing the first splitter is an option which allows user to double click the splitter to maximize the next pane.#[br]
-    The first splitter does not allow a resizing of the next pane.
+    The first splitter does not allow to resize the next pane.
 
   v-btn.mr-2.mb-2(small color="primary" @click="horizontal = !horizontal")
     v-icon.ml-n1.mr-1 {{ horizontal ? 'view_column' : 'view_stream' }}

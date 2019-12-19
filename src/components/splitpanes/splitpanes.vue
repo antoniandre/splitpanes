@@ -330,20 +330,21 @@ export default {
     },
 
     redoSplitters () {
-      Array.from(this.container.children).forEach(element => {
-        if (element.className.includes('splitpanes__splitter')) this.removeSplitter(element)
+      const children = Array.from(this.container.children)
+      children.forEach(el => {
+        if (el.className.includes('splitpanes__splitter')) this.removeSplitter(el)
       })
       let paneIndex = 0
-      Array.from(this.container.children).forEach(element => {
-        if (element.className.includes('splitpanes__pane')) {
-          if (!paneIndex && this.firstSplitter) this.addSplitter(paneIndex, element, true)
-          else if (paneIndex) this.addSplitter(paneIndex, element)
+      children.forEach(el => {
+        if (el.className.includes('splitpanes__pane')) {
+          if (!paneIndex && this.firstSplitter) this.addSplitter(paneIndex, el, true)
+          else if (paneIndex) this.addSplitter(paneIndex, el)
           paneIndex++
         }
       })
     },
 
-    // Called by pane component on programmatic resize.
+    // Called by Pane component on programmatic resize.
     requestUpdate ({ target, ...args }) {
       const pane = this.indexedPanes[target._uid]
       Object.entries(args).forEach(([key, value]) => pane[key] = value)
@@ -357,12 +358,14 @@ export default {
         return el === pane.$el
       })
 
+      const min = parseFloat(pane.minSize)
+      const max = parseFloat(pane.maxSize)
       this.panes.splice(index, 0, {
         id: pane._uid,
         index,
-        min: parseFloat(pane.minSize || 0),
-        max: (typeof pane.maxSize === 'undefined') ? 100 : parseFloat(pane.maxSize || 0),
-        size: parseFloat(pane.size || 0)
+        min: isNaN(min) ? 0 : min,
+        max: isNaN(max) ? 100 : max,
+        size: pane.size === null ? null : parseFloat(pane.size)
       })
 
       // Redo indexes after insertion for other shifted panes.
@@ -372,7 +375,7 @@ export default {
       if (this.ready) this.redoSplitters()
 
       // 3. Resize the panes.
-      if (this.ready && this.sumPrevPanesSize(index) < 100) this.redistributeSpaceEvenly()
+      if (this.ready) this.redistributeSpaceEvenly()
 
       // 4. Fire `pane-add` event.
       this.$emit('pane-add', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
@@ -393,6 +396,10 @@ export default {
       this.$emit('pane-remove', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
     },
 
+    resetPaneSizes () {
+      if (this.panes.some(pane => pane.size === null)) this.redistributeSpaceEvenly()
+    },
+
     redistributeSpaceEvenly () {
       const size = 100 / this.panesCount
       this.panes.forEach(pane => (pane.size = size))
@@ -400,7 +407,8 @@ export default {
       if (this.ready) this.$emit('resized', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
     },
 
-    distributeEmptySpace () {
+    // @todo: use this function:
+    /* distributeEmptySpace () {
       let growablePanes = []
       let collapsedPanesCount = 0
       let growableAmount = 0 // Total of how much the current panes can grow to fill blank space.
@@ -443,7 +451,7 @@ export default {
       }
 
       this.$emit('resized', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
-    }
+    } */
   },
 
   watch: {
@@ -470,7 +478,7 @@ export default {
     this.container = this.$refs.container
     this.checkSplitpanesNodes()
     this.redoSplitters()
-    this.redistributeSpaceEvenly()
+    this.resetPaneSizes()
     this.$emit('ready')
     this.ready = true
   },

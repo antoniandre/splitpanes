@@ -9,7 +9,7 @@
 export default {
   name: 'pane',
   props: {
-    size: { type: [Number, String], default: undefined },
+    size: { type: [Number, String], default: null },
     minSize: { type: [Number, String], default: 0 },
     maxSize: { type: [Number, String], default: 100 }
   },
@@ -20,12 +20,10 @@ export default {
 
   mounted () {
     this.$parent.onPaneAdd(this)
-    console.log('created pane!')
   },
 
   beforeDestroy () {
     this.$parent.onPaneRemove(this)
-    console.log('destroyed pane!')
   },
 
   methods: {
