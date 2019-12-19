@@ -303,6 +303,7 @@ div
 
   ssh-pre(language="html-vue" label="HTML").
     &lt;button @click="panesNumber++"&gt;Add pane&lt;/button&gt;
+    &lt;button @click="panesNumber--"&gt;Remove pane&lt;/button&gt;
 
     &lt;splitpanes class="default-theme" style="height: 400px"&gt;
       &lt;pane v-for="i in panesNumber" :key="i"&gt;
@@ -314,6 +315,44 @@ div
     // In your Vue component.
     data: () =&gt; ({
       panesNumber: 3
+    })
+
+  //- Example.
+  h3.mt-12.pt-8.mb-2.subtitle-1
+    a(href="#change-direction") # Change direction &amp; first splitter
+    a(name="change-direction")
+  p When changing direction, all the panes current width or height will flip to adapt to the new layout.
+  p.
+    Showing the first splitter is an option which allows user to double click the splitter to maximize the next pane.#[br]
+    The first splitter does not allow a resizing of the next pane.
+
+  v-btn.mr-2.mb-2(small color="primary" @click="horizontal = !horizontal")
+    v-icon.ml-n1.mr-1 {{ horizontal ? 'view_column' : 'view_stream' }}
+    | Switch to {{ horizontal ? 'Vertical' : 'Horizontal' }}
+  v-btn.mr-2.mb-2(small color="primary" @click="firstSplitter = !firstSplitter")
+    v-icon.ml-n1.mr-1 {{ firstSplitter ? 'close' : 'add' }}
+    | {{ firstSplitter ? 'Hide' : 'Show' }} First Splitter
+  splitpanes.default-theme.example(
+    :horizontal="horizontal"
+    :first-splitter="firstSplitter"
+    style="height: 400px")
+    pane(v-for="i in 3" :key="i")
+      span {{ i }}
+
+  ssh-pre(language="html-vue" label="HTML").
+    &lt;button @click="horizontal = !horizontal"&gt;Switch to {{ "\{\{ horizontal ? 'Vertical' : 'Horizontal' \}\}" }}&lt;/button&gt;
+    &lt;button @click="firstSplitter = !firstSplitter"&gt;{{ "\{\{ firstSplitter ? 'Hide' : 'Show' \}\}" }} First Splitter&lt;/button&gt;
+
+    &lt;splitpanes class="default-theme" :horizontal="horizontal" :first-splitter="firstSplitter" style="height: 400px"&gt;
+      &lt;pane v-for="i in 3" :key="i"&gt;
+        &lt;span&gt;{{ '\{\{ i \}\}' }}%&lt;/span&gt;
+      &lt;/pane&gt;
+    &lt;/splitpanes&gt;
+
+  ssh-pre(language="js" label="Javascript").
+    data: () => ({
+      horizontal: false
+      firstSplitter: false
     })
 
   //- Example.
@@ -491,18 +530,19 @@ div
   h3.mt-12.pt-8.mb-2.subtitle-1
     a(href="#emitted-events") # Listening to emitted events
     a(name="emitted-events")
-  p.
-    Four events are currently emitted from splitpanes: #[span.code ready], #[span.code resize], #[span.code pane-click] &amp; #[span.code pane-maximize].
+  p Here is the list of events that are emitted from splitpanes:
   ul
     li #[span.code ready] has no parameter and fires when splitpanes is ready
     li #[span.code resize] returns an array of all the panes objects with their dimensions, and fires while resizing (on mousemove/touchmove)
     li #[span.code resized] returns an array of all the panes objects with their dimensions, and fires once when the resizing stops (on mouseup/touchend)
     li #[span.code pane-click] returns the clicked pane object with its dimensions.
     li #[span.code pane-maximize] returns the maximized pane object with its dimensions.
+    li #[span.code pane-add] returns the added pane object with its dimensions.
+    li #[span.code pane-remove] returns an array of all the remaining panes objects with their dimensions.
     li.
       #[span.code splitter-click] returns the next pane object (with its dimensions) directly after the clicked splitter.#[br]
       This event is only emitted if dragging did not occur between mousedown and mouseup.
-  p Try resizing panes and check the logs bellow.
+  p.mt-4 Try resizing panes and check the logs bellow.
 
   splitpanes.default-theme.example(
     @resize="log('resize', $event)"
@@ -560,7 +600,7 @@ div
       div.text
         p.
           In this example the splitters are thin lines but the reactive touch zone is spread to 30 pixels all around!
-          #[em Hover a splitter to see the Fat-fingers reactive zone. ]
+          #[em Hover a splitter to see the enlarged fat-finger-proof reactive zone.]
 
   ssh-pre(language="html-vue" label="HTML").
     &lt;splitpanes horizontal style="height: 400px"&gt;
@@ -667,7 +707,16 @@ div
     a(href="#release-notes") Release Notes
     a(name="release-notes")
 
-  div
+  div #[strong Version 2.2.0]
+    ul
+      li Added the #[span.code `firstSplitter`] option, disabled by default
+      li Adapt panes width and height after direction change
+      li Emit a #[span.code `resized`] event after pane was added/removed
+      li Emit a #[span.code `pane-add`] event after pane was added
+      li Emit a #[span.code `pane-remove`] event after pane was removed
+      //- li Fix resizing after adding a pane between other panes
+
+  div.mt-4
     | #[strong Version 2.0.0] Fix reactivity issues.
     highlight-message(type="success")
       ul
@@ -727,12 +776,13 @@ export default {
     panesNumber: 3,
     logs: [],
     randomNums: { 1: 0, 2: 0, 3: 0 },
-    paneSize: 50
+    paneSize: 50,
+    horizontal: false,
+    firstSplitter: false
   }),
   methods: {
     log (eventName, eventParams) {
       this.logs.unshift({ name: eventName, params: JSON.stringify(eventParams) })
-      console.log(eventName, eventParams)
     },
     generateRandomNumber () {
       this.randomNums = Object.assign(this.randomNums, {
