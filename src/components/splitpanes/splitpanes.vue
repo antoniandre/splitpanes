@@ -5,7 +5,7 @@ export default {
     horizontal: { type: Boolean, default: false },
     pushOtherPanes: { type: Boolean, default: true },
     dblClickSplitter: { type: Boolean, default: true },
-    firstSplitter: { type: Boolean, default: true }
+    firstSplitter: { type: Boolean, default: false }
   },
   data: () => ({
     container: null,
@@ -346,7 +346,7 @@ export default {
           })
 
           if (paneAdded) {
-            this.$emit('pane-added', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
+            this.$emit('pane-add', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
           }
 
           return
@@ -374,7 +374,7 @@ export default {
         // There are less panes than before, so we need to remove the unused ones from `this.panes`.
         this.panes.splice(panesCount, this.panesCount - panesCount + 1)
         this.distributeEmptySpace()
-        this.$emit('pane-removed', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
+        this.$emit('pane-remove', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
       }
 
       // If some panes have no `size` prop set, then we compute and set their default size.
