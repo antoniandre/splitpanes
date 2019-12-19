@@ -1,6 +1,7 @@
 <template>
 <div class="splitpanes__pane" :style="style">
   <slot/>
+  <!-- ({{_uid}}) -->
 </div>
 </template>
 

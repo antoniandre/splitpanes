@@ -13,7 +13,7 @@ div
     @pane-added="log('pane-added', $event)"
     @resized="log('resized', $event)"
     style="height: 400px")
-    pane(v-for="i in panesNumber" :key="i")
+    pane(v-for="i in panesNumberAbs" :key="i")
       span {{ i }}
     pane
       span a
@@ -45,6 +45,13 @@ export default {
   methods: {
     log (name, params) {
       console.log(name, params)
+    }
+  },
+
+  computed: {
+    panesNumberAbs () {
+      if (this.panesNumber < 0) this.panesNumber = 0
+      return this.panesNumber
     }
   }
 }
