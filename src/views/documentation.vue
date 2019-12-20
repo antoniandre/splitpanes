@@ -298,8 +298,8 @@ div
       | Remove pane
 
   splitpanes.default-theme.example(style="height: 400px")
-    pane(v-for="i in panesNumber" :key="i")
-        span {{ i }}
+    pane(v-for="i in panesNumberAbs" :key="i")
+      span {{ i }}
 
   ssh-pre(language="html-vue" label="HTML").
     &lt;button @click="panesNumber++"&gt;Add pane&lt;/button&gt;
@@ -458,6 +458,36 @@ div
         this.randomNums[i]++
       }
     }
+
+  //- Example.
+  h3.mt-12.pt-8.mb-2.subtitle-1
+    a(href="#toggle-a-pane-with-v-if") # Toggle a pane with #[span.code v-if]
+    a(name="toggle-a-pane-with-v-if")
+
+  v-btn.mb-2(small color="primary" @click="hidePane2 = !hidePane2")
+    v-icon.mr-2(size="2em") {{ hidePane2 ? 'visibility' : 'visibility_off'}}
+    | {{ hidePane2 ? 'Show' : 'Hide' }} Pane 2
+  splitpanes.default-theme.example(style="height: 400px")
+    pane
+      span 1
+    pane.green.lighten-5(v-if="!hidePane2")
+      span 2
+    pane
+      span 3
+
+  ssh-pre(language="html-vue" label="HTML").
+    &lt;button @click="hidePane2 = !hidePane2"&gt;{{ "\{\{ hidePane2 ? 'Show' : 'Hide' \}\}" }} Pane 2&lt;/button&gt;
+    &lt;splitpanes class="default-theme" style="height: 400px"&gt;
+      &lt;pane&gt;
+        &lt;span&gt;1&lt;/span&gt;
+      &lt;/pane&gt;
+      &lt;pane v-if="!hidePane2"&gt;
+        &lt;span&gt;2&lt;/span&gt;
+      &lt;/pane&gt;
+      &lt;pane&gt;
+        &lt;span&gt;3&lt;/span&gt;
+      &lt;/pane&gt;
+    &lt;/splitpanes&gt;
 
   //- Example.
   h3.mt-12.pt-8.mb-2.subtitle-1
@@ -709,12 +739,12 @@ div
 
   div #[strong Version 2.2.0]
     ul
-      li Added the #[span.code `firstSplitter`] option, disabled by default
-      li Adapt panes width and height after direction change
+      li Added the #[span.code `firstSplitter`] option, disabled by default. ref: #[a(href="#change-direction") Change direction &amp; first splitter]
+      li Adapt panes width and height after direction change. ref: #[a(href="#change-direction") Change direction &amp; first splitter]
       li Emit a #[span.code `resized`] event after pane was added/removed
       li Emit a #[span.code `pane-add`] event after pane was added
       li Emit a #[span.code `pane-remove`] event after pane was removed
-      //- li Fix resizing after adding a pane between other panes
+      li Support #[span.code `v-if`] on a Pane and allow inserting a Pane at any position between others. ref: #[a(href="#toggle-a-pane-with-v-if") Toggle a pane with v-if]
 
   div.mt-4
     | #[strong Version 2.0.0] Fix reactivity issues.
@@ -777,6 +807,7 @@ export default {
     logs: [],
     randomNums: { 1: 0, 2: 0, 3: 0 },
     paneSize: 50,
+    hidePane2: false,
     horizontal: false,
     firstSplitter: false
   }),
@@ -793,6 +824,13 @@ export default {
     },
     incrementNumber (i) {
       this.randomNums[i]++
+    }
+  },
+
+  computed: {
+    panesNumberAbs () {
+      if (this.panesNumber < 0) this.panesNumber = 0
+      return this.panesNumber
     }
   }
 }
