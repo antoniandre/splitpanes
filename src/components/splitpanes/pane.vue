@@ -1,7 +1,6 @@
 <template>
 <div class="splitpanes__pane" :style="style">
   <slot/>
-  <!-- ({{_uid}}) -->
 </div>
 </template>
 
@@ -55,14 +54,6 @@ export default {
     maxSizeNumber (max) {
       this.$parent.requestUpdate({ target: this, max })
     }
-  },
-
-  // render (h) {
-  //   return h(
-  //     'div',
-  //     { class: ['splitpanes__pane'], style: this.style },
-  //     this.$slots.default
-  //   )
-  // }
+  }
 }
 </script>
