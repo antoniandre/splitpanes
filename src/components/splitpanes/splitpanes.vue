@@ -371,19 +371,19 @@ export default {
       // Redo indexes after insertion for other shifted panes.
       this.panes.forEach((p, i) => p.index = i)
 
-      // 2. Add the splitter.
-      if (this.ready) this.redoSplitters()
+      if (this.ready) {
+        this.redoSplitters() // 2. Add the splitter.
+        this.redistributeSpaceEvenly() // 3. Resize the panes.
 
-      // 3. Resize the panes.
-      if (this.ready) this.redistributeSpaceEvenly()
-
-      // 4. Fire `pane-add` event.
-      this.$emit('pane-add', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
+        // 4. Fire `pane-add` event.
+        this.$emit('pane-add', { index, panes: this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })) })
+      }
     },
 
     onPaneRemove (pane) {
       // 1. Remove the pane from array and redo indexes.
-      this.panes.splice(this.panes.findIndex(p => p.id === pane._uid), 1)
+      const index = this.panes.findIndex(p => p.id === pane._uid)
+      const removed = this.panes.splice(index, 1)[0]
       this.panes.forEach((p, i) => p.index = i)
 
       // 2. Remove the splitter.
@@ -394,7 +394,7 @@ export default {
       this.distributeEmptySpace()
 
       // 4. Fire `pane-remove` event.
-      this.$emit('pane-remove', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
+      this.$emit('pane-remove', { removed, panes: this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })) })
     },
 
     resetPaneSizes () {
