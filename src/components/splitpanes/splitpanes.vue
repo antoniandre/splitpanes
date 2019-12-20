@@ -390,7 +390,8 @@ export default {
       this.redoSplitters()
 
       // 3. Resize the panes.
-      this.redistributeSpaceEvenly()
+      // this.redistributeSpaceEvenly()
+      this.distributeEmptySpace()
 
       // 4. Fire `pane-remove` event.
       this.$emit('pane-remove', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
@@ -407,8 +408,7 @@ export default {
       if (this.ready) this.$emit('resized', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
     },
 
-    // @todo: use this function:
-    /* distributeEmptySpace () {
+    distributeEmptySpace () {
       let growablePanes = []
       let collapsedPanesCount = 0
       let growableAmount = 0 // Total of how much the current panes can grow to fill blank space.
@@ -451,7 +451,7 @@ export default {
       }
 
       this.$emit('resized', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
-    } */
+    }
   },
 
   watch: {
