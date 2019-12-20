@@ -18,7 +18,7 @@ div
           | Light weight &amp; no dependencies other than Vue JS
         li
           v-icon.mr-2(color="primary" size="20") check
-          | Responsive
+          | Fully responsive
         li
           v-icon.mr-2(color="primary" size="20") check
           | Support for touch devices
@@ -360,7 +360,14 @@ div
     a(href="#programmatic-resizing") # Programmatic resizing
     a(name="programmatic-resizing")
   p.mb-6 This example shows the programmatic way of resizing panes. And how it works both ways.
-  v-slider(v-model="paneSize" label="First pane size" thumb-label="always" thumb-size="25" :min="0" :max="100")
+  v-slider(
+    v-model="paneSize"
+    track-color="grey lighten-2"
+    label="First pane size"
+    thumb-label="always"
+    thumb-size="25"
+    :min="0"
+    :max="100")
   splitpanes.default-theme.example(@resize="paneSize = $event[0].size" style="height: 400px")
     pane(:size="paneSize")
       span {{ paneSize }}%
@@ -562,15 +569,17 @@ div
     a(name="emitted-events")
   p Here is the list of events that are emitted from splitpanes:
   ul
-    li #[span.code ready] has no parameter and fires when splitpanes is ready
-    li #[span.code resize] returns an array of all the panes objects with their dimensions, and fires while resizing (on mousemove/touchmove)
-    li #[span.code resized] returns an array of all the panes objects with their dimensions, and fires once when the resizing stops (on mouseup/touchend)
-    li #[span.code pane-click] returns the clicked pane object with its dimensions.
-    li #[span.code pane-maximize] returns the maximized pane object with its dimensions.
-    li #[span.code pane-add] returns the added pane object with its dimensions.
-    li #[span.code pane-remove] returns an array of all the remaining panes objects with their dimensions.
+    li #[code.mr-2 ready] has no parameter and fires when splitpanes is ready
+    li #[code.mr-2 resize] returns an array of all the panes objects with their dimensions, and fires while resizing (on mousemove/touchmove)
     li.
-      #[span.code splitter-click] returns the next pane object (with its dimensions) directly after the clicked splitter.#[br]
+      #[code.mr-2 resized] returns an array of all the panes objects with their dimensions, and fires once when the resizing stops after user drag (on mouseup/touchend).#[br]
+      This event is also fired after the internal resizing of panes that occurs after adding or removing a pane.
+    li #[code.mr-2 pane-click] returns the clicked pane object with its dimensions.
+    li #[code.mr-2 pane-maximize] returns the maximized pane object with its dimensions.
+    li #[code.mr-2 pane-add] returns an object containing the index of the added pane and the new array of panes after resize.
+    li #[code.mr-2 pane-remove] returns an object containing the removed pane and an array of all the remaining panes objects with their dimensions after resize.
+    li.
+      #[code.mr-2 splitter-click] returns the next pane object (with its dimensions) directly after the clicked splitter.#[br]
       This event is only emitted if dragging did not occur between mousedown and mouseup.
   p.mt-4 Try resizing panes and check the logs bellow.
 
