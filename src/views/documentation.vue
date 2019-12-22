@@ -791,15 +791,19 @@ div
   div #[strong Version 1.1.0] Allow pushing other panes while dragging splitter
   div #[strong Version 1.0.0] First public release
 
-  v-footer.mt-12.py-6.px-0(color="white")
-    v-layout.grey--text.text--darken-1(wrap justify-center)
-      v-flex.xs12.sm6.text-center.text-sm-left.copyright.
+  v-footer.mt-12.pt-8.pb-10.px-0(color="white")
+    v-layout(wrap justify-center)
+      v-flex.grey--text.text--lighten-1.xs12.sm6.text-center.text-sm-left.copyright.
         Copyright © {{ (new Date()).getFullYear() }} Antoni André, all rights reserved.
       v-flex.xs12.sm6.text-center.text-sm-right.made-with
-        .mb-1.
-          This documentation is made with #[v-icon(small) fab fa-vuejs], #[v-icon(small) fab fa-html5],
-          #[v-icon(small) fab fa-css3], #[v-icon(small) fab fa-sass] &amp; #[v-icon.heart(small) favorite]
-        | View project on #[a(href="https://github.com/antoniandre/splitpanes" target="_blank") #[v-icon(small) fab fa-github] Github].
+        div.grey--text.text--lighten-1.
+          This documentation is made with
+          #[v-icon.grey--text.text--lighten-1(small) fab fa-vuejs],
+          #[v-icon.grey--text.text--lighten-1(small) fab fa-html5],
+          #[v-icon.grey--text.text--lighten-1(small) fab fa-css3],
+          #[v-icon.grey--text.text--lighten-1(small) fab fa-sass] &amp;
+          #[v-icon.grey--text.text--lighten-1(small) favorite]
+        div View project on #[a(href="https://github.com/antoniandre/splitpanes" target="_blank") #[v-icon(small) fab fa-github] Github].
 </template>
 
 <script>
