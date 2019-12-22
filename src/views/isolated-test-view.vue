@@ -13,21 +13,10 @@ div
     @pane-added="log('pane-added', $event)"
     @resized="log('resized', $event)"
     style="height: 400px")
-    pane(v-for="i in panesNumberAbs" :key="i")
+    pane(v-for="i in panesNumberAbs" :key="i" size="22")
       span {{ i }}
-    pane
+    pane(fixed size="34")
       span a
-
-  v-divider.my-12
-
-  v-btn(small color="primary" @click="hidePane2 = !hidePane2") {{ hidePane2 ? 'Show' : 'Hide' }} Pane 2
-  splitpanes.default-theme.example(style="height: 400px")
-    pane
-      span 1
-    pane(v-if="!hidePane2")
-      span 2
-    pane
-      span 3
 </template>
 
 <script>

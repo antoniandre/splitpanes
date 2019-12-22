@@ -1,5 +1,5 @@
 <template>
-<div class="splitpanes__pane" :style="style">
+<div :class="{ splitpanes__pane: true, fixed }" :style="style">
   <slot/>
 </div>
 </template>
@@ -10,7 +10,8 @@ export default {
   props: {
     size: { type: [Number, String], default: null },
     minSize: { type: [Number, String], default: 0 },
-    maxSize: { type: [Number, String], default: 100 }
+    maxSize: { type: [Number, String], default: 100 },
+    fixed: { type: Boolean, default: false }
   },
 
   data: () => ({

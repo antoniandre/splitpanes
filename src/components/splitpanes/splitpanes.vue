@@ -116,6 +116,7 @@ export default {
 
     // On splitter dbl click or dbl tap maximize this pane.
     onSplitterDblClick (event, splitterIndex) {
+      const paneToMaximize = this.panes[splitterIndex]
       let totalMinSizes = 0
       this.panes = this.panes.map((pane, i) => {
         pane.size = i === splitterIndex ? pane.max : pane.min
@@ -123,8 +124,8 @@ export default {
 
         return pane
       })
-      this.panes[splitterIndex].size -= totalMinSizes
-      this.$emit('pane-maximize', this.panes[splitterIndex])
+      paneToMaximize.size = Math.min(100 - totalMinSizes, paneToMaximize.max)
+      this.$emit('pane-maximize', paneToMaximize)
     },
 
     onPaneClick (event, paneIndex) {
@@ -169,7 +170,9 @@ export default {
       let paneBefore = this.panes[panesToResize[0]] || null
       let paneAfter = this.panes[panesToResize[1]] || null
 
+      // If the pane right before the splitter has reached its max prevent dragging beyond that and stop increasing size.
       const paneBeforeMaxReached = paneBefore.max < 100 && (dragPercentage >= (paneBefore.max + sums.prevPanesSize))
+      // Same as above for the pane right after the splitter.
       const paneAfterMaxReached = paneAfter.max < 100 && (dragPercentage <= 100 - (paneAfter.max + this.sumNextPanesSize(splitterIndex + 1)))
       // Prevent dragging beyond pane max.
       if (paneBeforeMaxReached || paneAfterMaxReached) {
@@ -275,15 +278,15 @@ export default {
       return this.panes.reduce((total, pane, i) => total + (i > splitterIndex + 1 ? pane.size : 0), 0)
     },
 
-    // Return the previous pane from siblings which has a size (width for vert or height for horz) of more than 0.
+    // Return the previous non-fixed pane from siblings which has a size (width for vert or height for horz) of more than 0.
     findPrevExpandedPane (splitterIndex) {
-      const pane = [...this.panes].reverse().find(p => (p.index < splitterIndex && p.size > p.min))
+      const pane = [...this.panes].reverse().find(p => (p.index < splitterIndex && p.size > p.min && !p.fixed))
       return pane || {}
     },
 
-    // Return the next pane from siblings which has a size (width for vert or height for horz) of more than 0.
+    // Return the next non-fixed pane from siblings which has a size (width for vert or height for horz) of more than 0.
     findNextExpandedPane (splitterIndex) {
-      const pane = this.panes.find(p => (p.index > splitterIndex + 1 && p.size > p.min))
+      const pane = this.panes.find(p => (p.index > splitterIndex + 1 && p.size > p.min && !p.fixed))
       return pane || {}
     },
 
@@ -301,12 +304,13 @@ export default {
       })
     },
 
-    addSplitter (paneIndex, nextPaneNode, isVeryFirst = false) {
+    addSplitter (paneIndex, nextPaneNode, isFixed = false) {
       const splitterIndex = paneIndex - 1
       const elm = document.createElement('div')
       elm.classList.add('splitpanes__splitter')
 
-      if (!isVeryFirst) {
+      if (isFixed) elm.classList.add('fixed')
+      else {
         elm.onmousedown = event => this.onMouseDown(event, splitterIndex)
 
         if (typeof window !== 'undefined' && 'ontouchstart' in window) {
@@ -337,7 +341,9 @@ export default {
       let paneIndex = 0
       children.forEach(el => {
         if (el.className.includes('splitpanes__pane')) {
-          if (!paneIndex && this.firstSplitter) this.addSplitter(paneIndex, el, true)
+          if ((!paneIndex && this.firstSplitter) || el.className.includes('fixed')) {
+            this.addSplitter(paneIndex, el, true)
+          }
           else if (paneIndex) this.addSplitter(paneIndex, el)
           paneIndex++
         }
@@ -365,7 +371,8 @@ export default {
         index,
         min: isNaN(min) ? 0 : min,
         max: isNaN(max) ? 100 : max,
-        size: pane.size === null ? null : parseFloat(pane.size)
+        size: pane.size === null ? null : parseFloat(pane.size),
+        fixed: pane.fixed
       })
 
       // Redo indexes after insertion for other shifted panes.
@@ -376,7 +383,7 @@ export default {
         this.redistributeSpaceEvenly() // 3. Resize the panes.
 
         // 4. Fire `pane-add` event.
-        this.$emit('pane-add', { index, panes: this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })) })
+        this.$emit('pane-add', { index, panes: this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size, fixed: pane.fixed })) })
       }
     },
 
@@ -394,7 +401,7 @@ export default {
       this.distributeEmptySpace()
 
       // 4. Fire `pane-remove` event.
-      this.$emit('pane-remove', { removed, panes: this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })) })
+      this.$emit('pane-remove', { removed, panes: this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size, fixed: pane.fixed })) })
     },
 
     resetPaneSizes () {
@@ -403,9 +410,14 @@ export default {
 
     redistributeSpaceEvenly () {
       const size = 100 / this.panesCount
-      this.panes.forEach(pane => (pane.size = size))
+      let extraToDistribute = 0
+      this.panes.forEach(pane => {
+        pane.size = Math.min(size, pane.max)
+        const leftToDistribute = size - pane.size
+        if (leftToDistribute > 0) extraToDistribute = leftToDistribute
+      })
 
-      if (this.ready) this.$emit('resized', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
+      if (this.ready) this.$emit('resized', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size, fixed: pane.fixed })))
     },
 
     distributeEmptySpace () {
@@ -451,7 +463,7 @@ export default {
         console.warn('Splitpanes: Could not distribute all the empty space between panes due to their constraints.')
       } */
 
-      this.$emit('resized', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
+      this.$emit('resized', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size, fixed: pane.fixed })))
     }
   },
 
@@ -540,7 +552,10 @@ export default {
       transition: background-color 0.3s;
     }
     &:hover:before, &:hover:after {background-color: rgba(0, 0, 0, .25);}
-    &:first-child {cursor: auto;}
+    &.fixed {
+      cursor: auto;
+      &:before, &:after {content: none;}
+    }
   }
 }
 .default-theme {
