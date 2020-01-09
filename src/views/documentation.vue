@@ -4,7 +4,6 @@ div
     img(alt="Vue logo" src="@/assets/logo.png" height="40")
     h1.mb-3.headline Vue Split Panes
     p.mb-12.subtitle-1 A Vue JS reliable, simple and touch-ready panes splitter / resizer.
-    highlight-message(type="success" no-icon).subtitle-1.pa-8 #[strong Version 2 is out], Check the #[a(href="#release-notes") Release Notes]!
 
   v-layout
     v-flex
@@ -12,10 +11,13 @@ div
       ul.checklist
         li
           v-icon.mr-2(color="primary" size="20") check
-          | Nesting supported
+          | Light weight &amp; no dependencies other than Vue JS
         li
           v-icon.mr-2(color="primary" size="20") check
-          | Light weight &amp; no dependencies other than Vue JS
+          | Only worry about your panes, the splitters are automatic
+        li
+          v-icon.mr-2(color="primary" size="20") check
+          | Nesting supported
         li
           v-icon.mr-2(color="primary" size="20") check
           | Fully responsive
@@ -33,13 +35,7 @@ div
           | Programmatically set pane width or height
         li
           v-icon.mr-2(color="primary" size="20") check
-          | Adding panes on the fly automatically adds splitters
-        li
-          v-icon.mr-2(color="primary" size="20") check
-          | Simple yet efficient
-        li
-          v-icon.mr-2(color="primary" size="20") check
-          | More features to come, like pane labels.
+          | Programmatically add and remove panes
 
     div
       div.mt-12.mb-3.title Github project
@@ -66,52 +62,39 @@ div
     pane
       span 5
 
-  ssh-pre(language="html-vue" label="HTML Vue Template").
-    &lt;splitpanes style="height: 400px"&gt;
-      &lt;pane min-size="20"&gt;
-        &lt;span&gt;1&lt;/span&gt;
-      &lt;/pane&gt;
-      &lt;pane&gt;
-        &lt;splitpanes horizontal&gt;
-          &lt;pane&gt;
-            &lt;span&gt;2&lt;/span&gt;
-          &lt;/pane&gt;
-          &lt;pane&gt;
-            &lt;span&gt;3&lt;/span&gt;
-          &lt;/pane&gt;
-          &lt;pane&gt;
-            &lt;span&gt;4&lt;/span&gt;
-          &lt;pane&gt;
-        &lt;/splitpanes&gt;
-      &lt;/pane&gt;
-      &lt;pane&gt;
-        &lt;span&gt;5&lt;/span&gt;
-      &lt;/pane&gt;
-    &lt;/splitpanes&gt;
-  ssh-pre(language="css" label="CSS").
-    .splitpanes__pane {
-      justify-content: center;
-      align-items: center;
-      display: flex;
-    }
-
-    .splitpanes__pane span {
-      font-family: Helvetica, Arial, sans-serif;
-      color: #fff;
-      font-size: 5em;
-      opacity: 0.6;
-    }
+  v-layout.pb-6(wrap)
+    ssh-pre.flex.mb-0.mr-2(language="html-vue" label="HTML Vue Template").
+      &lt;splitpanes style="height: 400px"&gt;
+        &lt;pane min-size="20"&gt;1&lt;/pane&gt;
+        &lt;pane&gt;
+          &lt;splitpanes horizontal&gt;
+            &lt;pane&gt;2&lt;/pane&gt;
+            &lt;pane&gt;3&lt;/pane&gt;
+            &lt;pane&gt;4&lt;pane&gt;
+          &lt;/splitpanes&gt;
+        &lt;/pane&gt;
+        &lt;pane&gt;5&lt;/pane&gt;
+      &lt;/splitpanes&gt;
+    ssh-pre.flex.mb-0(language="css" label="CSS").
+      .splitpanes__pane {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: Helvetica, Arial, sans-serif;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 5em;
+      }
 
   h2.mt-12.mb-2.headline
     a(href="#installation") Installation
     a(name="installation")
 
-  p You have two options: #[em NPM] #[strong.mx-2 or] #[span.code &lt;script&gt;] tag.
+  p You have two options: #[em NPM] #[strong.mx-1 or] #[span.code &lt;script&gt;] tag.
   h3 Via NPM
   ssh-pre(language="shell" label="Shell") npm i --S splitpanes
   p Then import the component and CSS:
   ssh-pre(language="js" label="Javascript").
-    // In your VueJS component.
+    // In your Vue component.
     import { Splitpanes, Pane } from 'splitpanes'
     import 'splitpanes/dist/splitpanes.css'
 
@@ -145,13 +128,11 @@ div
     &lt;/splitpanes&gt;
 
   highlight-message(type="success")
-    strong.
-      Have you noticed? No splitter tags!#[br]
-    span.
-      The splitters will be added automatically between the #[span.code &lt;pane&gt;] tags.
+    strong No splitter tags!#[br]
+    span The splitters will be added automatically between the #[span.code &lt;pane&gt;] tags.
 
   highlight-message(type="tips").
-    By default the layout is 'column' (vertical), if you need you can set the attribute
+    By default the layout is vertical, if you need you can set the attribute
     #[span.code horizontal] on the #[span.code &lt;splitpanes&gt;] tag to change the layout to rows.
 
   highlight-message(type="tips").
