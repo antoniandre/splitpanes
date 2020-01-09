@@ -372,8 +372,11 @@ export default {
       this.panes.forEach((p, i) => p.index = i)
 
       if (this.ready) {
-        this.redoSplitters() // 2. Add the splitter.
-        this.redistributeSpaceEvenly() // 3. Resize the panes.
+        // 2. Add the splitter.
+        this.redoSplitters()
+
+        // 3. Resize the panes.
+        this.resetPaneSizes({ addedPane: this.panes[index] })
 
         // 4. Fire `pane-add` event.
         this.$emit('pane-add', { index, panes: this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })) })
@@ -390,15 +393,15 @@ export default {
       this.redoSplitters()
 
       // 3. Resize the panes.
-      // this.redistributeSpaceEvenly()
-      this.distributeEmptySpace()
+      this.resetPaneSizes({ removedPane: { ...removed, index } })
 
       // 4. Fire `pane-remove` event.
       this.$emit('pane-remove', { removed, panes: this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })) })
     },
 
-    resetPaneSizes () {
-      if (this.panes.some(pane => pane.size === null)) this.redistributeSpaceEvenly()
+    resetPaneSizes (changedPanes) {
+      if (this.panes.some(pane => pane.size || pane.min || pane.max < 100)) this.recalculatePaneSizes(changedPanes)
+      else this.redistributeSpaceEvenly()
     },
 
     redistributeSpaceEvenly () {
@@ -406,6 +409,76 @@ export default {
       this.panes.forEach(pane => (pane.size = size))
 
       if (this.ready) this.$emit('resized', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
+    },
+
+    recalculatePaneSizes ({
+      addedPane,
+      removedPane,
+      leftToAllocate = 100,
+      nested = false,
+      ungrowable = [],
+      unshrinkable = []
+    } = {}) {
+      let equalSpaceToAllocate
+      if (nested) {
+        if (leftToAllocate > 0) equalSpaceToAllocate = leftToAllocate / ungrowable.length
+        else equalSpaceToAllocate = leftToAllocate / unshrinkable.length
+      }
+      else equalSpaceToAllocate = leftToAllocate / this.panes.length
+
+      // debugger
+      this.panes.forEach((pane, i) => {
+        if (nested) {
+          if (leftToAllocate > 0 && !ungrowable.includes(pane.id)) pane.size = Math.max(Math.min(equalSpaceToAllocate, pane.max), pane.min)
+          else if (!unshrinkable.includes(pane.id)) pane.size = Math.max(Math.min(equalSpaceToAllocate, pane.max), pane.min)
+        }
+
+        // Added pane - reduce the size of the next pane.
+        else if (addedPane && addedPane.index + 1 === i) {
+          pane.size = Math.max(Math.min(100 - this.sumPrevPanesSize(i) - this.sumNextPanesSize(i + 1), pane.max), pane.min)
+          // @todo: if could not allocate correctly, try to allocate in the next pane straight away,
+          // then still do the second loop if not correct.
+        }
+
+        // Removed pane - increase the size of the next pane.
+        else if (removedPane && removedPane.index === i) {
+          pane.size = Math.max(Math.min(100 - this.sumPrevPanesSize(i) - this.sumNextPanesSize(i + 1), pane.max), pane.min)
+          // @todo: if could not allocate correctly, try to allocate in the next pane straight away,
+          // then still do the second loop if not correct.
+        }
+
+        // Initial load and on demand recalculation.
+        else if (!addedPane && !removedPane) {
+          pane.size = Math.max(Math.min(equalSpaceToAllocate, pane.max), pane.min)
+        }
+
+        leftToAllocate -= pane.size
+
+        if (pane.size >= pane.max) ungrowable.push(pane.id)
+        if (pane.size <= pane.min) unshrinkable.push(pane.id)
+
+        // if (!pane.size) collapsedPanesCount++
+        // else growableAmount += pane.max - pane.size
+      })
+
+      if (Math.abs(leftToAllocate) > 0.1) {
+        // Do one more loop to adjust sizes.
+        if (!nested) {
+          this.recalculatePaneSizes({
+            addedPane,
+            removedPane,
+            leftToAllocate,
+            nested: true,
+            ungrowable,
+            unshrinkable
+          })
+        }
+        // Warn user if fails again.
+        else console.warn('Could not resize panes correctly. Some min and max sizes must conflict.')
+        debugger
+      }
+
+      return leftToAllocate
     },
 
     distributeEmptySpace () {
