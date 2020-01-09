@@ -365,7 +365,8 @@ export default {
         index,
         min: isNaN(min) ? 0 : min,
         max: isNaN(max) ? 100 : max,
-        size: pane.size === null ? null : parseFloat(pane.size)
+        size: pane.size === null ? null : parseFloat(pane.size),
+        givenSize: pane.size
       })
 
       // Redo indexes after insertion for other shifted panes.
@@ -399,42 +400,117 @@ export default {
       this.$emit('pane-remove', { removed, panes: this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })) })
     },
 
-    resetPaneSizes (changedPanes) {
-      if (this.panes.some(pane => pane.size || pane.min || pane.max < 100)) this.recalculatePaneSizes(changedPanes)
-      else this.redistributeSpaceEvenly()
-    },
-
-    redistributeSpaceEvenly () {
-      const size = 100 / this.panesCount
-      this.panes.forEach(pane => (pane.size = size))
+    resetPaneSizes (changedPanes = {}) {
+      if (!changedPanes.addedPane && !changedPanes.removedPane) this.initialPanesSizing()
+      else if (this.panes.some(pane => pane.givenSize !== null || pane.min || pane.max < 100)) this.equalizeAfterAddOrRemove(changedPanes)
+      else this.equalize()
 
       if (this.ready) this.$emit('resized', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
     },
 
-    recalculatePaneSizes ({
-      addedPane,
-      removedPane,
-      leftToAllocate = 100,
-      nested = false,
-      ungrowable = [],
-      unshrinkable = []
-    } = {}) {
-      let equalSpaceToAllocate
-      if (nested) {
-        if (leftToAllocate > 0) equalSpaceToAllocate = leftToAllocate / ungrowable.length
-        else equalSpaceToAllocate = leftToAllocate / unshrinkable.length
-      }
-      else equalSpaceToAllocate = leftToAllocate / this.panes.length
+    equalize () {
+      const equalSpace = 100 / this.panesCount
+      let leftToAllocate = 0
+      let ungrowable = []
+      let unshrinkable = []
 
-      // debugger
-      this.panes.forEach((pane, i) => {
-        if (nested) {
-          if (leftToAllocate > 0 && !ungrowable.includes(pane.id)) pane.size = Math.max(Math.min(equalSpaceToAllocate, pane.max), pane.min)
-          else if (!unshrinkable.includes(pane.id)) pane.size = Math.max(Math.min(equalSpaceToAllocate, pane.max), pane.min)
+      this.panes.forEach(pane => {
+        pane.size = Math.max(Math.min(equalSpace, pane.max), pane.min)
+
+        leftToAllocate -= pane.size
+        if (pane.size >= pane.max) ungrowable.push(pane.id)
+        if (pane.size <= pane.min) unshrinkable.push(pane.id)
+      })
+
+      if (leftToAllocate > 0.1) this.readjustSizes(leftToAllocate, ungrowable, unshrinkable)
+    },
+
+    initialPanesSizing () {
+      let equalSpace = 100 / this.panesCount
+      let leftToAllocate = 100
+      let ungrowable = []
+      let unshrinkable = []
+      let definedSizes = 0
+
+      // Check if pre-allocated space is 100%.
+      this.panes.forEach(pane => {
+        leftToAllocate -= pane.size
+        if (pane.size !== null) definedSizes++
+        if (pane.size >= pane.max) ungrowable.push(pane.id)
+        if (pane.size <= pane.min) unshrinkable.push(pane.id)
+      })
+
+      // set pane sizes if not set.
+      let leftToAllocate2 = 100
+      if (leftToAllocate > 0.1) {
+        this.panes.forEach(pane => {
+          if (pane.size === null) {
+            pane.size = Math.max(Math.min(leftToAllocate / (this.panesCount - definedSizes), pane.max), pane.min)
+          }
+          leftToAllocate2 -= pane.size
+        })
+
+        if (leftToAllocate2 > 0.1) {
+          // debugger
+          this.readjustSizes(leftToAllocate, ungrowable, unshrinkable)
         }
+      }
+    },
 
+    equalizeAfterAddOrRemove ({ addedPane, removedPane } = {}) {
+      let equalSpace = 100 / this.panesCount
+      let leftToAllocate = 0
+      let ungrowable = []
+      let unshrinkable = []
+
+      if (addedPane && addedPane.givenSize !== null) {
+        equalSpace = (100 - addedPane.givenSize) / (this.panesCount - 1)
+      }
+
+      // Check if pre-allocated space is 100%.
+      this.panes.forEach(pane => {
+        leftToAllocate -= pane.size
+        if (pane.size >= pane.max) ungrowable.push(pane.id)
+        if (pane.size <= pane.min) unshrinkable.push(pane.id)
+      })
+
+      if (Math.abs(leftToAllocate) < 0.1) return // Ok.
+
+      this.panes.forEach(pane => {
+        if (addedPane && addedPane.givenSize !== null && addedPane.id === pane.id) {}
+        else pane.size = Math.max(Math.min(equalSpace, pane.max), pane.min)
+
+        leftToAllocate -= pane.size
+        if (pane.size >= pane.max) ungrowable.push(pane.id)
+        if (pane.size <= pane.min) unshrinkable.push(pane.id)
+      })
+
+      if (leftToAllocate > 0.1) this.readjustSizes(leftToAllocate, ungrowable, unshrinkable)
+    },
+
+    /* recalculatePaneSizes ({ addedPane, removedPane } = {}) {
+      let leftToAllocate = 100
+      let equalSpaceToAllocate = leftToAllocate / this.panes.length
+      let ungrowable = []
+      let unshrinkable = []
+
+      // When adding a pane with no size, apply min-size if defined otherwise divide another pane
+      // (next or prev) in 2.
+      // if (addedPane && addedPane.size === null) {
+      //   if (addedPane.min) addedPane.size = addedPane.min
+      //   else {
+      //     const paneToDivide = this.panes[addedPane.index + 1] || this.panes[addedPane.index - 1]
+      //     if (paneToDivide) {
+      //       // @todo: Dividing that pane in 2 could be incorrect if becoming lower than its min size.
+      //       addedPane.size = paneToDivide.size / 2
+      //       paneToDivide.size /= 2
+      //     }
+      //   }
+      // }
+
+      this.panes.forEach((pane, i) => {
         // Added pane - reduce the size of the next pane.
-        else if (addedPane && addedPane.index + 1 === i) {
+        if (addedPane && addedPane.index + 1 === i) {
           pane.size = Math.max(Math.min(100 - this.sumPrevPanesSize(i) - this.sumNextPanesSize(i + 1), pane.max), pane.min)
           // @todo: if could not allocate correctly, try to allocate in the next pane straight away,
           // then still do the second loop if not correct.
@@ -448,7 +524,7 @@ export default {
         }
 
         // Initial load and on demand recalculation.
-        else if (!addedPane && !removedPane) {
+        else if (!addedPane && !removedPane && pane.size === null) {
           pane.size = Math.max(Math.min(equalSpaceToAllocate, pane.max), pane.min)
         }
 
@@ -456,32 +532,48 @@ export default {
 
         if (pane.size >= pane.max) ungrowable.push(pane.id)
         if (pane.size <= pane.min) unshrinkable.push(pane.id)
-
-        // if (!pane.size) collapsedPanesCount++
-        // else growableAmount += pane.max - pane.size
       })
 
-      if (Math.abs(leftToAllocate) > 0.1) {
-        // Do one more loop to adjust sizes.
-        if (!nested) {
-          this.recalculatePaneSizes({
-            addedPane,
-            removedPane,
-            leftToAllocate,
-            nested: true,
-            ungrowable,
-            unshrinkable
-          })
+      // Do one more loop to adjust sizes if still wrong.
+      // > 0.1: Prevent maths rounding issues due to bytes.
+      if (Math.abs(leftToAllocate) > 0.1) this.readjustSizes(leftToAllocate, ungrowable, unshrinkable)
+    }, */
+
+    // Second loop to adjust sizes now that we know more about the panes constraints.
+    readjustSizes (leftToAllocate, ungrowable, unshrinkable) {
+      let equalSpaceToAllocate
+      if (leftToAllocate > 0) equalSpaceToAllocate = leftToAllocate / (this.panes.length - ungrowable.length)
+      else equalSpaceToAllocate = leftToAllocate / (this.panes.length - unshrinkable.length)
+
+      // debugger
+      this.panes.forEach((pane, i) => {
+        if (leftToAllocate > 0 && !ungrowable.includes(pane.id)) {
+          // Need to diff the size before and after to get the exact allocated space.
+          const newPaneSize = Math.max(Math.min(pane.size + equalSpaceToAllocate, pane.max), pane.min)
+          const allocated = newPaneSize - pane.size
+          leftToAllocate -= allocated
+          pane.size = newPaneSize
         }
-        // Warn user if fails again.
-        else console.warn('Could not resize panes correctly. Some min and max sizes must conflict.')
-        debugger
+        else if (!unshrinkable.includes(pane.id)) {
+          // Need to diff the size before and after to get the exact allocated space.
+          const newPaneSize = Math.max(Math.min(pane.size + equalSpaceToAllocate, pane.max), pane.min)
+          const allocated = newPaneSize - pane.size
+          leftToAllocate -= allocated
+          pane.size = newPaneSize
+        }
+      })
+
+      if (Math.abs(leftToAllocate) > 0.1) { // > 0.1: Prevent maths rounding issues due to bytes.
+        // Don't emit on hot reload when Vue destroys panes.
+        this.$nextTick(() => {
+          if (this.ready) {
+            console.warn('Splitpanes: Could not resize panes correctly due to their constraints.')
+          }
+        })
       }
+    }
 
-      return leftToAllocate
-    },
-
-    distributeEmptySpace () {
+    /* distributeEmptySpace () {
       let growablePanes = []
       let collapsedPanesCount = 0
       let growableAmount = 0 // Total of how much the current panes can grow to fill blank space.
@@ -522,10 +614,10 @@ export default {
       // if there is still space to allocate show warning message.
       if (this.panesCount && ~~spaceLeftToDistribute) {
         console.warn('Splitpanes: Could not distribute all the empty space between panes due to their constraints.')
-      } */
+      } *\/
 
       this.$emit('resized', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
-    }
+    } */
   },
 
   watch: {
@@ -546,6 +638,11 @@ export default {
         splitter.ondblclick = enable ? event => this.onSplitterDblClick(event, i) : undefined
       })
     }
+  },
+
+  beforeDestroy () {
+    // Prevent emitting console warnings on hot reloading.
+    this.ready = false
   },
 
   mounted () {
@@ -581,16 +678,21 @@ export default {
   display: flex;
   width: 100%;
   height: 100%;
+
   &--vertical {flex-direction: row;}
   &--horizontal {flex-direction: column;}
   &--dragging * {user-select: none;}
+
   &__pane {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    transition: width 0.2s ease-out, height 0.2s ease-out;
+
+    .splitpanes--vertical & {transition: width 0.2s ease-out;}
+    .splitpanes--horizontal & {transition: height 0.2s ease-out;}
     .splitpanes--dragging & {transition: none;}
   }
+
   // Disable default zoom behavior on touch device when double tapping splitter.
   &__splitter {touch-action: none;}
   &--vertical > .splitpanes__splitter {min-width: 1px;cursor: col-resize;}
@@ -604,6 +706,7 @@ export default {
     background-color: #fff;
     box-sizing: border-box;
     position: relative;
+    flex-shrink: 0;
     &:before, &:after {
       content: "";
       position: absolute;
@@ -622,7 +725,7 @@ export default {
   }
   &.splitpanes--vertical > .splitpanes__splitter,
   .splitpanes--vertical > .splitpanes__splitter {
-    width: 9px;
+    width: 7px;
     border-left: 1px solid #eee;
     margin-left: -1px;
     &:before, &:after {
@@ -635,7 +738,7 @@ export default {
   }
   &.splitpanes--horizontal > .splitpanes__splitter,
   .splitpanes--horizontal > .splitpanes__splitter {
-    height: 9px;
+    height: 7px;
     border-top: 1px solid #eee;
     margin-top: -1px;
     &:before,

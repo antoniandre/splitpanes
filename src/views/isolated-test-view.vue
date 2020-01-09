@@ -3,18 +3,22 @@
 div
   v-btn.ml-2(color="primary" small @click="hidePane2 = !hidePane2")
     | Hide pane 2
+  v-btn.ml-2(color="primary" small @click="hidePane4 = !hidePane4")
+    | Hide pane 4
 
   splitpanes.default-theme.example(
     @pane-removed="log('pane-removed', $event)"
     @pane-added="log('pane-added', $event)"
     @resized="log('resized', $event)"
     style="height: 400px")
-    pane(:max-size="20")
+    pane(size="85")
       span 1
-    pane(v-if="!hidePane2" :min-size="20")
+    pane(v-if="!hidePane2" size="15")
       span 2
-    pane(:min-size="20")
-      span 3
+    //- pane()
+    //-   span 3
+    //- pane(v-if="!hidePane4")
+    //-   span 4
 </template>
 
 <script>
@@ -26,6 +30,7 @@ export default {
   data: () => ({
     horizontal: true,
     hidePane2: false,
+    hidePane4: false,
     panesNumber: 3
   }),
 
