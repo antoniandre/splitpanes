@@ -823,6 +823,7 @@ export default {
 
   computed: {
     panesNumberAbs () {
+      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
       if (this.panesNumber < 0) this.panesNumber = 0
       return this.panesNumber
     }
