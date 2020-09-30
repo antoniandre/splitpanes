@@ -755,6 +755,7 @@ div
     a(href="#release-notes") Release Notes
     a(name="release-notes")
 
+  div #[strong Version 2.3.1] Fix firing #[span.code pane-click] event on pane click
   div #[strong Version 2.3.0] Support rtl direction
   div #[strong Version 2.2.0]
     ul
