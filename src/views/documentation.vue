@@ -724,9 +724,38 @@ div
     }
 
   h2.headline.mt-12.pt-12.mb-2
+    a(href="#api") API
+    a(name="api")
+  p Here is the list of all the props.
+  ul
+    li
+      code horizontal
+      span.code.ml-2 Default: false
+      p.
+        The orientation of the panes splitting.#[br]
+        Vertical by default, meaning the splitters are vertical, but you can resize horizontally
+    li
+      code push-other-panes
+      span.code.ml-2 Default: true
+      p Whether it should push the next splitter when dragging a splitter until it reached another one.
+    li
+      code dbl-click-splitter
+      span.code.ml-2 Default: true
+      p Double click on splitter to maximize the next pane.
+    li
+      code rtl
+      span.code.ml-2 Default: false
+      p Supports Right to left direction.
+    li
+      code first-splitter
+      span.code.ml-2 Default: false
+      p Displays the first splitter when set to true. This allows maximizing the first pane on splitter double click.
+
+  h2.headline.mt-12.pt-12.mb-2
     a(href="#release-notes") Release Notes
     a(name="release-notes")
 
+  div #[strong Version 2.3.0] Support rtl direction
   div #[strong Version 2.2.0]
     ul
       li Added the #[span.code `firstSplitter`] option, disabled by default. ref: #[a(href="#change-direction") Change direction &amp; first splitter]
