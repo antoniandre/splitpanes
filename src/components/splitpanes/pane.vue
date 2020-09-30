@@ -34,7 +34,7 @@ export default {
 
   computed: {
     sizeNumber () {
-      return this.size ? parseFloat(this.size) : null
+      return (this.size || this.size === 0) ? parseFloat(this.size) : null
     },
     minSizeNumber () {
       return parseFloat(this.minSize)
