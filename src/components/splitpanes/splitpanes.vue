@@ -9,6 +9,15 @@ export default {
     firstSplitter: { type: Boolean }
   },
 
+  provide () {
+    return {
+      requestUpdate: this.requestUpdate,
+      onPaneAdd: this.onPaneAdd,
+      onPaneRemove: this.onPaneRemove,
+      onPaneClick: this.onPaneClick
+    }
+  },
+
   data: () => ({
     container: null,
     ready: false,
@@ -129,8 +138,8 @@ export default {
       this.$emit('pane-maximize', this.panes[splitterIndex])
     },
 
-    onPaneClick (event, paneIndex) {
-      this.$emit('pane-click', this.panes[paneIndex])
+    onPaneClick (event, paneId) {
+      this.$emit('pane-click', this.indexedPanes[paneId])
     },
 
     // Get the cursor position relative to the splitpane container.

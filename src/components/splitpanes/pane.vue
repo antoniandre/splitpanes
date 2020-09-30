@@ -1,5 +1,5 @@
 <template>
-<div class="splitpanes__pane" :style="style">
+<div class="splitpanes__pane" @click="onPaneClick($event, _uid)" :style="style">
   <slot/>
 </div>
 </template>
@@ -7,6 +7,8 @@
 <script>
 export default {
   name: 'pane',
+  inject: ['requestUpdate', 'onPaneAdd', 'onPaneRemove', 'onPaneClick'],
+
   props: {
     size: { type: [Number, String], default: null },
     minSize: { type: [Number, String], default: 0 },
@@ -18,11 +20,11 @@ export default {
   }),
 
   mounted () {
-    this.$parent.onPaneAdd(this)
+    this.onPaneAdd(this)
   },
 
   beforeDestroy () {
-    this.$parent.onPaneRemove(this)
+    this.onPaneRemove(this)
   },
 
   methods: {
@@ -46,13 +48,13 @@ export default {
 
   watch: {
     sizeNumber (size) {
-      this.$parent.requestUpdate({ target: this, size })
+      this.requestUpdate({ target: this, size })
     },
     minSizeNumber (min) {
-      this.$parent.requestUpdate({ target: this, min })
+      this.requestUpdate({ target: this, min })
     },
     maxSizeNumber (max) {
-      this.$parent.requestUpdate({ target: this, max })
+      this.requestUpdate({ target: this, max })
     }
   }
 }
