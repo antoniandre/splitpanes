@@ -5,9 +5,10 @@ export default {
     horizontal: { type: Boolean },
     pushOtherPanes: { type: Boolean, default: true },
     dblClickSplitter: { type: Boolean, default: true },
-    rtl: { type: Boolean, default: true }, // Right to left direction.
+    rtl: { type: Boolean, default: false }, // Right to left direction.
     firstSplitter: { type: Boolean }
   },
+
   data: () => ({
     container: null,
     ready: false,
