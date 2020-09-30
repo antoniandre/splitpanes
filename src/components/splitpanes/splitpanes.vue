@@ -2,10 +2,11 @@
 export default {
   name: 'splitpanes',
   props: {
-    horizontal: { type: Boolean, default: false },
+    horizontal: { type: Boolean },
     pushOtherPanes: { type: Boolean, default: true },
     dblClickSplitter: { type: Boolean, default: true },
-    firstSplitter: { type: Boolean, default: false }
+    rtl: { type: Boolean, default: true }, // Right to left direction.
+    firstSplitter: { type: Boolean }
   },
   data: () => ({
     container: null,
@@ -148,6 +149,8 @@ export default {
       drag = drag[this.horizontal ? 'y' : 'x']
       // In the code bellow 'size' refers to 'width' for vertical and 'height' for horizontal layout.
       const containerSize = this.container[this.horizontal ? 'clientHeight' : 'clientWidth']
+      if (this.rtl && !this.horizontal) drag = containerSize - drag
+
       return drag * 100 / containerSize
     },
 
