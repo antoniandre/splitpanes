@@ -23,7 +23,7 @@ export default {
     this.onPaneAdd(this)
   },
 
-  beforeDestroy () {
+  beforeUnmount () {
     this.onPaneRemove(this)
   },
 

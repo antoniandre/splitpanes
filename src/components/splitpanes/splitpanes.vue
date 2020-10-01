@@ -653,7 +653,7 @@ export default {
     }
   },
 
-  beforeDestroy () {
+  beforeUnmount () {
     // Prevent emitting console warnings on hot reloading.
     this.ready = false
   },
