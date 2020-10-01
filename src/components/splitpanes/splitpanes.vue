@@ -309,6 +309,7 @@ export default {
         // Node is not a Pane or a splitter: remove it.
         if (!isPane && !isSplitter) {
           child.remove()
+          // eslint-disable-next-line no-console
           console.warn('Splitpanes: Only <pane> elements are allowed at the root of <splitpanes>. One of your DOM nodes was removed.')
           return
         }
@@ -587,6 +588,7 @@ export default {
         // Don't emit on hot reload when Vue destroys panes.
         this.$nextTick(() => {
           if (this.ready) {
+            // eslint-disable-next-line no-console
             console.warn('Splitpanes: Could not resize panes correctly due to their constraints.')
           }
         })
@@ -633,6 +635,7 @@ export default {
       /* Disabled otherwise will show up on hot reload.
       // if there is still space to allocate show warning message.
       if (this.panesCount && ~~spaceLeftToDistribute) {
+        // eslint-disable-next-line no-console
         console.warn('Splitpanes: Could not distribute all the empty space between panes due to their constraints.')
       } *\/
 
