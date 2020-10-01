@@ -39,7 +39,7 @@ export default {
     panesCount () {
       return this.panes.length
     },
-    // Indexed panes by `_.uid` of Pane components for fast lookup.
+    // Indexed panes by `uid` of Pane components for fast lookup.
     // Every time a pane is destroyed this index is recomputed.
     indexedPanes () {
       return this.panes.reduce((obj, pane) => (obj[pane.id] = pane) && obj, {})
@@ -48,10 +48,11 @@ export default {
 
   methods: {
     updatePaneComponents () {
-      this.$children.forEach(paneComponent => {
-        paneComponent.update({
-          // Panes are indexed by Pane component _.uid, as they might be inserted at different index!
-          [this.horizontal ? 'height' : 'width']: `${this.indexedPanes[paneComponent._.uid].size}%`
+      // On update refresh the size of each pane through the registered `update` method (in onPaneAdd).
+      this.panes.forEach(pane => {
+        pane.update && pane.update({
+          // Panes are indexed by Pane component uid, as they might be inserted at different index.
+          [this.horizontal ? 'height' : 'width']: `${this.indexedPanes[pane.id].size}%`
         })
       })
     },
@@ -381,21 +382,24 @@ export default {
         min: isNaN(min) ? 0 : min,
         max: isNaN(max) ? 100 : max,
         size: pane.size === null ? null : parseFloat(pane.size),
-        givenSize: pane.size
+        givenSize: pane.size,
+        update: pane.update
       })
 
       // Redo indexes after insertion for other shifted panes.
       this.panes.forEach((p, i) => p.index = i)
 
       if (this.ready) {
-        // 2. Add the splitter.
-        this.redoSplitters()
+        this.$nextTick(() => {
+          // 2. Add the splitter.
+          this.redoSplitters()
 
-        // 3. Resize the panes.
-        this.resetPaneSizes({ addedPane: this.panes[index] })
+          // 3. Resize the panes.
+          this.resetPaneSizes({ addedPane: this.panes[index] })
 
-        // 4. Fire `pane-add` event.
-        this.$emit('pane-add', { index, panes: this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })) })
+          // 4. Fire `pane-add` event.
+          this.$emit('pane-add', { index, panes: this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })) })
+        })
       }
     },
 
@@ -405,14 +409,16 @@ export default {
       const removed = this.panes.splice(index, 1)[0]
       this.panes.forEach((p, i) => p.index = i)
 
-      // 2. Remove the splitter.
-      this.redoSplitters()
+      this.$nextTick(() => {
+        // 2. Remove the splitter.
+        this.redoSplitters()
 
-      // 3. Resize the panes.
-      this.resetPaneSizes({ removedPane: { ...removed, index } })
+        // 3. Resize the panes.
+        this.resetPaneSizes({ removedPane: { ...removed, index } })
 
-      // 4. Fire `pane-remove` event.
-      this.$emit('pane-remove', { removed, panes: this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })) })
+        // 4. Fire `pane-remove` event.
+        this.$emit('pane-remove', { removed, panes: this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })) })
+      })
     },
 
     resetPaneSizes (changedPanes = {}) {
@@ -465,10 +471,7 @@ export default {
           leftToAllocate2 -= pane.size
         })
 
-        if (leftToAllocate2 > 0.1) {
-          // debugger
-          this.readjustSizes(leftToAllocate, ungrowable, unshrinkable)
-        }
+        if (leftToAllocate2 > 0.1) this.readjustSizes(leftToAllocate, ungrowable, unshrinkable)
       }
     },
 
@@ -505,7 +508,7 @@ export default {
 
     /* recalculatePaneSizes ({ addedPane, removedPane } = {}) {
       let leftToAllocate = 100
-      let equalSpaceToAllocate = leftToAllocate / this.panes.length
+      let equalSpaceToAllocate = leftToAllocate / this.panesCount
       let ungrowable = []
       let unshrinkable = []
 
@@ -557,10 +560,9 @@ export default {
     // Second loop to adjust sizes now that we know more about the panes constraints.
     readjustSizes (leftToAllocate, ungrowable, unshrinkable) {
       let equalSpaceToAllocate
-      if (leftToAllocate > 0) equalSpaceToAllocate = leftToAllocate / (this.panes.length - ungrowable.length)
-      else equalSpaceToAllocate = leftToAllocate / (this.panes.length - unshrinkable.length)
+      if (leftToAllocate > 0) equalSpaceToAllocate = leftToAllocate / (this.panesCount - ungrowable.length)
+      else equalSpaceToAllocate = leftToAllocate / (this.panesCount - unshrinkable.length)
 
-      // debugger
       this.panes.forEach((pane, i) => {
         if (leftToAllocate > 0 && !ungrowable.includes(pane.id)) {
           // Need to diff the size before and after to get the exact allocated space.
@@ -576,6 +578,11 @@ export default {
           leftToAllocate -= allocated
           pane.size = newPaneSize
         }
+
+        // Update each pane through the registered `update` method.
+        pane.update({
+          [this.horizontal ? 'height' : 'width']: `${this.indexedPanes[pane.id].size}%`
+        })
       })
 
       if (Math.abs(leftToAllocate) > 0.1) { // > 0.1: Prevent maths rounding issues due to bytes.
@@ -682,7 +689,7 @@ export default {
           }
         ]
       },
-      this.$slots.default
+      this.$slots.default()
     )
   }
 }
