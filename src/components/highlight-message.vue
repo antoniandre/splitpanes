@@ -1,7 +1,7 @@
 <template lang="pug">
-  component(:class="`highlight highlight--${type}`" :is="tag")
-    v-icon(v-if="!noIcon") {{ icon }}
-    slot
+component(:class="`highlight highlight--${type}`" :is="tag")
+  v-icon(v-if="!noIcon") {{ icon }}
+  slot
 </template>
 
 <script>
