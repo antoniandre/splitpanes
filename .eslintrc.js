@@ -4,7 +4,7 @@ module.exports = {
     node: true
   },
   'extends': [
-    'plugin:vue/essential'
+    'plugin:vue/vue3-essential'
   ],
   rules: {
     'brace-style': [2, 'stroustrup', { 'allowSingleLine': true }],
