@@ -5,12 +5,19 @@
 [![npm](https://img.shields.io/npm/dt/splitpanes.svg)](https://www.npmjs.com/package/splitpanes)
 [![npm](https://img.shields.io/npm/dw/splitpanes.svg)](https://www.npmjs.com/package/splitpanes)
 
-> A Vue JS reliable, simple and touch-ready panes splitter / resizer.
+> A Vue.js reliable, simple and touch-ready panes splitter / resizer.
+> Vue 3 compatible.
 
 ## Installation
 
 ```
-npm i --S splitpanes
+npm i splitpanes
+```
+
+**Vue 3**
+
+```
+npm i splitpanes@next
 ```
 
 ---
@@ -36,6 +43,9 @@ If you like this library, you can buy me a beer!
 
 [![paypal](https://www.paypalobjects.com/en_AU/i/btn/btn_donateCC_LG.gif)](https://www.paypal.me/antoniandre1)
 Thank you!
+
+If you are using this library for profit business, please consider [backing me up](https://github.com/sponsors/antoniandre)!
+It ensures that the project your products rely on keep being actively maintained. :)
 
 ___
 
