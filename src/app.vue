@@ -1,11 +1,12 @@
 <template lang="pug">
-  v-app.white(v-scroll="onScroll")
-    v-container
-      router-view
+router-view
+//- v-app.white(v-scroll="onScroll")
+  v-container
+    router-view
 
-    v-fab-transition
-      v-btn(color="primary" fixed bottom right fab v-show="!goTopHidden" small href="#top")
-        v-icon(color="white" size="26") keyboard_arrow_up
+  v-fab-transition
+    v-btn(color="primary" fixed bottom right fab v-show="!goTopHidden" small href="#top")
+      v-icon(color="white" size="26") keyboard_arrow_up
 </template>
 
 <script>
