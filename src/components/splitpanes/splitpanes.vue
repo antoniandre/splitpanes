@@ -1,4 +1,6 @@
 <script>
+import { h } from 'vue'
+
 export default {
   name: 'splitpanes',
   props: {
@@ -37,7 +39,7 @@ export default {
     panesCount () {
       return this.panes.length
     },
-    // Indexed panes by `_uid` of Pane components for fast lookup.
+    // Indexed panes by `_.uid` of Pane components for fast lookup.
     // Every time a pane is destroyed this index is recomputed.
     indexedPanes () {
       return this.panes.reduce((obj, pane) => (obj[pane.id] = pane) && obj, {})
@@ -48,8 +50,8 @@ export default {
     updatePaneComponents () {
       this.$children.forEach(paneComponent => {
         paneComponent.update({
-          // Panes are indexed by Pane component _uid, as they might be inserted at different index!
-          [this.horizontal ? 'height' : 'width']: `${this.indexedPanes[paneComponent._uid].size}%`
+          // Panes are indexed by Pane component _.uid, as they might be inserted at different index!
+          [this.horizontal ? 'height' : 'width']: `${this.indexedPanes[paneComponent._.uid].size}%`
         })
       })
     },
@@ -359,7 +361,7 @@ export default {
 
     // Called by Pane component on programmatic resize.
     requestUpdate ({ target, ...args }) {
-      const pane = this.indexedPanes[target._uid]
+      const pane = this.indexedPanes[target._.uid]
       Object.entries(args).forEach(([key, value]) => pane[key] = value)
     },
 
@@ -374,7 +376,7 @@ export default {
       const min = parseFloat(pane.minSize)
       const max = parseFloat(pane.maxSize)
       this.panes.splice(index, 0, {
-        id: pane._uid,
+        id: pane._.uid,
         index,
         min: isNaN(min) ? 0 : min,
         max: isNaN(max) ? 100 : max,
@@ -399,7 +401,7 @@ export default {
 
     onPaneRemove (pane) {
       // 1. Remove the pane from array and redo indexes.
-      const index = this.panes.findIndex(p => p.id === pane._uid)
+      const index = this.panes.findIndex(p => p.id === pane._.uid)
       const removed = this.panes.splice(index, 1)[0]
       this.panes.forEach((p, i) => p.index = i)
 
@@ -667,7 +669,7 @@ export default {
     this.ready = true
   },
 
-  render (h) {
+  render () {
     return h(
       'div',
       {

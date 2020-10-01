@@ -1,5 +1,5 @@
 <template>
-<div class="splitpanes__pane" @click="onPaneClick($event, _uid)" :style="style">
+<div class="splitpanes__pane" @click="onPaneClick($event, _.uid)" :style="style">
   <slot/>
 </div>
 </template>
