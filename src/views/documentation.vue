@@ -128,9 +128,10 @@ div
   ssh-pre(language="shell").
     npm i splitpanes@next # For Vue 3.
 
-  p
+  p.mt-2
     | View and edit a working
-    a(href="https://codepen.io/antoniandre/pen/LYNKGWV" target="_blank") See a working Vue 3 example on Codepen
+    a.ml-2(href="https://codepen.io/antoniandre/pen/LYNKGWV" target="_blank") Vue 3 example on Codepen
+    | .
 
   .mt-6 Then import the component and CSS:
   ssh-pre(language="js" label="Javascript").
