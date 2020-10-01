@@ -1,12 +1,8 @@
-import Vue from 'vue'
-import Router from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 import Documentation from '@/views/documentation'
 
-Vue.use(Router)
-
-export default new Router({
-  base: process.env.BASE_URL,
-  mode: 'history',
+export default createRouter({
+  history: createWebHistory(process.env.BASE_URL),
   routes: [
     {
       path: '/',
