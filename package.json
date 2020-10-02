@@ -13,9 +13,7 @@
   "unpkg": "dist/splitpanes.umd.min.js",
   "files": [
     "dist",
-    "package.json",
-    "README.md",
-    "LICENSE"
+    "src/components/splitpanes"
   ],
   "dependencies": {},
   "devDependencies": {
