@@ -304,7 +304,8 @@ export default {
     },
 
     checkSplitpanesNodes () {
-      this.container.children.forEach(child => {
+      const children = Array.from(this.container.children)
+      children.forEach(child => {
         const isPane = child.classList.contains('splitpanes__pane')
         const isSplitter = child.classList.contains('splitpanes__splitter')
 
