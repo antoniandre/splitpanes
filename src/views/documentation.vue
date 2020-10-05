@@ -129,6 +129,7 @@ div
     npm i splitpanes@next # For Vue 3.
 
   p.mt-2
+    v-icon.mr-1(small) chevron_right
     | View and edit a working
     a.ml-2(href="https://codepen.io/antoniandre/pen/LYNKGWV" target="_blank") Vue 3 example on Codepen
     | .

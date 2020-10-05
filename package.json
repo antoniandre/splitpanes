@@ -7,7 +7,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "build-bundle": "vue-cli-service build --target lib --name splitpanes ./src/components/splitpanes/index.js --dest ./dist"
+    "build-bundle": "vue-cli-service build --target lib --name splitpanes ./src/components/splitpanes/index.js --dest ./dist && rm ./dist/demo.html"
   },
   "main": "./dist/splitpanes.common.js",
   "unpkg": "dist/splitpanes.umd.min.js",
@@ -51,9 +51,11 @@
     "not ie <= 10"
   ],
   "keywords": [
+    "splitpanes",
     "split panes",
     "panes resizer",
     "vue",
+    "vue3",
     "vuejs",
     "ui"
   ],
