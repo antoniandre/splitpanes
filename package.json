@@ -51,9 +51,11 @@
     "not ie <= 10"
   ],
   "keywords": [
+    "splitpanes",
     "split panes",
     "panes resizer",
     "vue",
+    "vue3",
     "vuejs",
     "ui"
   ],
