@@ -309,7 +309,7 @@ export default {
 
         // Node is not a Pane or a splitter: remove it.
         if (!isPane && !isSplitter) {
-          child.remove()
+          child.parentNode.removeChild(child) // el.remove() doesn't work on IE11.
           // eslint-disable-next-line no-console
           console.warn('Splitpanes: Only <pane> elements are allowed at the root of <splitpanes>. One of your DOM nodes was removed.')
           return
@@ -342,7 +342,7 @@ export default {
       node.onmousedown = undefined
       node.onclick = undefined
       node.ondblclick = undefined
-      node.remove()
+      node.parentNode.removeChild(node) // el.remove() doesn't work on IE11.
     },
 
     redoSplitters () {
