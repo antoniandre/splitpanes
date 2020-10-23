@@ -39,13 +39,13 @@ ___
 
 ## Donating
 
-If you like this library, you can buy me a beer!
+If you like this library, you can buy me a beer or [become a sponsor](https://github.com/sponsors/antoniandre)!
 
 [![paypal](https://www.paypalobjects.com/en_AU/i/btn/btn_donateCC_LG.gif)](https://www.paypal.me/antoniandre1)
 Thank you!
 
-If you are using this library for profit business, please consider [backing me up](https://github.com/sponsors/antoniandre)!
-It ensures that the project your products rely on keep being actively maintained. :)
+If you are using this library for profit business, please consider [backing me](https://github.com/sponsors/antoniandre)!
+It ensures that the project your products rely on keeps being actively maintained. :)
 
 ___
 
