@@ -57,6 +57,7 @@ ___
 
 ## Release Notes
 
+- __Version 2.3.0__ Support rtl direction
 - __Version 2.2.0__ Add `firstSplitter` option allow `v-if` on panes and other improvements
 - __Version 2.0.0__ Fix reactivity issues
 - __Version 1.14.0__ Programmatically set pane size
