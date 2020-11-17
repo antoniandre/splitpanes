@@ -804,8 +804,9 @@ div
     a(href="#release-notes") Release Notes
     a(name="release-notes")
 
+  div #[strong Version 2.3.5] Prevent splitter double taps on touch devices if #[span.code `dblClickSplitter`] is set to false.
   div #[strong Version 2.3.4] Fix removing pane DOM nodes in IE11
-  div #[strong Version 2.3.1] Fix firing #[span.code pane-click] event on pane click
+  div #[strong Version 2.3.1] Fix firing #[span.code `pane-click`] event on pane click
   div #[strong Version 2.3.0] Support rtl direction
   div #[strong Version 2.2.0]
     ul

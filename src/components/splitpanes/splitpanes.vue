@@ -112,16 +112,20 @@ export default {
       if ('ontouchstart' in window) {
         event.preventDefault()
 
-        if (this.splitterTaps.splitter === splitterIndex) {
-          clearTimeout(this.splitterTaps.timeoutId)
-          this.splitterTaps.timeoutId = null
-          this.onSplitterDblClick(event, splitterIndex)
-        }
-        else {
-          this.splitterTaps.splitter = splitterIndex
-          this.splitterTaps.timeoutId = setTimeout(() => {
-            this.splitterTaps.splitter = null
-          }, 500)
+        // Detect splitter double taps if the option is on.
+        if (this.dblClickSplitter) {
+          if (this.splitterTaps.splitter === splitterIndex) {
+            clearTimeout(this.splitterTaps.timeoutId)
+            this.splitterTaps.timeoutId = null
+            this.onSplitterDblClick(event, splitterIndex)
+            this.splitterTaps.splitter = null // Reset for the next tap check.
+          }
+          else {
+            this.splitterTaps.splitter = splitterIndex
+            this.splitterTaps.timeoutId = setTimeout(() => {
+              this.splitterTaps.splitter = null
+            }, 500)
+          }
         }
       }
 
