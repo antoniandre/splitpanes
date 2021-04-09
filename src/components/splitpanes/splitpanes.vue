@@ -3,6 +3,8 @@ import { h } from 'vue'
 
 export default {
   name: 'splitpanes',
+  emits: ['ready','resize','resized','pane-click','pane-maximize','pane-add','pane-remove','splitter-click'],
+  
   props: {
     horizontal: { type: Boolean },
     pushOtherPanes: { type: Boolean, default: true },
