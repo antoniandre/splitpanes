@@ -100,7 +100,7 @@ div
           &lt;splitpanes horizontal&gt;
             &lt;pane&gt;2&lt;/pane&gt;
             &lt;pane&gt;3&lt;/pane&gt;
-            &lt;pane&gt;4&lt;pane&gt;
+            &lt;pane&gt;4&lt;/pane&gt;
           &lt;/splitpanes&gt;
         &lt;/pane&gt;
         &lt;pane&gt;5&lt;/pane&gt;
