@@ -6,7 +6,8 @@ export default {
     pushOtherPanes: { type: Boolean, default: true },
     dblClickSplitter: { type: Boolean, default: true },
     rtl: { type: Boolean, default: false }, // Right to left direction.
-    firstSplitter: { type: Boolean }
+    firstSplitter: { type: Boolean },
+    splitterClasses: {type: Array, default: () => []}
   },
 
   provide () {
@@ -324,7 +325,7 @@ export default {
     addSplitter (paneIndex, nextPaneNode, isVeryFirst = false) {
       const splitterIndex = paneIndex - 1
       const elm = document.createElement('div')
-      elm.classList.add('splitpanes__splitter')
+      elm.classList.add('splitpanes__splitter', ...this.splitterClasses)
 
       if (!isVeryFirst) {
         elm.onmousedown = event => this.onMouseDown(event, splitterIndex)
