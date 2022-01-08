@@ -88,13 +88,16 @@ export default {
         event.preventDefault()
         this.touch.dragging = true
         this.calculatePanesSize(this.getCurrentMouseDrag(event))
-        this.$emit('resize', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
+        var containerSize = this.container[this.horizontal ? 'clientHeight' : 'clientWidth']
+        this.$emit('resize', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size, sizeInPixel: (containerSize/100)*pane.size })))
+     
       }
     },
 
     onMouseUp () {
       if (this.touch.dragging) {
-        this.$emit('resized', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
+         var containerSize = this.container[this.horizontal ? 'clientHeight' : 'clientWidth']
+         this.$emit('resized', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size, sizeInPixel: (containerSize/100)*pane.size })))
       }
       this.touch.mouseDown = false
       // Keep dragging flag until click event is finished (click happens immediately after mouseup)
