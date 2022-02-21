@@ -1,82 +1,85 @@
 <template lang="pug">
-div
-  div.text-center
-    img(alt="Vue logo" src="@/assets/logo.png" height="40")
-    h1.mb-3.headline Splitpanes
-    p.mb-12.subtitle-1 A Vue JS reliable, simple and touch-ready panes splitter / resizer.
+.page-container
+  header.text-center
+    svg.mb5(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" xml:space="preserve" width="4em")
+      path(d="M469 500v490h57V10h-57v490z" fill="#42b983")
+      path(d="m109 417-83 83 80 80 81 81 20-20 20-20-46-46-46-46h219v-58H135l48-47 49-49c0-2-9-11-20-22l-20-20-83 84z" fill="#35495e")
+      path(d="m789 354-21 20 11 11 46 48 35 37-109 1H641v58h219l-46 46-46 46 21 20 20 20 82-83 83-83-13-11-82-81-70-70-20 21z" fill="#35495e")
+    h1.mb3.title1 Splitpanes
 
-  v-layout
-    v-flex
-      h2.mt-12.mb-2.title Features
-      ul.checklist
-        li
-          v-icon.mr-2(color="primary" size="20") check
-          | Light weight &amp; no dependencies other than Vue JS
-        li
-          v-icon.mr-2(color="primary" size="20") check
-          | Only worry about your panes, the splitters are automatic
-        li
-          v-icon.mr-2(color="primary" size="20") check
-          | Nesting supported
-        li
-          v-icon.mr-2(color="primary" size="20") check
-          | Fully responsive
-        li
-          v-icon.mr-2(color="primary" size="20") check
-          | Support for touch devices
-        li
-          v-icon.mr-2(color="primary" size="20") check
-          | Push other panes or not
-        li
-          v-icon.mr-2(color="primary" size="20") check
-          | Double click a splitter to maximize pane
-        li
-          v-icon.mr-2(color="primary" size="20") check
-          | Programmatically set pane width or height
-        li
-          v-icon.mr-2(color="primary" size="20") check
-          | Programmatically add and remove panes
-        li
-          v-icon.mr-2(color="primary" size="20") check
-          strong Supports Vue 2 &amp; Vue 3
+    p.grey A Vue JS reliable, simple and touch-ready panes splitter / resizer.
 
-  h3.mt-12.mb-4.title Github project &nbsp;&amp;&nbsp; important notes
-  v-layout(align-center shrink)
-    v-icon.pr-8.lightgrey--text(x-large) fab fa-github
-    a(href="https://github.com/antoniandre/splitpanes" target="_blank") //github.com/antoniandre/splitpanes #[v-icon(small color="primary") open_in_new]
+  h2.mt12.mb2.title2 Features
+  ul.checklist
+    li
+      w-icon.mr2(color="primary" size="20") material-icons check
+      | Light weight &amp; no dependencies other than Vue JS
+    li
+      w-icon.mr2(color="primary" size="20") material-icons check
+      | Only worry about your panes, the splitters are automatic
+    li
+      w-icon.mr2(color="primary" size="20") material-icons check
+      | Nesting supported
+    li
+      w-icon.mr2(color="primary" size="20") material-icons check
+      | Fully responsive
+    li
+      w-icon.mr2(color="primary" size="20") material-icons check
+      | Support for touch devices
+    li
+      w-icon.mr2(color="primary" size="20") material-icons check
+      | Push other panes or not
+    li
+      w-icon.mr2(color="primary" size="20") material-icons check
+      | Double click a splitter to maximize pane
+    li
+      w-icon.mr2(color="primary" size="20") material-icons check
+      | Programmatically set pane width or height
+    li
+      w-icon.mr2(color="primary" size="20") material-icons check
+      | Programmatically add and remove panes
+    li
+      w-icon.mr2(color="primary" size="20") material-icons check
+      strong Supports Vue 2 &amp; Vue 3
 
-  v-layout.mt-4.mb-8(align-center)
-    svg.mr-4.blue--text.text--lighten-1(viewBox="0 0 725 477" style="width: 50px;stroke: #497ca2;stroke-width: 5px")
+  h2.mt12.mb4.title2 Github project &nbsp;&amp;&nbsp; important notes
+  w-flex(align-center shrink)
+    w-icon.ml1.mr5.lightgrey(size="46") fab fa-github
+    a(href="https://github.com/antoniandre/vueper-slides" target="_blank") //github.com/antoniandre/vueper-slides #[w-icon(color="primary") material-icons open_in_new]
+
+  w-flex.my8(align-center)
+    w-icon.mr4(size="50" color="pink-light3") material-icons favorite
+    w-alert.ma0(border-left color="pink" style="width: 100%;max-width: 600px")
+      | If you like Splitpanes, you can
+      a.pink.mx2(
+        href="https://www.paypal.me/antoniandre1"
+        target="_blank"
+        style="text-decoration: underline") #[strong Support the project]
+      | or
+      a.pink.ml2(
+        href="https://github.com/sponsors/antoniandre"
+        target="_blank"
+        style="text-decoration: underline") #[strong Sponsor the author]
+      | !
+      div Thank you so much to all the supporters! #[span.title1.ml1 🙏]
+
+  w-flex.mt4.mb8(align-center)
+    svg.mr4.blue-light1(viewBox="0 0 725 477" style="width: 50px;stroke: #497ca2;stroke-width: 5px")
       path(fill="#497ca2" d="M449 0c-78 5-152 39-217 82-19 13-37 26-54 40-39 1-77 15-110 34-34 21-53 60-61 99-11 52-8 108 6 159 7 23 16 46 33 63 4-4 13-4 13-11-1-5-7-8-9-14-27-48-32-108-11-159 13-32 36-63 68-77 19-9 42-7 58 6 6 7 18 4 24-2 6-4 11-10 19-10-24 25-39 60-38 95 1 15 3 31 8 45 16 36 41 69 76 89 5 2 10 6 16 7 5-2 14-5 14-12-4-9-14-12-21-18-27-23-56-48-67-82-9-29-1-60 8-88 7-15 21-32 39-29 15 1 28 13 43 8 11-5 13-17 16-27 5-17 3-38-10-51-16-18-40-23-62-25l-11-2c23-19 53-26 81-31 21-3 43-5 64-2 18 3 28 21 42 31-33 47-57 102-56 159a170 170 0 0086 149c6-1 13-7 10-14-5-11-17-16-25-25-33-30-52-75-50-121 1-29 11-58 24-84 12-25 25-52 47-71 9-8 22-13 33-7 20 8 42 14 63 13-35 27-55 70-64 113-9 44-7 91 12 133 15 37 45 68 81 85 32 16 67 24 101 27 18 1 36 2 53-4 4-1 6-7 2-9-13-6-28-4-42-6-45-5-92-16-127-45-34-28-54-71-60-114-5-47 7-97 34-137 11-15 26-31 45-34 14-1 25 12 31 23 6 12 16 24 29 28 20-10 40-26 43-50 2-17-6-34-14-49-15-25-40-43-69-48-20-5-41-2-61-6-22-21-54-24-83-24zm6 21c22 0 48 5 62 25 4 7 8 16 8 24-1 10-10 22-21 19-9-7-18-14-30-16-14-4-31-1-43 8-6 6-17 8-24 2-9-6-17-15-28-17-27-7-54 1-81 6a364 364 0 01157-51zm117 29c33 0 66 25 72 58 3 12 3 28-8 35-3 2-6 4-8 1-8-12-12-27-23-37-3-7-12-8-19-9-13-2-26 0-39-4 7-7 6-17 4-25l-3-16 24-3zm-372 92l46 2c18 2 33 16 34 34 1 7 1 17-6 21-6 0-12-4-18-6-21-8-46-14-67-3-6 2-11 9-17 5-10-4-18-14-30-12-30 1-56 21-77 42-16 17-30 37-43 56 0-39 17-80 49-104 26-22 61-30 94-34l35-1z")
-    v-alert.ma-0(dense border="left" text color="#1471b8" style="width: 100%;max-width: 600px")
+    w-alert.ma0(border-left color="pale-blue" style="width: 100%;max-width: 600px")
       strong
-        | Check out my new UI framework for Vue &amp; Vue 3!
-        a.headline.ml-4(
+        | Check out my UI framework for Vue (2 &amp; 3)!
+        a.title1.ml4(
           href="https://antoniandre.github.io/wave-ui"
           target="_blank"
           style="width: 50px;color: #1471b8;text-decoration: underline")
             strong Wave UI
 
-  v-layout.my-8(align-center)
-    v-icon.mr-4(size="50" color="pink lighten-3") favorite
-    v-alert.ma-0(dense border="left" text color="pink" style="width: 100%;max-width: 600px")
-      | If you like Splitpanes, you can
-      a.pink--text.mx-2(
-        href="https://www.paypal.me/antoniandre1"
-        target="_blank"
-        style="text-decoration: underline") #[strong Support the project]
-      | or
-      a.pink--text.ml-2(
-        href="https://github.com/sponsors/antoniandre"
-        target="_blank"
-        style="text-decoration: underline") #[strong Sponsor the author]
-      | !
-      div Thank you so much to all the supporters! #[span.headline.ml-1 🙏]
-
-  h2.mt-12.pt-12.mb-2.subtitle-1
-    | # Demo - try it yourself:
-    a.ml-2.d-inline-flex.align-center(href="https://codepen.io/antoniandre/pen/XybPKP" target="_blank") //codepen.io/antoniandre/pen/XybPKP
-      v-icon(small color="primary") open_in_new
+  .title4.mt12.pt12.mb2
+    | # Demo -
+    a.ml1.d-inline-flex.align-center(href="https://codepen.io/antoniandre/pen/XybPKP" target="_blank")
+      | try it yourself on Codepen
+      w-icon.ml1(color="primary") material-icons open_in_new
 
   splitpanes.default-theme.example.example1(style="height: 400px")
     pane(min-size="20")
@@ -92,8 +95,8 @@ div
     pane
       span 5
 
-  v-layout.pb-6(wrap)
-    ssh-pre.flex.mb-0.mr-2(language="html-vue" label="HTML Vue Template").
+  w-flex.pb6(wrap)
+    ssh-pre.flex.mb0.mr2(language="html-vue" label="HTML Vue Template").
       &lt;splitpanes style="height: 400px"&gt;
         &lt;pane min-size="20"&gt;1&lt;/pane&gt;
         &lt;pane&gt;
@@ -105,7 +108,7 @@ div
         &lt;/pane&gt;
         &lt;pane&gt;5&lt;/pane&gt;
       &lt;/splitpanes&gt;
-    ssh-pre.flex.mb-0(language="css" label="CSS").
+    ssh-pre.flex.mb0(language="css" label="CSS").
       .splitpanes__pane {
         display: flex;
         justify-content: center;
@@ -115,11 +118,11 @@ div
         font-size: 5em;
       }
 
-  h2.mt-12.mb-2.headline
+  h2.mt12.mb2
     a(href="#installation") Installation
     a(name="installation")
 
-  p You have two options: #[em NPM] #[strong.mx-1 or] #[span.code &lt;script&gt;] tag.
+  p You have two options: #[em NPM] #[strong.mx1 or] #[span.code &lt;script&gt;] tag.
   h3 Via NPM
   ssh-pre(language="shell").
     npm i splitpanes # For Vue 2.x.
@@ -127,13 +130,13 @@ div
   ssh-pre(language="shell").
     npm i splitpanes@next # For Vue 3.
 
-  p.mt-2
-    v-icon.mr-1(small) chevron_right
+  p.mt2
+    w-icon.mr1 material-icons chevron_right
     | View and edit a working
-    a.ml-2(href="https://codepen.io/antoniandre/pen/LYNKGWV" target="_blank") Vue 3 example on Codepen
+    a.ml2(href="https://codepen.io/antoniandre/pen/LYNKGWV" target="_blank") Vue 3 example on Codepen
     | .
 
-  .mt-6 Then import the component and CSS:
+  .mt6 Then import the component and CSS:
   ssh-pre(language="js" label="Javascript").
     // In your Vue component.
     import { Splitpanes, Pane } from 'splitpanes'
@@ -144,7 +147,7 @@ div
       ...
     }
 
-  h3.mt-12 Via #[span.code &lt;script&gt;] tag
+  h3.mt12 Via #[span.code &lt;script&gt;] tag
   p Include the Splitpanes script in your document #[span.code &lt;head&gt;] as follows:
   ssh-pre(language="html" label="HTML").
     &lt;head&gt;
@@ -154,8 +157,8 @@ div
       &lt;link href="https://unpkg.com/splitpanes/dist/splitpanes.css" rel="stylesheet"&gt;
     &lt;/head&gt;
 
-  h2.mt-12.mb-2
-    a.headline(href="#how-to-use") How to use
+  h2.mt12.mb2
+    a(href="#how-to-use") How to use
     a(name="how-to-use")
 
   p.
@@ -184,12 +187,12 @@ div
 
   //- Examples.
   //-------------------------------------------------------//
-  h2.mt-12.mb-2.headline
+  h2.mt12.mb2
     a(href="#more-examples") More examples
     a(name="more-examples")
 
-  h3.mt-8.mb-2.subtitle-1
-    a(href="#vue-3") # Vue 3
+  h3.mt8.mb2
+    a(href="#vue-3") Vue 3
     a(name="vue-3")
   p
     | View and edit a working
@@ -197,8 +200,8 @@ div
 
 
   //- Example.
-  h3.mt-10.mb-2.subtitle-1
-    a(href="#horizontal-layout") # Horizontal layout, push other panes, min &amp; max use
+  h3.mt10.mb2
+    a(href="#horizontal-layout") Horizontal layout, push other panes, min &amp; max use
     a(name="horizontal-layout")
   p You can also double click a splitter to maximize the next pane! (First pane splitter will be an option soon)
   p If you want to disable the 'double click splitter to maximize' behavior, you can add this attribute: #[span.code :dbl-click-splitter="false"].
@@ -224,8 +227,8 @@ div
     &lt;/splitpanes&gt;
 
   //- Example.
-  h3.mt-12.pt-8.mb-2.subtitle-1
-    a(href="#default-pane-width") # Default pane width or height
+  h3.mt12.pt8.mb2
+    a(href="#default-pane-width") Default pane width or height
     a(name="default-pane-width")
   p
     | Provide dimension of your panes when they first load (will be used for the width or height respectively for the vertical or horizontal layout).#[br]
@@ -256,12 +259,13 @@ div
     &lt;/splitpanes&gt;
 
   //- Example.
-  h3.mt-12.pt-8.mb-2.subtitle-1
-    a(href="#nested-splitpanes") # Mix layout with nested splitpanes &amp; prevent pushing other panes
+  h3.mt12.pt8.mb2
+    a(href="#nested-splitpanes") Mix layout with nested splitpanes &amp; prevent pushing other panes
     a(name="nested-splitpanes")
   p
-    | try it yourself:
-    a(href="https://codepen.io/antoniandre/pen/PypgKY" target="_blank" class="ml-2") //codepen.io/antoniandre/pen/PypgKY #[v-icon(small color="primary") open_in_new]
+    a(href="https://codepen.io/antoniandre/pen/PypgKY" target="_blank")
+      | Try it yourself on Codepen
+      w-icon.ml1(color="primary") material-icons open_in_new
   splitpanes.default-theme.example(horizontal :push-other-panes="false" style="height: 400px")
     pane
       span 1
@@ -300,8 +304,8 @@ div
     &lt;/splitpanes&gt;
 
   //- Example.
-  h3.mt-12.pt-8.mb-2.subtitle-1
-    a(href="#lots-of-splitters") # Lots of splitters &amp; push other panes - all panes have a min width of 5%
+  h3.mt12.pt8.mb2
+    a(href="#lots-of-splitters") Lots of splitters &amp; push other panes - all panes have a min width of 5%
     a(name="lots-of-splitters")
   splitpanes.default-theme.example(style="height: 400px")
     pane(v-for="i in 8" :key="i" :min-size="5")
@@ -315,16 +319,16 @@ div
     &lt;/splitpanes&gt;
 
   //- Example.
-  h3.mt-12.pt-8.mb-2.subtitle-1
-    a(href="#adding-splitters-on-the-fly") # Adding splitters on the fly
+  h3.mt12.pt8.mb2
+    a(href="#adding-splitters-on-the-fly") Adding splitters on the fly
     a(name="adding-splitters-on-the-fly")
   p
     | This example shows the reactivity when you add a new element dynamically in splitpanes.
-    v-btn.ml-2(color="primary" small @click="panesNumber++")
-      v-icon.mr-1 add
+    w-button.ml2(@click="panesNumber++")
+      w-icon.mr1 material-icons add
       | Add pane
-    v-btn.ml-2(color="primary" small @click="panesNumber--")
-      v-icon.mr-1 remove
+    w-button.ml2(@click="panesNumber--")
+      w-icon.mr1 material-icons remove
       | Remove pane
 
   splitpanes.default-theme.example(style="height: 400px")
@@ -348,19 +352,19 @@ div
     })
 
   //- Example.
-  h3.mt-12.pt-8.mb-2.subtitle-1
-    a(href="#change-direction") # Change direction &amp; first splitter
+  h3.mt12.pt8.mb2
+    a(href="#change-direction") Change direction &amp; first splitter
     a(name="change-direction")
   p When changing direction, all the panes current width or height will flip to adapt to the new layout.
   p.
     Showing the first splitter is an option which allows user to double click the splitter to maximize the next pane.#[br]
     The first splitter does not allow to resize the next pane.
 
-  v-btn.mr-2.mb-2(small color="primary" @click="horizontal = !horizontal")
-    v-icon.ml-n1.mr-1 {{ horizontal ? 'view_column' : 'view_stream' }}
+  w-button.mr2.mb2(@click="horizontal = !horizontal")
+    w-icon.ml-n1.mr1 material-icons {{ horizontal ? 'view_column' : 'view_stream' }}
     | Switch to {{ horizontal ? 'Vertical' : 'Horizontal' }}
-  v-btn.mr-2.mb-2(small color="primary" @click="firstSplitter = !firstSplitter")
-    v-icon.ml-n1.mr-1 {{ firstSplitter ? 'close' : 'add' }}
+  w-button.mr2.mb2(@click="firstSplitter = !firstSplitter")
+    w-icon.ml-n1.mr1 material-icons {{ firstSplitter ? 'close' : 'add' }}
     | {{ firstSplitter ? 'Hide' : 'Show' }} First Splitter
   splitpanes.default-theme.example(
     :horizontal="horizontal"
@@ -386,13 +390,13 @@ div
     })
 
   //- Example.
-  h3.mt-12.pt-8.mb-2.subtitle-1
-    a(href="#programmatic-resizing") # Programmatic resizing
+  h3.mt12.pt8.mb2
+    a(href="#programmatic-resizing") Programmatic resizing
     a(name="programmatic-resizing")
-  p.mb-6 This example shows the programmatic way of resizing panes. And how it works both ways.
-  v-slider(
+  p.mb6 This example shows the programmatic way of resizing panes. And how it works both ways.
+  w-slider.mt12.mb10(
     v-model="paneSize"
-    track-color="grey lighten-2"
+    track-color="grey-light2"
     label="First pane size"
     thumb-label="always"
     thumb-size="25"
@@ -405,7 +409,7 @@ div
       span {{ 100 - paneSize }}%
 
   ssh-pre(language="html-vue" label="HTML").
-    &lt;v-slider v-model="paneSize" label="First pane size" :min="0" :max="100"&gt;
+    &lt;w-slider v-model="paneSize" label="First pane size" :min="0" :max="100"&gt;
     &lt;splitpanes class="default-theme" @resize="paneSize = $event[0].size" style="height: 400px"&gt;
       &lt;pane :size="paneSize"&gt;
         &lt;span&gt;{{ '\{\{ paneSize \}\}' }}%&lt;/span&gt;
@@ -422,30 +426,30 @@ div
     })
 
   //- Example.
-  h3.mt-12.pt-8.mb-2.subtitle-1
-    a(href="#in-depth-reactivity") # In-depth reactivity
+  h3.mt12.pt8.mb2
+    a(href="#in-depth-reactivity") In-depth reactivity
     a(name="in-depth-reactivity")
   p
     | This example shows the reactivity when you modify anything in your component inside splitpanes.#[br]
-    v-btn.mt-2.mr-2(color="primary" small @click="generateRandomNumber")
-      v-icon.mr-1(size="20") sync
+    w-button.mt2.mr2(@click="generateRandomNumber")
+      w-icon.mr1(size="20") material-icons sync
       | Generate 3 random numbers
-    v-btn.mt-2(color="primary" small @click="incrementNumber(3)")
-      v-icon.mr-1(size="20") add
+    w-button.mt2(@click="incrementNumber(3)")
+      w-icon.mr1(size="20") material-icons add
       | Increment pane #3
   splitpanes.default-theme.example(style="height: 400px" horizontal)
     pane
       splitpanes
-        pane.layout.column.text-center(v-for="i in 3" :key="i")
+        pane.w-flex.column.text-center(v-for="i in 3" :key="i")
           span {{ i }}#[br]
           em Number is: {{ randomNums[i] }}#[br]
           em(v-if="i === 2").
             Number on the left is: {{ randomNums[1] }}#[br]
             Number on the right is: {{ randomNums[3] }}#[br]
-          v-btn.align-center(v-if="i !== 2" small color="primary" @click="randomNums[i] = randomNums[i] + 1" style="min-width: 0")
-            v-icon(size="20") add
+          w-button.align-center(v-if="i !== 2" @click="randomNums[i] = randomNums[i] + 1" style="min-width: 0")
+            w-icon(size="20") material-icons add
             | 1
-    pane.layout.column.text-center
+    pane.w-flex.column.text-center
       span 4#[br]
       em.
         - Nested splitpanes -#[br]
@@ -497,17 +501,17 @@ div
     }
 
   //- Example.
-  h3.mt-12.pt-8.mb-2.subtitle-1
-    a(href="#toggle-a-pane-with-v-if") # Toggle a pane with #[span.code v-if]
+  h3.mt12.pt8.mb2
+    a(href="#toggle-a-pane-with-v-if") Toggle a pane with #[span.code v-if]
     a(name="toggle-a-pane-with-v-if")
 
-  v-btn.mb-2(small color="primary" @click="hidePane2 = !hidePane2")
-    v-icon.mr-2(size="2em") {{ hidePane2 ? 'visibility' : 'visibility_off'}}
+  w-button.mb2(@click="hidePane2 = !hidePane2")
+    w-icon.mr2 material-icons {{ hidePane2 ? 'visibility' : 'visibility_off'}}
     | {{ hidePane2 ? 'Show' : 'Hide' }} Pane 2
   splitpanes.default-theme.example(style="height: 400px")
     pane
       span 1
-    pane.green.lighten-5(v-if="!hidePane2")
+    pane.green-light5(v-if="!hidePane2")
       span 2
     pane
       span 3
@@ -527,29 +531,29 @@ div
     &lt;/splitpanes&gt;
 
   //- Example.
-  h3.mt-12.pt-8.mb-2.subtitle-1
-    a(href="#vue-router") # Vue Router inside splitpanes
+  h3.mt12.pt8.mb2
+    a(href="#vue-router") Vue Router inside splitpanes
     a(name="vue-router")
-  p.mb-1.
+  p.mb1.
     This is another reactivity example of a rather common case: Vue Router inside splitpanes.#[br]
     The navigation is in the left pane, but you can also access from outside of splitpanes, through those buttons:
-  v-btn.example-vue-router.my-1.mr-1(color="primary" small to="example-home-view") Home view
-  v-btn.example-vue-router.my-1(color="primary" small to="example-another-view") Another view
+  w-button.example-vue-router.my1.mr1(route="example-home-view") Home view
+  w-button.example-vue-router.my1(route="example-another-view") Another view
 
-  splitpanes.default-theme.example-vue-router.mt-2(style="height: 400px")
-    pane.layout.column.fill-height(min-size="20")
-      .flex.pa-2
-        p.headline Navigation
+  splitpanes.default-theme.example-vue-router.mt2(style="height: 400px")
+    pane.w-flex.column.fill-height(min-size="20")
+      .flex.pa2
+        p.title1 Navigation
         ul
           li
             router-link(to="example-home-view") Home view
           li
             router-link(to="example-another-view") Another view
-      em.ma-auto.grey--text I have a min width of 20%
-    pane.layout.column.fill-height
-      em.d-flex.justify-center.grey--text.code.pa-2 router-view
+      em.ma-auto.grey I have a min width of 20%
+    pane.w-flex.column.fill-height
+      em.d-flex.justify-center.grey.code.pa2 router-view
       router-view.flex
-    pane.layout.align-center.justify-center
+    pane.w-flex.align-center.justify-center
       span.ma-auto 3#[br]
 
   ssh-pre(language="html-vue" label="HTML").
@@ -594,24 +598,24 @@ div
     &lt;/template&gt;
 
   //- Example.
-  h3.mt-12.pt-8.mb-2.subtitle-1
-    a(href="#emitted-events") # Listening to emitted events
+  h3.mt12.pt8.mb2
+    a(href="#emitted-events") Listening to emitted events
     a(name="emitted-events")
   p Here is the list of events that are emitted from splitpanes:
   ul
-    li #[code.mr-2 ready] has no parameter and fires when splitpanes is ready
-    li #[code.mr-2 resize] returns an array of all the panes objects with their dimensions, and fires while resizing (on mousemove/touchmove)
+    li #[code.mr2 ready] has no parameter and fires when splitpanes is ready
+    li #[code.mr2 resize] returns an array of all the panes objects with their dimensions, and fires while resizing (on mousemove/touchmove)
     li.
-      #[code.mr-2 resized] returns an array of all the panes objects with their dimensions, and fires once when the resizing stops after user drag (on mouseup/touchend).#[br]
+      #[code.mr2 resized] returns an array of all the panes objects with their dimensions, and fires once when the resizing stops after user drag (on mouseup/touchend).#[br]
       This event is also fired after the internal resizing of panes that occurs after adding or removing a pane.
-    li #[code.mr-2 pane-click] returns the clicked pane object with its dimensions.
-    li #[code.mr-2 pane-maximize] returns the maximized pane object with its dimensions.
-    li #[code.mr-2 pane-add] returns an object containing the index of the added pane and the new array of panes after resize.
-    li #[code.mr-2 pane-remove] returns an object containing the removed pane and an array of all the remaining panes objects with their dimensions after resize.
+    li #[code.mr2 pane-click] returns the clicked pane object with its dimensions.
+    li #[code.mr2 pane-maximize] returns the maximized pane object with its dimensions.
+    li #[code.mr2 pane-add] returns an object containing the index of the added pane and the new array of panes after resize.
+    li #[code.mr2 pane-remove] returns an object containing the removed pane and an array of all the remaining panes objects with their dimensions after resize.
     li.
-      #[code.mr-2 splitter-click] returns the next pane object (with its dimensions) directly after the clicked splitter.#[br]
+      #[code.mr2 splitter-click] returns the next pane object (with its dimensions) directly after the clicked splitter.#[br]
       This event is only emitted if dragging did not occur between mousedown and mouseup.
-  p.mt-4 Try resizing panes and check the logs bellow.
+  p.mt4 Try resizing panes and check the logs bellow.
 
   splitpanes.default-theme.example(
     @resize="log('resize', $event)"
@@ -625,7 +629,7 @@ div
       span {{ i }}
 
   pre.ssh-pre.logs-box(data-label="Logs")
-    div.grey--text
+    div.grey
       | //&nbsp;
       strong Event name:&nbsp;
       span Event params &nbsp; (Last event on top)
@@ -649,12 +653,13 @@ div
     &lt;/splitpanes&gt;
 
   //- Example.
-  h3.mt-12.pt-8.mb-2.subtitle-1
-    a(href="#increased-touch-zone") # Increased reactive touch zone for touch devices
+  h3.mt12.pt8.mb2
+    a(href="#increased-touch-zone") Increased reactive touch zone for touch devices
     a(name="increased-touch-zone")
   p
-    | try it yourself:
-    a(href="https://codepen.io/antoniandre/pen/XxRZmB" target="_blank" class="ml-2") //codepen.io/antoniandre/pen/XxRZmB #[v-icon(small color="primary") open_in_new]
+    a(href="https://codepen.io/antoniandre/pen/XxRZmB" target="_blank")
+      | Try it yourself on Codepen
+      w-icon.ml1(color="primary") material-icons open_in_new
 
   splitpanes.touch-example(horizontal style="height: 400px")
     pane
@@ -710,13 +715,14 @@ div
     .splitpanes--horizontal &gt; .splitpanes__splitter:before {top: -30px;bottom: -30px;width: 100%;}
 
   //- Example.
-  h3.mt-12.pt-8.mb-2.subtitle-1
-    a(href="#do-your-own-style") # Do your own style
+  h3.mt12.pt8.mb2
+    a(href="#do-your-own-style") Do your own style
     a(name="do-your-own-style")
   p If you don't want to use the default style, here is how to do your own.
   p
-    | try it yourself:
-    a(href="https://codepen.io/antoniandre/pen/mzGZXR" target="_blank" class="ml-2") //codepen.io/antoniandre/pen/mzGZXR #[v-icon(small color="primary") open_in_new]
+    a(href="https://codepen.io/antoniandre/pen/mzGZXR" target="_blank")
+      | Try it yourself on Codepen
+      w-icon.ml1(color="primary") material-icons open_in_new
 
   splitpanes.example-own-style(horizontal style="height: 400px")
     pane
@@ -772,35 +778,36 @@ div
       background: linear-gradient(0deg, #ccc, #111);
     }
 
-  h2.headline.mt-12.pt-12.mb-2
+  h2.mt12.pt12.mb2
     a(href="#api") API
     a(name="api")
+
   p Here is the list of all the props.
   ul
     li
       code horizontal
-      span.code.ml-2 Default: false
+      span.code.ml2 Default: false
       p.
         The orientation of the panes splitting.#[br]
         Vertical by default, meaning the splitters are vertical, but you can resize horizontally
     li
       code push-other-panes
-      span.code.ml-2 Default: true
+      span.code.ml2 Default: true
       p Whether it should push the next splitter when dragging a splitter until it reached another one.
     li
       code dbl-click-splitter
-      span.code.ml-2 Default: true
+      span.code.ml2 Default: true
       p Double click on splitter to maximize the next pane.
     li
       code rtl
-      span.code.ml-2 Default: false
+      span.code.ml2 Default: false
       p Supports Right to left direction.
     li
       code first-splitter
-      span.code.ml-2 Default: false
+      span.code.ml2 Default: false
       p Displays the first splitter when set to true. This allows maximizing the first pane on splitter double click.
 
-  h2.headline.mt-12.pt-12.mb-2
+  h2.mt12.pt12.mb2
     a(href="#release-notes") Release Notes
     a(name="release-notes")
 
@@ -817,7 +824,7 @@ div
       li Emit a #[span.code `pane-remove`] event after pane was removed
       li Support #[span.code `v-if`] on a Pane and allow inserting a Pane at any position between others. ref: #[a(href="#toggle-a-pane-with-v-if") Toggle a pane with v-if]
 
-  div.mt-4
+  div.mt4
     | #[strong Version 2.0.0] Fix reactivity issues.
     highlight-message(type="success")
       ul
@@ -838,7 +845,7 @@ div
       strong.
         The #[span.code `resize`] event - previously firing after resize end - is now firing on resize.#[br]
         A new #[span.code `resized`] event is emitted on resize end. Check out the
-        #[a(href="#emitted-events") # Listening to emitted events] example.
+        #[a(href="#emitted-events") Listening to emitted events] example.
     highlight-message(type="success")
       strong.
         By default and for performance, the reactivity is now limited to slot deletion and slot creation.#[br]
@@ -852,20 +859,6 @@ div
   div #[strong Version 1.2.0] Add a `default-theme` CSS class to load default theme
   div #[strong Version 1.1.0] Allow pushing other panes while dragging splitter
   div #[strong Version 1.0.0] First public release
-
-  v-footer.mt-12.pt-8.pb-10.px-0(color="white")
-    v-layout(wrap justify-center)
-      v-flex.grey--text.text--lighten-1.xs12.sm6.text-center.text-sm-left.copyright.
-        Copyright © {{ (new Date()).getFullYear() }} Antoni André, all rights reserved.
-      v-flex.xs12.sm6.text-center.text-sm-right.made-with
-        div.grey--text.text--lighten-1.
-          This documentation is made with
-          #[v-icon.grey--text.text--lighten-1(small) fab fa-vuejs],
-          #[v-icon.grey--text.text--lighten-1(small) fab fa-html5],
-          #[v-icon.grey--text.text--lighten-1(small) fab fa-css3],
-          #[v-icon.grey--text.text--lighten-1(small) fab fa-sass] &amp;
-          #[v-icon.grey--text.text--lighten-1(small) favorite]
-        div View project on #[a(href="https://github.com/antoniandre/splitpanes" target="_blank") #[v-icon(small) fab fa-github] Github].
 </template>
 
 <script>
@@ -920,7 +913,7 @@ a {
   text-decoration: none;
   transition: 0.3s;
 
-  .v-application h3 & {color: #333;font-size: 1.5em;}
+  .w-application h3 & {color: #333;font-size: 1.5em;}
   &:hover {color: $secondary-color;}
 }
 
@@ -967,7 +960,7 @@ em.specs {
 // Vue Router example.
 //---------------
 .example-vue-router {
-  &.v-btn--active {background-color: darken($primary-color, 10) !important;}
+  &.w-button--active {background-color: darken($primary-color, 10) !important;}
   .router-link-active {color: darken($primary-color, 10);}
 }
 

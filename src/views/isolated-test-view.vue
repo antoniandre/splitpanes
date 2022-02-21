@@ -1,9 +1,9 @@
 <template lang="pug">
 //- This is an isolated test view. Just for testing purpose.
 div
-  v-btn.ml-2(color="primary" small @click="hidePane2 = !hidePane2")
+  w-button.ml2(@click="hidePane2 = !hidePane2")
     | Hide pane 2
-  v-btn.ml-2(color="primary" small @click="hidePane4 = !hidePane4")
+  w-button.ml2(@click="hidePane4 = !hidePane4")
     | Hide pane 4
 
   splitpanes.default-theme.example(

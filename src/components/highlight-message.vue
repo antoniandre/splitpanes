@@ -1,6 +1,6 @@
 <template lang="pug">
 component(:class="`highlight highlight--${type}`" :is="tag")
-  v-icon(v-if="!noIcon") {{ icon }}
+  w-icon(v-if="!noIcon") material-icons {{ icon }}
   slot
 </template>
 
@@ -58,7 +58,7 @@ export default {
     border-color: #f33 !important;
   }
 
-  > .v-icon {
+  > .w-icon {
     position: absolute;
     left: -11px;
     color: #fff !important;
@@ -72,11 +72,11 @@ export default {
     top: 0.5em;
   }
 
-  &--info > .v-icon {background: #09f !important;transform: rotate(180deg);}
-  &--success > .v-icon {background-color: #6c0 !important;}
-  &--error > .v-icon {background-color: #f33 !important;}
-  &--tips > .v-icon {background-color: #fd0 !important;transform: rotate(180deg);}
-  &--warning > .v-icon {background-color: #fa0 !important;}
-  &--info > .v-icon, &.warning > .v-icon {font-size: 16px;}
+  &--info > .w-icon {background: #09f !important;transform: rotate(180deg);}
+  &--success > .w-icon {background-color: #6c0 !important;}
+  &--error > .w-icon {background-color: #f33 !important;}
+  &--tips > .w-icon {background-color: #fd0 !important;transform: rotate(180deg);}
+  &--warning > .w-icon {background-color: #fa0 !important;}
+  &--info > .w-icon, &.warning > .w-icon {font-size: 16px;}
 }
 </style>

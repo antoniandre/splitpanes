@@ -18,5 +18,12 @@ module.exports = {
         options.compilerOptions.whitespace = 'preserve'
         return options
       })
+  },
+  css: {
+    loaderOptions: {
+      scss: {
+        additionalData: '@import "@/scss/_variables.scss";'
+      }
+    }
   }
 }

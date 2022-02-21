@@ -1,0 +1,68 @@
+body {
+  font: 14px 'Avenir', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: rgba(0,0,0,.87);
+}
+
+h1, h2, h3, h4 {
+  font-weight: 400;
+  margin-bottom: 0.5em;
+}
+
+h1 {
+  font-size: 2.6em;
+}
+
+h2 {
+  font-size: 2.2em;
+  margin-top: 3em;
+  color: $primary;
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid $lighter-text;
+
+  a {color: inherit;}
+}
+
+h3 {
+  font-size: 1.6em;
+  margin-top: 4em;
+  color: #333;
+
+  a {color: inherit;}
+}
+
+h2 + h3,
+h2 + a[name] + h3 {
+  margin-top: 0;
+}
+
+h3 a[href] {
+  color: inherit !important;
+}
+
+h3 a[href]:before {
+  content: "# ";
+  color: $lighter-text;
+  font-size: 1.2em;
+  transition: 0.3s;
+}
+
+h3 a[href]:hover:before {
+  color: $light-text;
+}
+
+h4 {
+  margin-top: 2em;
+  font-size: 1.2em;
+  color: $dark-text;
+}
+
+a {
+  text-decoration: none;
+}
+
+p b {
+  color: $darker-text;
+  font-weight: 500;
+}
