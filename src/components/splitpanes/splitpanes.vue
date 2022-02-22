@@ -145,6 +145,7 @@ export default {
       })
       this.panes[splitterIndex].size -= totalMinSizes
       this.$emit('pane-maximize', this.panes[splitterIndex])
+      this.$emit('resized', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
     },
 
     onPaneClick (event, paneId) {
