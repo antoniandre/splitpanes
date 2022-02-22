@@ -69,7 +69,7 @@
     w-alert.ma0(border-left color="pale-blue" style="width: 100%;max-width: 600px")
       strong
         | Check out my UI framework for Vue (2 &amp; 3)!
-        a.title1.ml4(
+        a.title2.ml4(
           href="https://antoniandre.github.io/wave-ui"
           target="_blank"
           style="width: 50px;color: #1471b8;text-decoration: underline")
