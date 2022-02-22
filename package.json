@@ -1,55 +1,48 @@
 {
   "name": "splitpanes",
   "version": "3.0.6",
-  "description": "A Vue JS reliable, simple and touch-ready panes splitter / resizer",
+  "description": "A Vue.js reliable, simple and touch-ready panes splitter / resizer",
   "author": "Antoni Andre <antoniandre.web@gmail.com>",
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint",
-    "build-bundle": "vue-cli-service build --target lib --name splitpanes ./src/components/splitpanes/index.js --dest ./dist && rm ./dist/demo.html"
+    "dev": "vite",
+    "build": "vite build --base /splitpanes/",
+    "build-bundle": "BUNDLE=true vite build && mv ./dist/style.css ./dist/splitpanes.css",
+    "serve": "vite preview --base /splitpanes/"
   },
-  "main": "./dist/splitpanes.common.js",
-  "unpkg": "dist/splitpanes.umd.min.js",
+  "main": "./dist/splitpanes.umd.js",
+  "unpkg": "dist/splitpanes.umd.js",
+  "jsdelivr": "dist/splitpanes.umd.js",
+  "module": "./dist/splitpanes.es.js",
+  "exports": {
+    "./dist/splitpanes.css": "./dist/splitpanes.css",
+    "./dist/splitpanes.cjs.js": "./dist/splitpanes.cjs.js",
+    ".": {
+      "import": "./dist/splitpanes.es.js",
+      "require": "./dist/splitpanes.umd.js"
+    }
+  },
   "files": [
     "dist",
     "src/components/splitpanes"
   ],
-  "dependencies": {},
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^5.15.3",
-    "@vue/cli-plugin-babel": "^4.5.13",
-    "@vue/cli-plugin-eslint": "^4.5.13",
-    "@vue/cli-service": "^4.5.13",
+    "@vitejs/plugin-vue": "^2.2.2",
     "@vue/compiler-sfc": "^3.1.4",
     "@vue/eslint-config-standard": "^5.1.2",
-    "babel-eslint": "^10.1.0",
-    "core-js": "^3.15.2",
+    "@babel/eslint-parser": "^7.17.0",
     "eslint": "^7.30.0",
     "eslint-plugin-vue": "^7.13.0",
-    "material-design-icons-iconfont": "^5.0.1",
-    "node-sass": "^4.14.1",
     "pug": "^3.0.2",
-    "pug-plain-loader": "^1.1.0",
-    "regenerator-runtime": "^0.13.7",
-    "roboto-fontface": "*",
-    "sass-loader": "^10.2.0",
+    "rollup-plugin-delete": "^2.0.0",
+    "sass": "^1.49.8",
     "simple-syntax-highlighter": "^1.4.8",
+    "vite": "^2.8.4",
+    "vite-plugin-pug": "^0.3.0",
     "vue": "^3.1.4",
-    "vue-cli-plugin-vuetify": "^2.4.1",
     "vue-router": "^4.0.10",
     "vuetify": "^2.5.6"
   },
-  "postcss": {
-    "plugins": {
-      "autoprefixer": {}
-    }
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not ie <= 10"
-  ],
   "keywords": [
     "splitpanes",
     "split panes",

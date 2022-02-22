@@ -1,4 +1,4 @@
 <template lang="pug">
-.green.lighten-5.layout.align-center.justify-center
-  .headline This is home
+.green-light5--bg.w-flex.align-center.justify-center
+  .title1 This is home
 </template>

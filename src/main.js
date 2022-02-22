@@ -1,16 +1,15 @@
-// Polyfill.
-import 'core-js/stable'
-import 'regenerator-runtime/runtime'
-
-import { createApp, h } from 'vue'
-// import vuetify from './plugins/vuetify'
+import { createApp } from 'vue'
+import WaveUI from './plugins/wave-ui'
 import router from '@/router'
-import App from './app'
+import App from './app.vue'
 
-import 'roboto-fontface/css/roboto/roboto-fontface.css'
-import 'material-design-icons-iconfont/dist/material-design-icons.css'
+import '@fortawesome/fontawesome-free/css/fontawesome.css'
+import '@fortawesome/fontawesome-free/css/brands.css'
 
-createApp({
-  // vuetify,
-  render: () => h(App)
-}).use(router).mount('#app')
+const app = createApp(App)
+
+new WaveUI(app, {
+  // Some Wave UI options.
+})
+
+app.use(router).mount('#app')
