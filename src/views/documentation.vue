@@ -96,7 +96,7 @@
       span 5
 
   w-flex.pb6(wrap)
-    ssh-pre.flex.mb0.mr2(language="html-vue" label="HTML Vue Template").
+    ssh-pre.grow.mb0.mr2(language="html-vue" label="HTML Vue Template").
       &lt;splitpanes style="height: 400px"&gt;
         &lt;pane min-size="20"&gt;1&lt;/pane&gt;
         &lt;pane&gt;
@@ -108,7 +108,7 @@
         &lt;/pane&gt;
         &lt;pane&gt;5&lt;/pane&gt;
       &lt;/splitpanes&gt;
-    ssh-pre.flex.mb0(language="css" label="CSS").
+    ssh-pre.grow.mb0(language="css" label="CSS").
       .splitpanes__pane {
         display: flex;
         justify-content: center;
