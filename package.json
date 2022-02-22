@@ -19,6 +19,7 @@
     "@fortawesome/fontawesome-free": "^5.15.4",
     "@vitejs/plugin-vue": "^2.2.2",
     "@vue/eslint-config-standard": "^6.1.0",
+    "autoprefixer": "^10.4.2",
     "babel-eslint": "^10.1.0",
     "eslint": "^7.32.0",
     "eslint-plugin-vue": "^7.20.0",
@@ -44,8 +45,5 @@
     "ui"
   ],
   "license": "MIT",
-  "repository": "https://github.com/antoniandre/splitpanes",
-  "dependencies": {
-    "autoprefixer": "^10.4.2"
-  }
+  "repository": "https://github.com/antoniandre/splitpanes"
 }
