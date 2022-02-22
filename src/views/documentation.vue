@@ -404,9 +404,9 @@
     :max="100")
   splitpanes.default-theme.example(@resize="paneSize = $event[0].size" style="height: 400px")
     pane(:size="paneSize")
-      span {{ paneSize }}%
+      span {{ ~~(paneSize * 100) / 100 }}%
     pane(:size="100 - paneSize")
-      span {{ 100 - paneSize }}%
+      span {{ ~~((100 - paneSize) * 100) / 100 }}%
 
   ssh-pre(language="html-vue" label="HTML").
     &lt;w-slider v-model="paneSize" label="First pane size" :min="0" :max="100"&gt;
@@ -827,7 +827,7 @@
   div.mt4
     | #[strong Version 2.0.0] Fix reactivity issues.
     highlight-message(type="success")
-      ul
+      ul.mt1
         li
           strong.
             Children now must be wrapped into a #[span.code `pane`] component.
