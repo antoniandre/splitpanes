@@ -6,7 +6,6 @@ specifiers:
   '@vue/eslint-config-standard': ^6.1.0
   autoprefixer: ^10.4.2
   babel-eslint: ^10.1.0
-  core-js: ^3.21.1
   eslint: ^7.32.0
   eslint-plugin-vue: ^7.20.0
   pug: ^3.0.2
@@ -29,7 +28,6 @@ devDependencies:
   '@vitejs/plugin-vue': 2.2.2_vite@2.8.4+vue@2.6.14
   '@vue/eslint-config-standard': 6.1.0_ab11fdb32a8d59d11c405eedcdc33c9f
   babel-eslint: 10.1.0_eslint@7.32.0
-  core-js: 3.21.1
   eslint: 7.32.0
   eslint-plugin-vue: 7.20.0_eslint@7.32.0
   pug: 3.0.2
@@ -930,11 +928,6 @@ packages:
     resolution: {integrity: sha512-+OQdjP49zViI/6i7nIJpA8rAl4sV/JdPfU9nZs3VqOwGIgizICvuN2ru6fMd+4llL0tar18UYJXfZ/TWtmhUjA==}
     dependencies:
       safe-buffer: 5.1.2
-    dev: true
-
-  /core-js/3.21.1:
-    resolution: {integrity: sha512-FRq5b/VMrWlrmCzwRrpDYNxyHP9BcAZC+xHJaqTgIE5091ZV1NTmyh0sGOg5XqpnHvR0svdy0sv1gWA1zmhxig==}
-    requiresBuild: true
     dev: true
 
   /cross-spawn/7.0.3:
