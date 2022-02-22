@@ -7,7 +7,7 @@
       path(d="m789 354-21 20 11 11 46 48 35 37-109 1H641v58h219l-46 46-46 46 21 20 20 20 82-83 83-83-13-11-82-81-70-70-20 21z" fill="#35495e")
     h1.mb3.title1 Splitpanes
 
-    p.grey A Vue JS reliable, simple and touch-ready panes splitter / resizer.
+    p.grey A Vue.js reliable, simple and touch-ready panes splitter / resizer.
 
   h2.mt12.mb2.title2 Features
   ul.checklist

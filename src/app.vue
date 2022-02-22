@@ -1,5 +1,5 @@
 <template lang="pug">
-w-app(v-scroll="onScroll")
+w-app(block v-scroll="onScroll")
   router-view
 
   w-transition-twist

@@ -79,17 +79,17 @@ code {
 }
 
 .page-container {
-  width: 100%;
+  flex-grow: 1;
   max-width: $page-max-width;
-  margin-left: auto !important;
-  margin-right: auto !important;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 header {margin-bottom: 6em;}
 
 .w-tag i.w-icon {
   position: relative;
-  color: rgba(0, 0, 0, .25) !important;
+  color: rgba(0, 0, 0, .25);
   margin: 0 7px 0 -7px;
 }
 
@@ -124,7 +124,7 @@ footer {
   font-style: italic;
   color: $main-text;
   font-size: 0.9em;
-  margin: 3em 0 5em;
+  margin: 5em 0 3.5em;
 
   i {
     font-size: 1.2em;
@@ -147,9 +147,9 @@ footer {
 
 // Media queries.
 // --------------------------------------------------------
-@media screen and (max-width: 1119px) {
-  .page-container, h2, h3, h4, p, .ssh-pre {
-    margin-left: 10px !important;
-    margin-right: 10px !important;
+@media screen and (max-width: ($page-max-width + 20px)) {
+  .page-container {
+    margin-left: 10px;
+    margin-right: 10px;
   }
 }
