@@ -48,6 +48,17 @@
     a(href="https://github.com/antoniandre/vueper-slides" target="_blank") //github.com/antoniandre/vueper-slides #[w-icon(color="primary") material-icons open_in_new]
 
   w-flex.my8(align-center)
+    w-icon.mr4(size="50" color="orange-light3") material-icons report
+    w-alert.ma0(border-left color="orange" style="width: 100%;max-width: 600px")
+      a.orange(
+        href="https://github.com/sponsors/antoniandre"
+        target="_blank"
+        style="text-decoration: underline") Vue 3 is the new default
+      | , and so is Splitpanes 3, for Vue 3. #[span.title2.ml1 🙌]#[br]
+      | For Vue 2 projects, you should use #[code npm i splitpanes@#[strong legacy]].
+
+
+  w-flex.my8(align-center)
     w-icon.mr4(size="50" color="pink-light3") material-icons favorite
     w-alert.ma0(border-left color="pink" style="width: 100%;max-width: 600px")
       | If you like Splitpanes, you can
@@ -61,7 +72,7 @@
         target="_blank"
         style="text-decoration: underline") #[strong Sponsor the author]
       | !
-      div Thank you so much to all the supporters! #[span.title1.ml1 🙏]
+      div Thank you so much to all the supporters! #[span.title2.ml1 🙏]
 
   w-flex.mt4.mb8(align-center)
     svg.mr4.blue-light1(viewBox="0 0 725 477" style="width: 50px;stroke: #497ca2;stroke-width: 5px")
@@ -123,18 +134,22 @@
     a(name="installation")
 
   p You have two options: #[em NPM] #[strong.mx1 or] #[span.code &lt;script&gt;] tag.
-  h3 Via NPM
-  ssh-pre(language="shell").
-    npm i splitpanes # For Vue 2.x.
+  h3.mt12 Via NPM
 
-  ssh-pre(language="shell").
-    npm i splitpanes@next # For Vue 3.
+  w-flex(align-center wrap)
+    ssh-pre.px4(language="shell").
+      npm i splitpanes # For Vue 3
+    span.mx2 or
+    ssh-pre.px4(language="shell").
+      npm i splitpanes@legacy # For Vue 2
 
   p.mt2
     w-icon.mr1 material-icons chevron_right
     | View and edit a working
-    a.ml2(href="https://codepen.io/antoniandre/pen/LYNKGWV" target="_blank") Vue 3 example on Codepen
-    | .
+    a.ml2(href="https://codepen.io/antoniandre/pen/LYNKGWV" target="_blank") Vue 3 example
+    | , or
+    a.mx2(href="https://codepen.io/antoniandre/pen/XybPKP" target="_blank") Vue 2 example
+    | on Codepen.
 
   .mt6 Then import the component and CSS:
   ssh-pre(language="js" label="Javascript").
@@ -811,6 +826,12 @@
     a(href="#release-notes") Release Notes
     a(name="release-notes")
 
+  div.mt4
+    | #[strong Version 3.0] For Vue 3 projects.
+    highlight-message(type="warning").
+      Installing the latest splitpanes on a Vue 2 project will break it.#[br]
+      For Vue 2, you need to install splitpanes from the #[span.code legacy] tag: #[code npm i splitpanes@legacy].#[br]
+      For Vue 3, you don't need the #[code next] tag anymore.
   div #[strong Version 2.3.5] Prevent splitter double taps on touch devices if #[span.code `dblClickSplitter`] is set to false.
   div #[strong Version 2.3.4] Fix removing pane DOM nodes in IE11
   div #[strong Version 2.3.1] Fix firing #[span.code `pane-click`] event on pane click
@@ -830,7 +851,7 @@
       ul.mt1
         li
           strong.
-            Children now must be wrapped into a #[span.code `pane`] component.
+            Children must now be wrapped into a #[span.code `pane`] component.
         li The attribute #[span.code `splitpanes-size`] is now replaced with #[span.code `size`] on the #[span.code `pane`] component.
         li you can still add CSS classes on the #[span.code `pane`] component tag.
 
