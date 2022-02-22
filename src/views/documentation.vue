@@ -862,8 +862,8 @@
 </template>
 
 <script>
-import { Splitpanes, Pane } from '@/components/splitpanes/index'
-import HighlightMessage from '@/components/highlight-message'
+import { Splitpanes, Pane } from '@/components/splitpanes/index.js'
+import HighlightMessage from '@/components/highlight-message.vue'
 import SshPre from 'simple-syntax-highlighter'
 import 'simple-syntax-highlighter/dist/sshpre.css'
 
