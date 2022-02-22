@@ -51,7 +51,7 @@
     w-icon.mr4(size="50" color="orange-light3") material-icons report
     w-alert.ma0(border-left color="orange" style="width: 100%;max-width: 600px")
       a.orange(
-        href="https://github.com/sponsors/antoniandre"
+        href="https://blog.vuejs.org/posts/vue-3-as-the-new-default.html"
         target="_blank"
         style="text-decoration: underline") Vue 3 is the new default
       | , and so is Splitpanes 3, for Vue 3. #[span.title2.ml1 🙌]#[br]
@@ -205,14 +205,6 @@
   h2.mt12.mb2
     a(href="#more-examples") More examples
     a(name="more-examples")
-
-  h3.mt8.mb2
-    a(href="#vue-3") Vue 3
-    a(name="vue-3")
-  p
-    | View and edit a working
-    a(href="https://codepen.io/antoniandre/pen/LYNKGWV" target="_blank")  Vue 3 example on Codepen
-
 
   //- Example.
   h3.mt10.mb2
