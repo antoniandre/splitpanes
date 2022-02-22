@@ -12,7 +12,7 @@ const build = process.env.BUNDLE ? {
   },
   rollupOptions: {
     plugins: [
-      Delete({ targets: ['dist/*.{ico,html}'], hook: 'generateBundle' })
+      Delete({ targets: ['dist/*.{ico,png,html}'], hook: 'generateBundle' })
     ],
     // Make sure to externalize deps that shouldn't be bundled into library.
     external: ['vue'],

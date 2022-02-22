@@ -7,10 +7,20 @@
     "dev": "vite",
     "build": "vite build --base /splitpanes/",
     "build-bundle": "BUNDLE=true vite build && mv ./dist/style.css ./dist/splitpanes.css",
-    "serve": "vite preview --root docs --base /splitpanes/"
+    "serve": "vite preview --base /splitpanes/"
   },
-  "main": "./dist/splitpanes.common.js",
-  "unpkg": "dist/splitpanes.umd.min.js",
+  "main": "./dist/splitpanes.umd.js",
+  "unpkg": "dist/splitpanes.umd.js",
+  "jsdelivr": "dist/splitpanes.umd.js",
+  "module": "./dist/splitpanes.es.js",
+  "exports": {
+    "./dist/splitpanes.css": "./dist/splitpanes.css",
+    "./dist/splitpanes.cjs.js": "./dist/splitpanes.cjs.js",
+    ".": {
+      "import": "./dist/splitpanes.es.js",
+      "require": "./dist/splitpanes.umd.js"
+    }
+  },
   "files": [
     "dist",
     "src/components/splitpanes"
