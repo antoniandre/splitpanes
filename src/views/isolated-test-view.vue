@@ -1,53 +1,25 @@
 <template lang="pug">
 //- This is an isolated test view. Just for testing purpose.
 div
-  w-button.ml2(@click="hidePane2 = !hidePane2")
-    | Hide pane 2
-  w-button.ml2(@click="hidePane4 = !hidePane4")
-    | Hide pane 4
-
-  splitpanes.default-theme.example(
-    @pane-removed="log('pane-removed', $event)"
-    @pane-added="log('pane-added', $event)"
-    @resized="log('resized', $event)"
-    style="height: 400px")
-    pane(size="85")
-      span 1
-    pane(v-if="!hidePane2" size="15")
-      span 2
-    //- pane()
-    //-   span 3
-    //- pane(v-if="!hidePane4")
-    //-   span 4
+  w-button(@click="hidePane2 = !hidePane2") toggle pane 2
+  splitpanes.default-theme(style="height: 400px")
+    pane(size="85") 1
+    pane(size="5" v-if="!hidePane2") 2
+    pane(size="10") 3
 </template>
 
-<script>
+<script setup>
+import { ref } from 'vue'
 import { Splitpanes, Pane } from '@/components/splitpanes/index'
 
-const now = new Date()
-export default {
-  components: { Splitpanes, Pane },
-  data: () => ({
-    horizontal: true,
-    hidePane2: false,
-    hidePane4: false,
-    panesNumber: 3
-  }),
+const components = { Splitpanes, Pane }
+const horizontal = true
+const hidePane2 = ref(false)
+const panesNumber = 3
 
-  methods: {
-    log (name, params) {
-      console.log(name, params)
-    }
-  },
-
-  computed: {
-    panesNumberAbs () {
-      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-      if (this.panesNumber < 0) this.panesNumber = 0
-      return this.panesNumber
-    }
-  }
-}
+// const togglePane2 = () => {
+//   hidePane2 = !hidePane2
+// }
 </script>
 
 <style lang="scss">
