@@ -45,7 +45,7 @@
   h2.mt12.mb4.title2 Github project &nbsp;&amp;&nbsp; important notes
   w-flex(align-center shrink)
     w-icon.ml1.mr5.lightgrey(size="46") fab fa-github
-    a(href="https://github.com/antoniandre/vueper-slides" target="_blank") //github.com/antoniandre/vueper-slides #[w-icon(color="primary") material-icons open_in_new]
+    a(href="https://github.com/antoniandre/splitpanes" target="_blank") //github.com/antoniandre/splitpanes #[w-icon(color="primary") material-icons open_in_new]
 
   w-flex.my8(align-center)
     w-icon.mr4(size="50" color="orange-light3") material-icons report
@@ -72,7 +72,7 @@
         target="_blank"
         style="text-decoration: underline") #[strong Sponsor the author]
       | !
-      div Thank you so much to all the supporters! #[span.title2.ml1 🙏]
+      div Thank you so much to all the backers! #[span.title2.ml1 🙏]
 
   w-flex.mt4.mb8(align-center)
     svg.mr4.blue-light1(viewBox="0 0 725 477" style="width: 50px;stroke: #497ca2;stroke-width: 5px")
