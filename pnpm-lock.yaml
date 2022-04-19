@@ -17,7 +17,7 @@ specifiers:
   vite-plugin-pug: ^0.3.0
   vue: ^3.2.31
   vue-router: ^4.0.10
-  wave-ui: ^2.31.4
+  wave-ui: ^2.36.0
 
 devDependencies:
   '@babel/eslint-parser': 7.17.0_eslint@7.32.0
@@ -36,7 +36,7 @@ devDependencies:
   vite-plugin-pug: 0.3.0_vite@2.8.4
   vue: 3.2.31
   vue-router: 4.0.12_vue@3.2.31
-  wave-ui: 2.31.4
+  wave-ui: 2.36.0
 
 packages:
 
@@ -2451,10 +2451,8 @@ packages:
       '@vue/shared': 3.2.31
     dev: true
 
-  /wave-ui/2.31.4:
-    resolution: {integrity: sha512-GmWsMWztiiMQaikJjhftw2pR9Hh7VODfOipDBpaLYTkwGK62GPmyxBoRvDS2aOt44lpZhMzOERrrgEWjZUU7ig==}
-    dependencies:
-      postcss: 8.4.6
+  /wave-ui/2.36.0:
+    resolution: {integrity: sha512-OjiBwpXPT5ZMcATHd3N/1gvwYj91z8oUgMWgCXpcceqfkymnmcKqWgQF9NOwFQga4E8SBqCTieH77Zf9gNYXXg==}
     dev: true
 
   /which/2.0.2:

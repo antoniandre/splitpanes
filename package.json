@@ -42,7 +42,7 @@
     "vite-plugin-pug": "^0.3.0",
     "vue": "^3.2.31",
     "vue-router": "^4.0.10",
-    "wave-ui": "^2.31.4"
+    "wave-ui": "^2.36.0"
   },
   "keywords": [
     "splitpanes",
