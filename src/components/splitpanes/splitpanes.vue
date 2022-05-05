@@ -10,7 +10,8 @@ export default {
     pushOtherPanes: { type: Boolean, default: true },
     dblClickSplitter: { type: Boolean, default: true },
     rtl: { type: Boolean, default: false }, // Right to left direction.
-    firstSplitter: { type: Boolean }
+    firstSplitter: { type: Boolean },
+    preventPointerEvents: { type: Boolean }
   },
 
   provide () {
@@ -84,6 +85,8 @@ export default {
       this.bindEvents()
       this.touch.mouseDown = true
       this.touch.activeSplitter = splitterIndex
+
+      if (this.preventPointerEvents) this.handlePointerEventsClass('add')
     },
 
     onMouseMove (event) {
@@ -107,6 +110,16 @@ export default {
         this.touch.dragging = false
         this.unbindEvents()
       }, 100)
+
+      if (this.preventPointerEvents) this.handlePointerEventsClass('remove')
+    },
+
+    handlePointerEventsClass (action) {
+      const els = document.querySelectorAll('.splitpanes object, .splitpanes iframe')
+      Array.prototype.forEach.call(els, (i) => {
+        if (action === 'add') i.classList.add('prevent-pointer-events')
+        if (action === 'remove') i.classList.remove('prevent-pointer-events')
+      })
     },
 
     // If touch device, detect double tap manually (2 taps separated by less than 500ms).
@@ -730,6 +743,10 @@ export default {
   &__splitter {touch-action: none;}
   &--vertical > .splitpanes__splitter {min-width: 1px;cursor: col-resize;}
   &--horizontal > .splitpanes__splitter {min-height: 1px;cursor: row-resize;}
+
+  .prevent-pointer-events {
+    pointer-events: none!important;
+  }
 }
 .splitpanes.default-theme {
   .splitpanes__pane {

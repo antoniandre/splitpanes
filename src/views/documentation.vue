@@ -813,6 +813,10 @@
       code first-splitter
       span.code.ml2 Default: false
       p Displays the first splitter when set to true. This allows maximizing the first pane on splitter double click.
+    li
+      code prevent-pointer-events
+      span.code.ml2 Default: false
+      p Set the pointer-events attribute of the object element and iframe element to none when set to true.
 
   h2.mt12.pt12.mb2
     a(href="#release-notes") Release Notes
