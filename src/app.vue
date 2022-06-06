@@ -5,7 +5,6 @@ w-app(block v-scroll="onScroll")
   w-transition-twist
     w-button.go-top(
       v-show="!goTopHidden"
-      bg-color="primary"
       icon="material-icons keyboard_arrow_up"
       fixed
       bottom
@@ -41,7 +40,7 @@ export default {
   },
   directives: {
     scroll: {
-      inserted: (el, binding) => {
+      mounted: (el, binding) => {
         const f = evt => {
           if (binding.value(evt, el)) window.removeEventListener('scroll', f)
         }
