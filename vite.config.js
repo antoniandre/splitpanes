@@ -44,5 +44,12 @@ export default defineConfig({
       '@': resolve(__dirname, '/src')
     }
   },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        additionalData: '@import "@/scss/_variables.scss";'
+      }
+    }
+  },
   build
 })
