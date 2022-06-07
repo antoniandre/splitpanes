@@ -1,1 +1,0 @@
-import{o as e,c as t,i as s}from"./vendor.3338de2e.js";import{_ as o}from"./index.ea4174ae.js";const c={class:"blue-light5--bg w-flex align-center justify-center"},r=s("div",{class:"title1"},"This is another view",-1),i=[r];function a(_,l){return e(),t("div",c,i)}const n={};var h=o(n,[["render",a]]);export{h as default};
