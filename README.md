@@ -10,14 +10,16 @@
 
 ## Installation
 
+**Vue 3**
+
 ```
 npm i splitpanes
 ```
 
-**Vue 3**
+**Vue 2**
 
 ```
-npm i splitpanes@next
+npm i splitpanes@legacy
 ```
 
 ---
