@@ -17,7 +17,12 @@ w-app(block v-scroll="onScroll")
       .xs12.sm6.text-center.smu-text-left.copyright.
         Copyright © {{ (new Date()).getFullYear() }} Antoni André, all rights reserved.
       .xs12.sm6.text-center.smu-text-right.made-with
-        .mb1 This documentation is made with #[w-icon fab fa-vuejs], #[w-icon fab fa-html5], #[w-icon fab fa-css3], #[w-icon fab fa-sass] &amp; #[w-icon.heart material-icons favorite]
+        .mb1.
+          This documentation is made with #[w-icon fab fa-vuejs],
+          #[w-icon fab fa-html5],
+          #[w-icon fab fa-css3],
+          #[w-icon fab fa-sass] &amp;
+          #[w-icon.heart material-icons favorite]
         | View this project on #[a(href="https://github.com/antoniandre/splitpanes" target="_blank") #[w-icon fab fa-github] Github].
 </template>
 
