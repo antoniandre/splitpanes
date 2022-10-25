@@ -3,28 +3,41 @@
   "version": "3.1.2",
   "description": "A Vue.js reliable, simple and touch-ready panes splitter / resizer",
   "author": "Antoni Andre <antoniandre.web@gmail.com>",
+  "homepage": "https://antoniandre.github.io/splitpanes",
+  "repository": "https://github.com/antoniandre/splitpanes",
+  "license": "MIT",
+  "funding": "https://github.com/sponsors/antoniandre",
+  "main": "./dist/splitpanes.umd.js",
+  "unpkg": "dist/splitpanes.umd.js",
+  "jsdelivr": "dist/splitpanes.umd.js",
+  "module": "./dist/splitpanes.es.js",
+  "files": [
+    "dist",
+    "src/components/splitpanes"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/splitpanes.es.js",
+      "require": "./dist/splitpanes.umd.js"
+    },
+    "./package.json": "./package.json",
+    "./dist/*": "./dist/*"
+  },
+  "keywords": [
+    "splitpanes",
+    "split panes",
+    "panes resizer",
+    "vue",
+    "vue3",
+    "vuejs",
+    "ui"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "vite build --base /splitpanes/",
     "build-bundle": "BUNDLE=true vite build && mv ./dist/style.css ./dist/splitpanes.css",
     "serve": "vite preview --base /splitpanes/"
   },
-  "main": "./dist/splitpanes.umd.js",
-  "unpkg": "dist/splitpanes.umd.js",
-  "jsdelivr": "dist/splitpanes.umd.js",
-  "module": "./dist/splitpanes.es.js",
-  "exports": {
-    "./dist/splitpanes.css": "./dist/splitpanes.css",
-    "./dist/splitpanes.cjs.js": "./dist/splitpanes.cjs.js",
-    ".": {
-      "import": "./dist/splitpanes.es.js",
-      "require": "./dist/splitpanes.umd.js"
-    }
-  },
-  "files": [
-    "dist",
-    "src/components/splitpanes"
-  ],
   "devDependencies": {
     "@babel/eslint-parser": "^7.17.0",
     "@fortawesome/fontawesome-free": "^5.15.3",
@@ -39,20 +52,8 @@
     "sass": "^1.49.8",
     "simple-syntax-highlighter": "^2.2.0",
     "vite": "^2.8.4",
-    "vite-plugin-pug": "^0.3.0",
     "vue": "^3.2.31",
     "vue-router": "^4.0.10",
     "wave-ui": "^2.36.0"
-  },
-  "keywords": [
-    "splitpanes",
-    "split panes",
-    "panes resizer",
-    "vue",
-    "vue3",
-    "vuejs",
-    "ui"
-  ],
-  "license": "MIT",
-  "repository": "https://github.com/antoniandre/splitpanes"
+  }
 }
