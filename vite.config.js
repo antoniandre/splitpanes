@@ -3,6 +3,7 @@ import Vue from '@vitejs/plugin-vue'
 import { resolve } from 'path'
 import Delete from 'rollup-plugin-delete'
 
+// eslint-disable-next-line multiline-ternary
 const build = process.env.BUNDLE ? {
   lib: {
     entry: resolve(__dirname, '/src/components/splitpanes/index.js'),
@@ -20,9 +21,9 @@ const build = process.env.BUNDLE ? {
     external: ['vue'],
     output: {
       // Provide global variables to use in the UMD build for externalized deps.
-      globals: {
-        vue: 'Vue'
-      }
+      globals: { vue: 'Vue' },
+      entryFileNames: 'splitpanes.[format].js',
+      chunkFileNames: '[name].js'
     }
   }
 } : {
