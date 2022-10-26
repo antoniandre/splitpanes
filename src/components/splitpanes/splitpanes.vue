@@ -2,6 +2,7 @@
 import { h } from 'vue'
 
 export default {
+  // eslint-disable-next-line vue/multi-word-component-names
   name: 'splitpanes',
   emits: ['ready', 'resize', 'resized', 'pane-click', 'pane-maximize', 'pane-add', 'pane-remove', 'splitter-click'],
 
@@ -321,7 +322,6 @@ export default {
           child.parentNode.removeChild(child) // el.remove() doesn't work on IE11.
           // eslint-disable-next-line no-console
           console.warn('Splitpanes: Only <pane> elements are allowed at the root of <splitpanes>. One of your DOM nodes was removed.')
-          return
         }
       })
     },
@@ -372,7 +372,7 @@ export default {
     // Called by Pane component on programmatic resize.
     requestUpdate ({ target, ...args }) {
       const pane = this.indexedPanes[target._.uid]
-      Object.entries(args).forEach(([key, value]) => pane[key] = value)
+      Object.entries(args).forEach(([key, value]) => (pane[key] = value))
     },
 
     onPaneAdd (pane) {
@@ -396,7 +396,7 @@ export default {
       })
 
       // Redo indexes after insertion for other shifted panes.
-      this.panes.forEach((p, i) => p.index = i)
+      this.panes.forEach((p, i) => (p.index = i))
 
       if (this.ready) {
         this.$nextTick(() => {
@@ -416,7 +416,7 @@ export default {
       // 1. Remove the pane from array and redo indexes.
       const index = this.panes.findIndex(p => p.id === pane._.uid)
       const removed = this.panes.splice(index, 1)[0]
-      this.panes.forEach((p, i) => p.index = i)
+      this.panes.forEach((p, i) => (p.index = i))
 
       this.$nextTick(() => {
         // 2. Remove the splitter.
@@ -441,8 +441,8 @@ export default {
     equalize () {
       const equalSpace = 100 / this.panesCount
       let leftToAllocate = 0
-      let ungrowable = []
-      let unshrinkable = []
+      const ungrowable = []
+      const unshrinkable = []
 
       this.panes.forEach(pane => {
         pane.size = Math.max(Math.min(equalSpace, pane.max), pane.min)
@@ -456,10 +456,9 @@ export default {
     },
 
     initialPanesSizing () {
-      let equalSpace = 100 / this.panesCount
       let leftToAllocate = 100
-      let ungrowable = []
-      let unshrinkable = []
+      const ungrowable = []
+      const unshrinkable = []
       let definedSizes = 0
 
       // Check if pre-allocated space is 100%.
@@ -487,8 +486,8 @@ export default {
     equalizeAfterAddOrRemove ({ addedPane, removedPane } = {}) {
       let equalSpace = 100 / this.panesCount
       let leftToAllocate = 0
-      let ungrowable = []
-      let unshrinkable = []
+      const ungrowable = []
+      const unshrinkable = []
 
       if (addedPane && addedPane.givenSize !== null) {
         equalSpace = (100 - addedPane.givenSize) / (this.panesCount - 1)
