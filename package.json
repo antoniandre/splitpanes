@@ -10,14 +10,14 @@
   "main": "./dist/splitpanes.umd.js",
   "unpkg": "dist/splitpanes.umd.js",
   "jsdelivr": "dist/splitpanes.umd.js",
-  "module": "./dist/splitpanes.es.js",
+  "module": "./dist/splitpanes.mjs",
   "files": [
     "dist",
     "src/components/splitpanes"
   ],
   "exports": {
     ".": {
-      "import": "./dist/splitpanes.es.js",
+      "import": "./dist/splitpanes.mjs",
       "require": "./dist/splitpanes.umd.js"
     },
     "./package.json": "./package.json",
