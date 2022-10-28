@@ -7,7 +7,7 @@
   "repository": "https://github.com/antoniandre/splitpanes",
   "license": "MIT",
   "funding": "https://github.com/sponsors/antoniandre",
-  "main": "./dist/splitpanes.umd.js",
+  "main": "./dist/splitpanes.es.js",
   "unpkg": "dist/splitpanes.umd.js",
   "jsdelivr": "dist/splitpanes.umd.js",
   "module": "./dist/splitpanes.es.js",
@@ -23,6 +23,7 @@
     "./package.json": "./package.json",
     "./dist/*": "./dist/*"
   },
+  "type": "module",
   "keywords": [
     "splitpanes",
     "split panes",
