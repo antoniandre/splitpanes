@@ -622,6 +622,9 @@
     li.
       #[code.mr2 splitter-click] returns the next pane object (with its dimensions) directly after the clicked splitter.#[br]
       This event is only emitted if dragging did not occur between mousedown and mouseup.
+    li.
+      #[code.mr2 splitter-dbl-click] returns the next pane object (with its dimensions) directly after the double clicked splitter.#[br]
+      This event is only emitted if dragging did not occur between mousedown and mouseup.
   p.mt4 Try resizing panes and check the logs bellow.
 
   splitpanes.default-theme.example(
@@ -631,6 +634,7 @@
     @pane-click="log('pane-click', $event)"
     @ready="log('ready', $event)"
     @splitter-click="log('splitter-click', $event)"
+    @splitter-dbl-click="log('splitter-dbl-click', $event)"
     style="height: 400px")
     pane(v-for="i in 3" :key="i" :min-size="10")
       span {{ i }}
@@ -653,6 +657,7 @@
       @pane-click="log('pane-click', $event)"
       @ready="log('ready', $event)"
       @splitter-click="log('splitter-click', $event)"
+      @splitter-dbl-click="log('splitter-dbl-click', $event)"
       style="height: 400px"&gt;
       &lt;pane v-for="i in 3" :key="i" min-size="10"&gt;
         &lt;span&gt;{{ '\{\{ i \}\}' }}&lt;/span&gt;
