@@ -4,7 +4,7 @@ import { h } from 'vue'
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
   name: 'splitpanes',
-  emits: ['ready', 'resize', 'resized', 'pane-click', 'pane-maximize', 'pane-add', 'pane-remove', 'splitter-click'],
+  emits: ['ready', 'resize', 'resized', 'pane-click', 'pane-maximize', 'pane-add', 'pane-remove', 'splitter-click', 'splitter-dbl-click'],
 
   props: {
     horizontal: { type: Boolean },
@@ -145,6 +145,7 @@ export default {
         return pane
       })
       this.panes[splitterIndex].size -= totalMinSizes
+      this.$emit('splitter-dbl-click', this.panes[splitterIndex])
       this.$emit('pane-maximize', this.panes[splitterIndex])
       this.$emit('resized', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
     },
@@ -342,6 +343,8 @@ export default {
 
       if (this.dblClickSplitter) {
         elm.ondblclick = event => this.onSplitterDblClick(event, splitterIndex + 1)
+      } else {
+        elm.ondblclick = () => this.$emit('splitter-dbl-click', this.panes[splitterIndex + 1])
       }
 
       nextPaneNode.parentNode.insertBefore(elm, nextPaneNode)
@@ -667,7 +670,9 @@ export default {
     dblClickSplitter (enable) {
       const splitters = [...this.container.querySelectorAll('.splitpanes__splitter')]
       splitters.forEach((splitter, i) => {
-        splitter.ondblclick = enable ? event => this.onSplitterDblClick(event, i) : undefined
+        splitter.ondblclick = enable
+          ? event => this.onSplitterDblClick(event, i)
+          : this.$emit('splitter-dbl-click', this.panes[i])
       })
     }
   },
