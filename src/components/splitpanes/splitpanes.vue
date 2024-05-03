@@ -11,7 +11,8 @@ export default {
     pushOtherPanes: { type: Boolean, default: true },
     dblClickSplitter: { type: Boolean, default: true },
     rtl: { type: Boolean, default: false }, // Right to left direction.
-    firstSplitter: { type: Boolean }
+    firstSplitter: { type: Boolean },
+    snapToMouse: { type: Boolean, default: true }
   },
 
   provide () {
@@ -30,7 +31,11 @@ export default {
     touch: {
       mouseDown: false,
       dragging: false,
-      activeSplitter: null
+      activeSplitter: null,
+      offset: { // Used to improve mouse following with thicker splitters
+        x: 0,
+        y: 0,
+      }
     },
     splitterTaps: { // Used to detect double click on touch devices.
       splitter: null,
@@ -83,6 +88,7 @@ export default {
 
     onMouseDown (event, splitterIndex) {
       this.bindEvents()
+      this.calculateMouseOffset(event, splitterIndex)
       this.touch.mouseDown = true
       this.touch.activeSplitter = splitterIndex
     },
@@ -153,14 +159,37 @@ export default {
       this.$emit('pane-click', this.indexedPanes[paneId])
     },
 
+    getMouseCoordinates (event) {
+      event = 'ontouchstart' in window && event.touches ? event.touches[0] : event
+      return { x: event.clientX, y: event.clientY }
+    },
+
     // Get the cursor position relative to the splitpane container.
     getCurrentMouseDrag (event) {
       const rect = this.container.getBoundingClientRect()
-      const { clientX, clientY } = ('ontouchstart' in window && event.touches) ? event.touches[0] : event
+      const { x, y } = this.getMouseCoordinates(event)
 
       return {
-        x: clientX - rect.left,
-        y: clientY - rect.top
+        x: x - rect.left + this.touch.offset.x,
+        y: y - rect.top + this.touch.offset.y,
+      }
+    },
+
+    // Stores the mouse position relative to the splitter.
+    // “snap to mouse” mode forces this to 0 so the splitter is always under it
+    calculateMouseOffset (event, splitterIndex) {
+      if (this.$props.snapToMouse) {
+        this.touch.offset = { x: 0, y: 0}
+        return
+      }
+
+      const splitter = this.container.querySelectorAll(':scope > .splitpanes__splitter')[splitterIndex]
+      const rect = splitter.getBoundingClientRect()
+      const { x, y } = this.getMouseCoordinates(event)
+
+      this.touch.offset = {
+        x: rect.left - x,
+        y: rect.top - y
       }
     },
 
