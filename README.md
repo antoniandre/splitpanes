@@ -1,9 +1,9 @@
 # Splitpanes
 
-[![Latest Version on NPM](https://img.shields.io/npm/v/splitpanes.svg)](https://npmjs.com/package/splitpanes)
+[![Latest Version on NPM](https://img.shields.io/npm/v/splitpanes.svg)](https://npmjs.com/package/splitpanes4)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE.md)
-[![npm](https://img.shields.io/npm/dt/splitpanes.svg)](https://www.npmjs.com/package/splitpanes)
-[![npm](https://img.shields.io/npm/dw/splitpanes.svg)](https://www.npmjs.com/package/splitpanes)
+[![npm](https://img.shields.io/npm/dt/splitpanes.svg)](https://www.npmjs.com/package/splitpanes4)
+[![npm](https://img.shields.io/npm/dw/splitpanes.svg)](https://www.npmjs.com/package/splitpanes4)
 
 > A Vue.js reliable, simple and touch-ready panes splitter / resizer.
 > Vue 3 compatible.
@@ -13,14 +13,9 @@
 **Vue 3**
 
 ```
-npm i splitpanes
+npm i splitpanes4
 ```
 
-**Vue 2**
-
-```
-npm i splitpanes@legacy
-```
 
 ---
 
