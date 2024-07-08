@@ -702,7 +702,9 @@ export default {
     dblClickSplitter (enable) {
       const splitters = [...this.container.querySelectorAll('.splitpanes__splitter')]
       splitters.forEach((splitter, i) => {
-        splitter.ondblclick = enable ? event => this.onSplitterDblClick(event, i) : this.$emit('splitter-dbl-click', this.panes[i])
+        splitter.ondblclick = enable
+          ? event => this.onSplitterDblClick(event, i)
+          : this.$emit('splitter-dbl-click', this.panes[i])
       })
     }
   },
