@@ -1,8 +1,10 @@
-<template lang="pug">
-component(:class="`highlight highlight--${type}`" :is="tag")
-  w-icon(v-if="!noIcon") material-icons {{ icon }}
-  slot
+<template>
+  <component :class="`highlight highlight--${type}`" :is="tag">
+    <w-icon v-if="!noIcon" material-icons>{{ icon }}</w-icon>
+    <slot></slot>
+  </component>
 </template>
+
 
 <script>
 export default {
