@@ -26,32 +26,25 @@ w-app(block v-scroll="onScroll")
         | View this project on #[a(href="https://github.com/antoniandre/splitpanes" target="_blank") #[w-icon fab fa-github] Github].
 </template>
 
-<script>
-import '@/scss/index.scss'
 
-export default {
-  data: () => ({
-    offsetTop: 0,
-    goTopHidden: true
-  }),
-  methods: {
-    onScroll () {
-      this.offsetTop = window.scrollY || document.documentElement.scrollTop
-      this.goTopHidden = this.offsetTop < 200
-    },
-    scrollToTop () {
-      document.documentElement.scrollTo({ top: 0, behavior: 'smooth' })
-    }
-  },
-  directives: {
-    scroll: {
-      mounted: (el, binding) => {
-        const f = evt => {
-          if (binding.value(evt, el)) window.removeEventListener('scroll', f)
-        }
-        window.addEventListener('scroll', f)
-      }
-    }
-  }
+<script setup lang="ts">
+import '@/scss/index.scss'
+import {ref, onMounted, onUnmounted} from 'vue'
+import type {Ref} from 'vue'
+const offsetTop: Ref<number> = ref(0)
+const goTopHidden: Ref<boolean> = ref(true)
+const onScroll = () => {
+  offsetTop.value = window.scrollY || document.documentElement.scrollTop
+  goTopHidden.value = offsetTop.value < 200
 }
+const scrollToTop = () => {
+  document.documentElement.scrollTo({ top: 0, behavior: 'smooth' })
+}
+onMounted(() => {
+  window.addEventListener('scroll', onScroll)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', onScroll)
+})
 </script>
