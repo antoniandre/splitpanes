@@ -726,6 +726,78 @@
     .splitpanes--vertical &gt; .splitpanes__splitter:before {left: -30px;right: -30px;height: 100%;}
     .splitpanes--horizontal &gt; .splitpanes__splitter:before {top: -30px;bottom: -30px;width: 100%;}
 
+
+  //- Example
+  h3.mt12.pt8.mb2
+    a(href="#mouse-snapping") Mouse snapping
+    a(name="mouse-snapping")
+
+  p
+    | This example shows the effect of disabling splitters snapping to the mouse
+    | when the interacte zone is wider than a few pixels.
+
+  splitpanes.touch-example(
+    horizontal
+    style="height: 400px"
+    :snap-to-mouse="snapToMouse")
+    pane
+      splitpanes.touch-example(:snap-to-mouse="snapToMouse")
+        pane
+          span 1
+        pane
+          span 2
+        pane
+          span 3
+    pane
+      div.text
+        p
+          span(v-if="snapToMouse").
+            By default, the splitter always gets put under the cursor.
+          span(v-else).
+            When #[span.code :snap-to-mouse="false"], the splitter keeps its distance relative to the cursor.
+          br
+          w-button.mr2.mb2(@click="snapToMouse = !snapToMouse")
+            w-icon.ml-n1.mr1 material-icons {{ snapToMouse ? 'disable' : 'enable' }}
+            | {{ snapToMouse ? 'Disable' : 'Enable' }} mouse snapping
+
+  ssh-pre(language="html-vue" label="HTML").
+    &lt;splitpanes horizontal style="height: 400px" :snap-to-mouse="false"&gt;
+      &lt;pane&gt;
+        &lt;splitpanes&gt;
+          &lt;pane&gt;
+            &lt;span&gt;1&lt;/span&gt;
+          &lt;/pane&gt;
+          &lt;pane&gt;
+            &lt;span&gt;2&lt;/span&gt;
+          &lt;/pane&gt;
+          &lt;pane&gt;
+            &lt;span&gt;3&lt;/span&gt;
+          &lt;/pane&gt;
+        &lt;/splitpanes&gt;
+      &lt;/pane&gt;
+      &lt;pane&gt;
+        &lt;p&gt;When :snap-to-mouse="false", the splitter keeps its distance relative to the cursor.&lt;/p&gt;
+      &lt;/pane&gt;
+    &lt;/splitpanes&gt;
+
+  ssh-pre(language="css" label="CSS").
+    .splitpanes {background-color: #f8f8f8;}
+
+    .splitpanes__splitter {background-color: #ccc;position: relative;}
+    .splitpanes__splitter:before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      transition: opacity 0.4s;
+      background-color: rgba(255, 0, 0, 0.3);
+      opacity: 0;
+      z-index: 1;
+    }
+    .splitpanes__splitter:hover:before {opacity: 1;}
+    .splitpanes--vertical &gt; .splitpanes__splitter:before {left: -30px;right: -30px;height: 100%;}
+    .splitpanes--horizontal &gt; .splitpanes__splitter:before {top: -30px;bottom: -30px;width: 100%;}
+
   //- Example.
   h3.mt12.pt8.mb2
     a(href="#do-your-own-style") Do your own style
@@ -818,6 +890,12 @@
       code first-splitter
       span.code.ml2 Default: false
       p Displays the first splitter when set to true. This allows maximizing the first pane on splitter double click.
+    li
+      code snap-to-mouse
+      span.code.ml2 Default: true
+      p.
+        Always snap the splitter right under the mouse, even if the drag was started a few pixels of the center.
+        This makes more sense with custom themes and/or thicker splitter handles.
 
   h2.mt12.pt12.mb2
     a(href="#release-notes") Release Notes
@@ -895,7 +973,8 @@ export default {
     paneSize: 50,
     hidePane2: false,
     horizontal: false,
-    firstSplitter: false
+    firstSplitter: false,
+    snapToMouse: true,
   }),
   methods: {
     log (eventName, eventParams) {
