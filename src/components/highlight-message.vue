@@ -6,26 +6,34 @@
 </template>
 
 
-<script>
-export default {
-  props: {
-    tag: { type: String, default: 'p' },
-    type: { type: String, default: 'info' },
-    noIcon: { type: Boolean, default: false }
-  },
-  computed: {
-    icon () {
-      switch (this.type) {
-        case 'success': return 'check'
-        case 'error': return 'close'
-        case 'warning': return 'priority_high'
-        case 'tips': return 'wb_incandescent'
-        case 'info':
-        default: return 'priority_high'
-      }
-    }
+<script setup lang="ts">
+import { computed, defineProps } from 'vue'
+
+const props = defineProps<{
+  tag?: string
+  type?: string
+  noIcon?: boolean
+}>()
+
+const tag = props.tag ?? 'p'
+const type = props.type ?? 'info'
+const noIcon = props.noIcon ?? false
+
+const icon = computed(() => {
+  switch (type) {
+    case 'success':
+      return 'check'
+    case 'error':
+      return 'close'
+    case 'warning':
+      return 'priority_high'
+    case 'tips':
+      return 'wb_incandescent'
+    case 'info':
+    default:
+      return 'priority_high'
   }
-}
+})
 </script>
 
 <style lang="scss">
