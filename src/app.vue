@@ -36,7 +36,7 @@ export default {
   }),
   methods: {
     onScroll () {
-      this.offsetTop = window.pageYOffset || document.documentElement.scrollTop
+      this.offsetTop = window.scrollY || document.documentElement.scrollTop
       this.goTopHidden = this.offsetTop < 200
     },
     scrollToTop () {
