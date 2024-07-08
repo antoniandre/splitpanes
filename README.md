@@ -13,14 +13,9 @@
 **Vue 3**
 
 ```
-npm i splitpanes
+npm i splitpanes4
 ```
 
-**Vue 2**
-
-```
-npm i splitpanes@legacy
-```
 
 ---
 
