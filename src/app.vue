@@ -29,10 +29,10 @@ w-app(block v-scroll="onScroll")
 
 <script setup lang="ts">
 import '@/scss/index.scss'
-import {ref, DirectiveBinding} from 'vue'
+import {ref, onMounted, onUnmounted} from 'vue'
 import type {Ref} from 'vue'
-const offsetTop: Ref<number> = 0
-const goTopHidden: Ref<boolean> = true
+const offsetTop: Ref<number> = ref(0)
+const goTopHidden: Ref<boolean> = ref(true)
 const onScroll = () => {
   offsetTop.value = window.scrollY || document.documentElement.scrollTop
   goTopHidden.value = offsetTop.value < 200
@@ -40,16 +40,11 @@ const onScroll = () => {
 const scrollToTop = () => {
   document.documentElement.scrollTo({ top: 0, behavior: 'smooth' })
 }
-const scrollDirective = {
-  mounted(el: HTMLElement, binding: DirectiveBinding<(evt: Event, el: HTMLElement) => boolean>) {
-    const f = (evt: Event) => {
-      if (binding.value(evt, el)) {
-        window.removeEventListener('scroll', f);
-      }
-    };
+onMounted(() => {
+  window.addEventListener('scroll', onScroll)
+})
 
-    window.addEventListener('scroll', f);
-  },
-};
-
+onUnmounted(() => {
+  window.removeEventListener('scroll', onScroll)
+})
 </script>
