@@ -1,5 +1,5 @@
 <template lang="pug">
-w-app(block v-scroll="onScroll")
+div(v-scroll="onScroll")
   router-view
 
   w-transition-twist
@@ -36,7 +36,7 @@ export default {
   }),
   methods: {
     onScroll () {
-      this.offsetTop = window.pageYOffset || document.documentElement.scrollTop
+      this.offsetTop = window.scrollY || document.documentElement.scrollTop
       this.goTopHidden = this.offsetTop < 200
     },
     scrollToTop () {
