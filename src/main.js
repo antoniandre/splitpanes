@@ -7,9 +7,10 @@ import App from './app.vue'
 import '@fortawesome/fontawesome-free/css/fontawesome.css'
 import '@fortawesome/fontawesome-free/css/brands.css'
 
-const app = createApp(App).use(router)
+const app = createApp(App)
 
-new WaveUI(app, {
+app.use(router)
+app.use(WaveUI, {
   iconsLigature: 'material-icons',
   colors: {
     primary: '#42b983',

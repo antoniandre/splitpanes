@@ -63,8 +63,8 @@ importers:
         specifier: ^4.4.0
         version: 4.4.0(vue@3.4.31)
       wave-ui:
-        specifier: ^2.48.0
-        version: 2.48.0(vue@3.4.31)
+        specifier: ^3.13.6
+        version: 3.13.6(vue@3.4.31)
 
 packages:
 
@@ -1421,8 +1421,8 @@ packages:
       typescript:
         optional: true
 
-  wave-ui@2.48.0:
-    resolution: {integrity: sha512-bNuIs9zCnhY1YPOlJw2e0rx8Rrj2hts1xQOy9fFNX2fpfkPR/S6+jvzFMdwt0V9UZ+iBhqeb/gFbL7Ya4vUsMQ==}
+  wave-ui@3.13.6:
+    resolution: {integrity: sha512-TdZGFuoHh4bCYgQnQVh5AjekyKa8Ejcpx/pQQYcHpvc7uhwYNuWAzcgJ1ewxw3jSranaoud9i2hh8nXsh2g2Vg==}
     peerDependencies:
       vue: ^2.6.14 || ^3.2.0
 
@@ -2935,7 +2935,7 @@ snapshots:
       '@vue/server-renderer': 3.4.31(vue@3.4.31)
       '@vue/shared': 3.4.31
 
-  wave-ui@2.48.0(vue@3.4.31):
+  wave-ui@3.13.6(vue@3.4.31):
     dependencies:
       vue: 3.4.31
 
