@@ -579,11 +579,11 @@
     routes: [
       {
         path: '/home-view',
-        component: () => import(/* webpackChunkName: "home-view" */ './components/home-view.vue')
+        component: () => import('./components/home-view.vue')
       },
       {
         path: '/another-view',
-        component: () => import(/* webpackChunkName: "another-view" */ './components/another-view.vue')
+        component: () => import('./components/another-view.vue')
       }
     ]
 
