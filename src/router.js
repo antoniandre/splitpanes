@@ -10,17 +10,17 @@ export default createRouter({
       children: [
         {
           path: '/example-home-view',
-          component: () => import(/* webpackChunkName: "example-home-view" */ '@/views/example-home-view.vue')
+          component: () => import('@/views/example-home-view.vue')
         },
         {
           path: '/example-another-view',
-          component: () => import(/* webpackChunkName: "example-another-view" */ '@/views/example-another-view.vue')
+          component: () => import('@/views/example-another-view.vue')
         }
       ]
     },
     {
       path: '/test',
-      component: () => import(/* webpackChunkName: "isolated-test-view" */ '@/views/isolated-test-view.vue')
+      component: () => import('@/views/isolated-test-view.vue')
     }
   ]
 })
