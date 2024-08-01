@@ -53,7 +53,7 @@
     "pug": "^3.0.3",
     "rollup-plugin-delete": "^2.0.0",
     "sass": "^1.77.8",
-    "simple-syntax-highlighter": "^2.2.5",
+    "simple-syntax-highlighter": "^3.0.3",
     "vite": "^5.3.5",
     "vue": "^3.4.35",
     "vue-router": "^4.4.2",
