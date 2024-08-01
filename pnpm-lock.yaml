@@ -8,15 +8,12 @@ importers:
 
   .:
     devDependencies:
-      '@fortawesome/fontawesome-free':
-        specifier: ^5.15.4
-        version: 5.15.4
+      '@mdi/font':
+        specifier: ^7.4.47
+        version: 7.4.47
       '@vitejs/plugin-vue':
         specifier: ^5.1.2
         version: 5.1.2(vite@5.3.5(@types/node@22.0.2)(sass@1.77.8))(vue@3.4.35)
-      '@vue/compiler-sfc':
-        specifier: ^3.4.35
-        version: 3.4.35
       autoprefixer:
         specifier: ^10.4.19
         version: 10.4.19(postcss@8.4.40)
@@ -241,10 +238,6 @@ packages:
     resolution: {integrity: sha512-Ys+3g2TaW7gADOJzPt83SJtCDhMjndcDMFVQ/Tj9iA1BfJzFKD9mAUXT3OenpuPHbI6P/myECxRJrofUsDx/5g==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
 
-  '@fortawesome/fontawesome-free@5.15.4':
-    resolution: {integrity: sha512-eYm8vijH/hpzr/6/1CJ/V/Eb1xQFW2nnUKArb3z+yUWv7HTwj6M7SP957oMjfZjAHU6qpoNc2wQvIxBLWYa/Jg==}
-    engines: {node: '>=6'}
-
   '@humanwhocodes/config-array@0.11.14':
     resolution: {integrity: sha512-3T8LkOmg45BV5FICb15QQMsyUSWrQ8AygVfC7ZG32zOalnqrilm018ZVCw0eapXux8FtA33q8PSRSstjee3jSg==}
     engines: {node: '>=10.10.0'}
@@ -260,6 +253,9 @@ packages:
 
   '@jridgewell/sourcemap-codec@1.5.0':
     resolution: {integrity: sha512-gv3ZRaISU3fjPAgNsriBRqGWQL6quFx04YMPW/zD8XMLsU32mhCCbfbO6KZFLjvYpCZ8zyDEgqsgf+PwPaM7GQ==}
+
+  '@mdi/font@7.4.47':
+    resolution: {integrity: sha512-43MtGpd585SNzHZPcYowu/84Vz2a2g31TvPMTm9uTiCSWzaheQySUcSyUH/46fPnuPQWof2yd0pGBtzee/IQWw==}
 
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -1657,8 +1653,6 @@ snapshots:
 
   '@eslint/js@8.57.0': {}
 
-  '@fortawesome/fontawesome-free@5.15.4': {}
-
   '@humanwhocodes/config-array@0.11.14':
     dependencies:
       '@humanwhocodes/object-schema': 2.0.3
@@ -1672,6 +1666,8 @@ snapshots:
   '@humanwhocodes/object-schema@2.0.3': {}
 
   '@jridgewell/sourcemap-codec@1.5.0': {}
+
+  '@mdi/font@7.4.47': {}
 
   '@nodelib/fs.scandir@2.1.5':
     dependencies:

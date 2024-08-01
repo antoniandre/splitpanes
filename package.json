@@ -40,9 +40,8 @@
     "serve": "vite preview --base /splitpanes/"
   },
   "devDependencies": {
-    "@fortawesome/fontawesome-free": "^5.15.4",
+    "@mdi/font": "^7.4.47",
     "@vitejs/plugin-vue": "^5.1.2",
-    "@vue/compiler-sfc": "^3.4.35",
     "autoprefixer": "^10.4.19",
     "eslint": "^8.57.0",
     "eslint-config-standard": "^17.1.0",
