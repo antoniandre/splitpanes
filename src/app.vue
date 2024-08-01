@@ -5,7 +5,7 @@ div(v-scroll="onScroll")
   w-transition-twist
     w-button.go-top(
       v-show="!goTopHidden"
-      icon="material-icons keyboard_arrow_up"
+      icon="wi-chevron-up"
       fixed
       bottom
       right
@@ -18,12 +18,12 @@ div(v-scroll="onScroll")
         Copyright © {{ (new Date()).getFullYear() }} Antoni André, all rights reserved.
       .xs12.sm6.text-center.smu-text-right.made-with
         .mb1.
-          This documentation is made with #[w-icon fab fa-vuejs],
-          #[w-icon fab fa-html5],
-          #[w-icon fab fa-css3],
-          #[w-icon fab fa-sass] &amp;
-          #[w-icon.heart material-icons favorite]
-        | View this project on #[a(href="https://github.com/antoniandre/splitpanes" target="_blank") #[w-icon fab fa-github] Github].
+          This documentation is made with #[w-icon mdi mdi-vuejs],
+          #[w-icon mdi mdi-language-html5],
+          #[w-icon mdi mdi-language-css3],
+          #[w-icon mdi mdi-sass] &amp;
+          #[w-icon.heart mdi mdi-heart]
+        | View this project on #[a(href="https://github.com/antoniandre/splitpanes" target="_blank") #[w-icon mdi mdi-github] Github].
 </template>
 
 <script>

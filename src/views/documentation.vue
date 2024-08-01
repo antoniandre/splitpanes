@@ -12,54 +12,43 @@
   h2.mt12.mb2.title2 Features
   ul.checklist
     li
-      w-icon.mr2(color="primary" size="20") material-icons check
+      w-icon.mr2(color="primary" size="20") wi-check
       | Light weight &amp; no dependencies other than Vue JS
     li
-      w-icon.mr2(color="primary" size="20") material-icons check
+      w-icon.mr2(color="primary" size="20") wi-check
       | Only worry about your panes, the splitters are automatic
     li
-      w-icon.mr2(color="primary" size="20") material-icons check
+      w-icon.mr2(color="primary" size="20") wi-check
       | Nesting supported
     li
-      w-icon.mr2(color="primary" size="20") material-icons check
+      w-icon.mr2(color="primary" size="20") wi-check
       | Fully responsive
     li
-      w-icon.mr2(color="primary" size="20") material-icons check
+      w-icon.mr2(color="primary" size="20") wi-check
       | Support for touch devices
     li
-      w-icon.mr2(color="primary" size="20") material-icons check
+      w-icon.mr2(color="primary" size="20") wi-check
       | Push other panes or not
     li
-      w-icon.mr2(color="primary" size="20") material-icons check
+      w-icon.mr2(color="primary" size="20") wi-check
       | Double click a splitter to maximize pane
     li
-      w-icon.mr2(color="primary" size="20") material-icons check
+      w-icon.mr2(color="primary" size="20") wi-check
       | Programmatically set pane width or height
     li
-      w-icon.mr2(color="primary" size="20") material-icons check
+      w-icon.mr2(color="primary" size="20") wi-check
       | Programmatically add and remove panes
     li
-      w-icon.mr2(color="primary" size="20") material-icons check
+      w-icon.mr2(color="primary" size="20") wi-check
       strong Supports Vue 2 &amp; Vue 3
 
   h2.mt12.mb4.title2 Github project &nbsp;&amp;&nbsp; important notes
   w-flex(align-center shrink)
-    w-icon.ml1.mr5.lightgrey(size="46") fab fa-github
-    a(href="https://github.com/antoniandre/splitpanes" target="_blank") //github.com/antoniandre/splitpanes #[w-icon(color="primary") material-icons open_in_new]
+    w-icon.ml1.mr5.lightgrey(size="46") mdi mdi-github
+    a(href="https://github.com/antoniandre/splitpanes" target="_blank") //github.com/antoniandre/splitpanes #[w-icon(color="primary") mdi mdi-open-in-new]
 
-  w-flex.my8(align-center)
-    w-icon.mr4(size="50" color="orange-light3") material-icons report
-    w-alert.ma0(border-left color="orange" style="width: 100%;max-width: 600px")
-      a.orange(
-        href="https://blog.vuejs.org/posts/vue-3-as-the-new-default.html"
-        target="_blank"
-        style="text-decoration: underline") Vue 3 is the new default
-      | , and so is Splitpanes 3, for Vue 3. #[span.title2.ml1 🙌]#[br]
-      | For Vue 2 projects, you should use #[code npm i splitpanes@#[strong legacy]].
-
-
-  w-flex.my8(align-center)
-    w-icon.mr4(size="50" color="pink-light3") material-icons favorite
+  w-flex.my4(align-center)
+    w-icon.mr4(size="50" color="pink-light3") mdi mdi-heart
     w-alert.ma0(border-left color="pink" style="width: 100%;max-width: 600px")
       | If you like Splitpanes, you can
       a.pink.mx2(
@@ -74,23 +63,24 @@
       | !
       div Thank you so much to all the backers! #[span.title2.ml1 🙏]
 
-  w-flex.mt4.mb8(align-center)
+  .w-flex.mb8.align-center
     svg.mr4.blue-light1(viewBox="0 0 725 477" style="width: 50px;stroke: #497ca2;stroke-width: 5px")
       path(fill="#497ca2" d="M449 0c-78 5-152 39-217 82-19 13-37 26-54 40-39 1-77 15-110 34-34 21-53 60-61 99-11 52-8 108 6 159 7 23 16 46 33 63 4-4 13-4 13-11-1-5-7-8-9-14-27-48-32-108-11-159 13-32 36-63 68-77 19-9 42-7 58 6 6 7 18 4 24-2 6-4 11-10 19-10-24 25-39 60-38 95 1 15 3 31 8 45 16 36 41 69 76 89 5 2 10 6 16 7 5-2 14-5 14-12-4-9-14-12-21-18-27-23-56-48-67-82-9-29-1-60 8-88 7-15 21-32 39-29 15 1 28 13 43 8 11-5 13-17 16-27 5-17 3-38-10-51-16-18-40-23-62-25l-11-2c23-19 53-26 81-31 21-3 43-5 64-2 18 3 28 21 42 31-33 47-57 102-56 159a170 170 0 0086 149c6-1 13-7 10-14-5-11-17-16-25-25-33-30-52-75-50-121 1-29 11-58 24-84 12-25 25-52 47-71 9-8 22-13 33-7 20 8 42 14 63 13-35 27-55 70-64 113-9 44-7 91 12 133 15 37 45 68 81 85 32 16 67 24 101 27 18 1 36 2 53-4 4-1 6-7 2-9-13-6-28-4-42-6-45-5-92-16-127-45-34-28-54-71-60-114-5-47 7-97 34-137 11-15 26-31 45-34 14-1 25 12 31 23 6 12 16 24 29 28 20-10 40-26 43-50 2-17-6-34-14-49-15-25-40-43-69-48-20-5-41-2-61-6-22-21-54-24-83-24zm6 21c22 0 48 5 62 25 4 7 8 16 8 24-1 10-10 22-21 19-9-7-18-14-30-16-14-4-31-1-43 8-6 6-17 8-24 2-9-6-17-15-28-17-27-7-54 1-81 6a364 364 0 01157-51zm117 29c33 0 66 25 72 58 3 12 3 28-8 35-3 2-6 4-8 1-8-12-12-27-23-37-3-7-12-8-19-9-13-2-26 0-39-4 7-7 6-17 4-25l-3-16 24-3zm-372 92l46 2c18 2 33 16 34 34 1 7 1 17-6 21-6 0-12-4-18-6-21-8-46-14-67-3-6 2-11 9-17 5-10-4-18-14-30-12-30 1-56 21-77 42-16 17-30 37-43 56 0-39 17-80 49-104 26-22 61-30 94-34l35-1z")
     w-alert.ma0(border-left color="pale-blue" style="width: 100%;max-width: 600px")
-      strong
-        | Check out my UI framework for Vue (2 &amp; 3)!
+      .text-bold
+        | Do you need A UI framework? Checkout
         a.title2.ml4(
           href="https://antoniandre.github.io/wave-ui"
           target="_blank"
           style="width: 50px;color: #1471b8;text-decoration: underline")
             strong Wave UI
+        div By the same awesome author.
 
   .title4.mt12.pt12.mb2
     | # Demo -
     a.ml1.d-inline-flex.align-center(href="https://codepen.io/antoniandre/pen/XybPKP" target="_blank")
       | try it yourself on Codepen
-      w-icon.ml1(color="primary") material-icons open_in_new
+      w-icon.ml1(color="primary") mdi mdi-open-in-new
 
   splitpanes.default-theme.example.example1(style="height: 400px")
     pane(min-size="20")
@@ -144,7 +134,7 @@
       npm i splitpanes@legacy # For Vue 2
 
   p.mt2
-    w-icon.mr1 material-icons chevron_right
+    w-icon.mr1 wi-chevron-right
     | View and edit a working
     a.ml2(href="https://codepen.io/antoniandre/pen/LYNKGWV" target="_blank") Vue 3 example
     | , or
@@ -272,7 +262,7 @@
   p
     a(href="https://codepen.io/antoniandre/pen/PypgKY" target="_blank")
       | Try it yourself on Codepen
-      w-icon.ml1(color="primary") material-icons open_in_new
+      w-icon.ml1(color="primary") mdi mdi-open-in-new
   splitpanes.default-theme.example(horizontal :push-other-panes="false" style="height: 400px")
     pane
       span 1
@@ -332,10 +322,10 @@
   p
     | This example shows the reactivity when you add a new element dynamically in splitpanes.
     w-button.ml2(@click="panesNumber++")
-      w-icon.mr1 material-icons add
+      w-icon.mr1 mdi mdi-plus
       | Add pane
     w-button.ml2(@click="panesNumber--")
-      w-icon.mr1 material-icons remove
+      w-icon.mr1 mdi mdi-minus
       | Remove pane
 
   splitpanes.default-theme.example(style="height: 400px")
@@ -368,10 +358,10 @@
     The first splitter does not allow to resize the next pane.
 
   w-button.mr2.mb2(@click="horizontal = !horizontal")
-    w-icon.ml-n1.mr1 material-icons {{ horizontal ? 'view_column' : 'view_stream' }}
+    w-icon.ml-n1.mr1 mdi mdi-{{ horizontal ? 'view-column' : 'view-stream' }}
     | Switch to {{ horizontal ? 'Vertical' : 'Horizontal' }}
   w-button.mr2.mb2(@click="firstSplitter = !firstSplitter")
-    w-icon.ml-n1.mr1 material-icons {{ firstSplitter ? 'close' : 'add' }}
+    w-icon.ml-n1.mr1 wi-{{ firstSplitter ? 'cross' : 'plus' }}
     | {{ firstSplitter ? 'Hide' : 'Show' }} First Splitter
   splitpanes.default-theme.example(
     :horizontal="horizontal"
@@ -439,10 +429,10 @@
   p
     | This example shows the reactivity when you modify anything in your component inside splitpanes.#[br]
     w-button.mt2.mr2(@click="generateRandomNumber")
-      w-icon.mr1(size="20") material-icons sync
+      w-icon.mr1(size="20") mdi mdi-sync
       | Generate 3 random numbers
     w-button.mt2(@click="incrementNumber(3)")
-      w-icon.mr1(size="20") material-icons add
+      w-icon.mr1(size="20") mdi mdi-plus
       | Increment pane #3
   splitpanes.default-theme.example(style="height: 400px" horizontal)
     pane
@@ -454,7 +444,7 @@
             Number on the left is: {{ randomNums[1] }}#[br]
             Number on the right is: {{ randomNums[3] }}#[br]
           w-button.align-center(v-if="i !== 2" @click="randomNums[i] = randomNums[i] + 1" style="min-width: 0")
-            w-icon(size="20") material-icons add
+            w-icon(size="20") mdi mdi-plus
             | 1
     pane.w-flex.column.text-center
       span 4#[br]
@@ -513,7 +503,7 @@
     a(name="toggle-a-pane-with-v-if")
 
   w-button.mb2(@click="hidePane2 = !hidePane2")
-    w-icon.mr2 material-icons {{ hidePane2 ? 'visibility' : 'visibility_off'}}
+    w-icon.mr2 mdi mdi-{{ hidePane2 ? 'eye' : 'eye-off'}}
     | {{ hidePane2 ? 'Show' : 'Hide' }} Pane 2
   splitpanes.default-theme.example(style="height: 400px")
     pane
@@ -666,7 +656,7 @@
   p
     a(href="https://codepen.io/antoniandre/pen/XxRZmB" target="_blank")
       | Try it yourself on Codepen
-      w-icon.ml1(color="primary") material-icons open_in_new
+      w-icon.ml1(color="primary") mdi mdi-open-in-new
 
   splitpanes.touch-example(horizontal style="height: 400px")
     pane
@@ -729,7 +719,7 @@
   p
     a(href="https://codepen.io/antoniandre/pen/mzGZXR" target="_blank")
       | Try it yourself on Codepen
-      w-icon.ml1(color="primary") material-icons open_in_new
+      w-icon.ml1(color="primary") mdi mdi-open-in-new
 
   splitpanes.example-own-style(horizontal style="height: 400px")
     pane
