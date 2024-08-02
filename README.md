@@ -4,6 +4,7 @@
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE.md)
 [![npm](https://img.shields.io/npm/dt/splitpanes.svg)](https://www.npmjs.com/package/splitpanes)
 [![npm](https://img.shields.io/npm/dw/splitpanes.svg)](https://www.npmjs.com/package/splitpanes)
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 > A Vue.js reliable, simple and touch-ready panes splitter / resizer.
 > Vue 3 compatible.
