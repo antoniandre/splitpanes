@@ -1,3 +1,30 @@
+<script setup>
+import { ref } from 'vue'
+import '@/scss/index.scss'
+
+const offsetTop = ref(0)
+const goTopHidden = ref(true)
+
+const onScroll = () => {
+  offsetTop.value = window.scrollY || document.documentElement.scrollTop
+  goTopHidden.value = offsetTop.value < 200
+}
+
+const scrollToTop = () => {
+  document.documentElement.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
+// Directives.
+const vScroll = {
+  mounted: (el, binding) => {
+    const f = evt => {
+      if (binding.value(evt, el)) window.removeEventListener('scroll', f)
+    }
+    window.addEventListener('scroll', f)
+  }
+}
+</script>
+
 <template lang="pug">
 div(v-scroll="onScroll")
   router-view
@@ -25,33 +52,3 @@ div(v-scroll="onScroll")
           #[w-icon.heart mdi mdi-heart]
         | View this project on #[a(href="https://github.com/antoniandre/splitpanes" target="_blank") #[w-icon mdi mdi-github] Github].
 </template>
-
-<script>
-import '@/scss/index.scss'
-
-export default {
-  data: () => ({
-    offsetTop: 0,
-    goTopHidden: true
-  }),
-  methods: {
-    onScroll () {
-      this.offsetTop = window.scrollY || document.documentElement.scrollTop
-      this.goTopHidden = this.offsetTop < 200
-    },
-    scrollToTop () {
-      document.documentElement.scrollTo({ top: 0, behavior: 'smooth' })
-    }
-  },
-  directives: {
-    scroll: {
-      mounted: (el, binding) => {
-        const f = evt => {
-          if (binding.value(evt, el)) window.removeEventListener('scroll', f)
-        }
-        window.addEventListener('scroll', f)
-      }
-    }
-  }
-}
-</script>
