@@ -864,47 +864,41 @@
   div #[strong Version 1.0.0] First public release
 </template>
 
-<script>
+<script setup>
+import { computed, ref } from 'vue'
 import { Splitpanes, Pane } from '@/components/splitpanes/index.js'
 import HighlightMessage from '@/components/highlight-message.vue'
 import SshPre from 'simple-syntax-highlighter'
 import 'simple-syntax-highlighter/dist/sshpre.css'
 
-export default {
-  name: 'app',
-  components: { Splitpanes, Pane, SshPre, HighlightMessage },
-  data: () => ({
-    panesNumber: 3,
-    logs: [],
-    randomNums: { 1: 0, 2: 0, 3: 0 },
-    paneSize: 50,
-    hidePane2: false,
-    horizontal: false,
-    firstSplitter: false
-  }),
-  methods: {
-    log (eventName, eventParams) {
-      this.logs.unshift({ name: eventName, params: JSON.stringify(eventParams) })
-    },
-    generateRandomNumber () {
-      this.randomNums = Object.assign(this.randomNums, {
-        1: Math.round(Math.random() * 100),
-        2: Math.round(Math.random() * 100),
-        3: Math.round(Math.random() * 100)
-      })
-    },
-    incrementNumber (i) {
-      this.randomNums[i]++
-    }
-  },
+const panesNumber = ref(3)
+const logs = ref([])
+const randomNums = ref({ 1: 0, 2: 0, 3: 0 })
+const paneSize = ref(50)
+const hidePane2 = ref(false)
+const horizontal = ref(false)
+const firstSplitter = ref(false)
 
-  computed: {
-    panesNumberAbs () {
-      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-      if (this.panesNumber < 0) this.panesNumber = 0
-      return this.panesNumber
-    }
-  }
+const panesNumberAbs = computed(() => {
+  // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+  if (panesNumber.value < 0) panesNumber.value = 0
+  return panesNumber.value
+})
+
+const log = (eventName, eventParams) => {
+  logs.value.unshift({ name: eventName, params: JSON.stringify(eventParams) })
+}
+
+const generateRandomNumber = () => {
+  randomNums.value = Object.assign(randomNums.value, {
+    1: Math.round(Math.random() * 100),
+    2: Math.round(Math.random() * 100),
+    3: Math.round(Math.random() * 100)
+  })
+}
+
+const incrementNumber = (i) => {
+  randomNums.value[i]++
 }
 </script>
 
