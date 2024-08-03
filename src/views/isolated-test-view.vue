@@ -13,9 +13,8 @@ div
 import { ref } from 'vue'
 import { Splitpanes, Pane } from '@/components/splitpanes/index'
 
-const components = { Splitpanes, Pane }
-let horizontal = ref(true)
-let hidePane2 = ref(false)
+const horizontal = ref(true)
+const hidePane2 = ref(false)
 const panesNumber = 3
 
 const togglePane2 = () => {
