@@ -2,8 +2,6 @@
 import { h } from 'vue'
 
 export default {
-  // eslint-disable-next-line vue/multi-word-component-names
-  name: 'splitpanes',
   emits: ['ready', 'resize', 'resized', 'pane-click', 'pane-maximize', 'pane-add', 'pane-remove', 'splitter-click'],
 
   props: {
@@ -370,30 +368,20 @@ export default {
     },
 
     // Called by Pane component on programmatic resize.
-    requestUpdate ({ target, ...args }) {
-      const pane = this.indexedPanes[target._.uid]
+    requestUpdate ({ uid, ...args }) {
+      const pane = this.indexedPanes[uid]
       Object.entries(args).forEach(([key, value]) => (pane[key] = value))
     },
 
     onPaneAdd (pane) {
       // 1. Add pane to array at the same index it was inserted in the <splitpanes> tag.
       let index = -1
-      Array.from(pane.$el.parentNode.children).some(el => {
+      Array.from(pane.el.parentNode.children).some(el => {
         if (el.className.includes('splitpanes__pane')) index++
-        return el === pane.$el
+        return el === pane
       })
 
-      const min = parseFloat(pane.minSize)
-      const max = parseFloat(pane.maxSize)
-      this.panes.splice(index, 0, {
-        id: pane._.uid,
-        index,
-        min: isNaN(min) ? 0 : min,
-        max: isNaN(max) ? 100 : max,
-        size: pane.size === null ? null : parseFloat(pane.size),
-        givenSize: pane.size,
-        update: pane.update
-      })
+      this.panes.splice(index, 0, { ...pane, index })
 
       // Redo indexes after insertion for other shifted panes.
       this.panes.forEach((p, i) => (p.index = i))
@@ -412,9 +400,9 @@ export default {
       }
     },
 
-    onPaneRemove (pane) {
+    onPaneRemove (uid) {
       // 1. Remove the pane from array and redo indexes.
-      const index = this.panes.findIndex(p => p.id === pane._.uid)
+      const index = this.panes.findIndex(p => p.id === uid)
       const removed = this.panes.splice(index, 1)[0]
       this.panes.forEach((p, i) => (p.index = i))
 
