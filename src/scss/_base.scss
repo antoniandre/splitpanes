@@ -12,12 +12,6 @@ body {
 a {
   text-decoration: none;
   color: $primary;
-
-  &[name] {
-    position: relative;
-    top: -4em;
-    display: block;
-  }
 }
 
 ul, ol {

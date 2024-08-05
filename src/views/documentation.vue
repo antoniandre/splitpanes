@@ -119,9 +119,8 @@
         font-size: 5em;
       }
 
-  h2.mt12.mb2
+  h2.mt12.mb2(id="installation")
     a(href="#installation") Installation
-    a(name="installation")
 
   p You have two options: #[em NPM] #[strong.mx1 or] #[span.code &lt;script&gt;] tag.
   h3.mt12 Via NPM
@@ -162,9 +161,8 @@
       &lt;link href="https://unpkg.com/splitpanes/dist/splitpanes.css" rel="stylesheet"&gt;
     &lt;/head&gt;
 
-  h2.mt12.mb2
+  h2.mt12.mb2(id="how-to-use")
     a(href="#how-to-use") How to use
-    a(name="how-to-use")
 
   p.
     Once included in your project, use as follows.
@@ -192,14 +190,12 @@
 
   //- Examples.
   //-------------------------------------------------------//
-  h2.mt12.mb2
+  h2.mt12.mb2(id="more-examples")
     a(href="#more-examples") More examples
-    a(name="more-examples")
 
   //- Example.
-  h3.mt10.mb2
+  h3.mt10.mb2(id="horizontal-layout")
     a(href="#horizontal-layout") Horizontal layout, push other panes, min &amp; max use
-    a(name="horizontal-layout")
   p You can also double click a splitter to maximize the next pane! (First pane splitter will be an option soon)
   p If you want to disable the 'double click splitter to maximize' behavior, you can add this attribute: #[span.code :dbl-click-splitter="false"].
   splitpanes.default-theme.example(horizontal style="height: 400px")
@@ -224,9 +220,8 @@
     &lt;/splitpanes&gt;
 
   //- Example.
-  h3.mt12.pt8.mb2
+  h3.mt12.pt8.mb2(id="default-pane-width")
     a(href="#default-pane-width") Default pane width or height
-    a(name="default-pane-width")
   p
     | Provide dimension of your panes when they first load (will be used for the width or height respectively for the vertical or horizontal layout).#[br]
     strong.
@@ -256,9 +251,8 @@
     &lt;/splitpanes&gt;
 
   //- Example.
-  h3.mt12.pt8.mb2
+  h3.mt12.pt8.mb2(id="nested-splitpanes")
     a(href="#nested-splitpanes") Mix layout with nested splitpanes &amp; prevent pushing other panes
-    a(name="nested-splitpanes")
   p
     a(href="https://codepen.io/antoniandre/pen/PypgKY" target="_blank")
       | Try it yourself on Codepen
@@ -301,9 +295,8 @@
     &lt;/splitpanes&gt;
 
   //- Example.
-  h3.mt12.pt8.mb2
+  h3.mt12.pt8.mb2(id="lots-of-splitters")
     a(href="#lots-of-splitters") Lots of splitters &amp; push other panes - all panes have a min width of 5%
-    a(name="lots-of-splitters")
   splitpanes.default-theme.example(style="height: 400px")
     pane(v-for="i in 8" :key="i" :min-size="5")
       span {{ i }}
@@ -316,9 +309,8 @@
     &lt;/splitpanes&gt;
 
   //- Example.
-  h3.mt12.pt8.mb2
+  h3.mt12.pt8.mb2(id="adding-splitters-on-the-fly")
     a(href="#adding-splitters-on-the-fly") Adding splitters on the fly
-    a(name="adding-splitters-on-the-fly")
   p
     | This example shows the reactivity when you add a new element dynamically in splitpanes.
     w-button.ml2(@click="panesNumber++")
@@ -349,9 +341,8 @@
     })
 
   //- Example.
-  h3.mt12.pt8.mb2
+  h3.mt12.pt8.mb2(id="change-direction")
     a(href="#change-direction") Change direction &amp; first splitter
-    a(name="change-direction")
   p When changing direction, all the panes current width or height will flip to adapt to the new layout.
   p.
     Showing the first splitter is an option which allows user to double click the splitter to maximize the next pane.#[br]
@@ -387,10 +378,13 @@
     })
 
   //- Example.
-  h3.mt12.pt8.mb2
+  h3.mt12.pt8.mb2(id="programmatic-resizing")
     a(href="#programmatic-resizing") Programmatic resizing
-    a(name="programmatic-resizing")
-  p.mb6 This example shows the programmatic way of resizing panes. And how it works both ways.
+  p.mb6 This example shows the programmatic way of resizing panes and how it works both ways.
+  p.mt0.mb6.
+    In this example, the default transition on the .splitpanes__pane element is removed
+    so it looks fast and reactive.
+
   w-slider.mt12.mb10(
     v-model="paneSize"
     track-color="grey-light2"
@@ -399,7 +393,7 @@
     thumb-size="25"
     :min="0"
     :max="100")
-  splitpanes.default-theme.example(@resize="paneSize = $event[0].size" style="height: 400px")
+  splitpanes.default-theme.example.example--programmatic-resizing(@resize="paneSize = $event[0].size" style="height: 400px")
     pane(:size="paneSize")
       span {{ ~~(paneSize * 100) / 100 }}%
     pane(:size="100 - paneSize")
@@ -423,9 +417,8 @@
     })
 
   //- Example.
-  h3.mt12.pt8.mb2
+  h3.mt12.pt8.mb2(id="in-depth-reactivity")
     a(href="#in-depth-reactivity") In-depth reactivity
-    a(name="in-depth-reactivity")
   p
     | This example shows the reactivity when you modify anything in your component inside splitpanes.#[br]
     w-button.mt2.mr2(@click="generateRandomNumber")
@@ -498,9 +491,8 @@
     }
 
   //- Example.
-  h3.mt12.pt8.mb2
+  h3.mt12.pt8.mb2(id="toggle-a-pane-with-v-if")
     a(href="#toggle-a-pane-with-v-if") Toggle a pane with #[span.code v-if]
-    a(name="toggle-a-pane-with-v-if")
 
   w-button.mb2(@click="hidePane2 = !hidePane2")
     w-icon.mr2 mdi mdi-{{ hidePane2 ? 'eye' : 'eye-off'}}
@@ -528,9 +520,8 @@
     &lt;/splitpanes&gt;
 
   //- Example.
-  h3.mt12.pt8.mb2
+  h3.mt12.pt8.mb2(id="vue-router")
     a(href="#vue-router") Vue Router inside splitpanes
-    a(name="vue-router")
   p.mb1.
     This is another reactivity example of a rather common case: Vue Router inside splitpanes.#[br]
     The navigation is in the left pane, but you can also access from outside of splitpanes, through those buttons:
@@ -595,9 +586,8 @@
     &lt;/template&gt;
 
   //- Example.
-  h3.mt12.pt8.mb2
+  h3.mt12.pt8.mb2(id="emitted-events")
     a(href="#emitted-events") Listening to emitted events
-    a(name="emitted-events")
   p Here is the list of events that are emitted from splitpanes:
   ul
     li #[code.mr2 ready] has no parameter and fires when splitpanes is ready
@@ -650,9 +640,8 @@
     &lt;/splitpanes&gt;
 
   //- Example.
-  h3.mt12.pt8.mb2
+  h3.mt12.pt8.mb2(id="increased-touch-zone")
     a(href="#increased-touch-zone") Increased reactive touch zone for touch devices
-    a(name="increased-touch-zone")
   p
     a(href="https://codepen.io/antoniandre/pen/XxRZmB" target="_blank")
       | Try it yourself on Codepen
@@ -712,9 +701,8 @@
     .splitpanes--horizontal &gt; .splitpanes__splitter:before {top: -30px;bottom: -30px;width: 100%;}
 
   //- Example.
-  h3.mt12.pt8.mb2
+  h3.mt12.pt8.mb2(id="do-your-own-style")
     a(href="#do-your-own-style") Do your own style
-    a(name="do-your-own-style")
   p If you don't want to use the default style, here is how to do your own.
   p
     a(href="https://codepen.io/antoniandre/pen/mzGZXR" target="_blank")
@@ -775,9 +763,8 @@
       background: linear-gradient(0deg, #ccc, #111);
     }
 
-  h2.mt12.pt12.mb2
+  h2.mt12.pt12.mb2(id="api")
     a(href="#api") API
-    a(name="api")
 
   p Here is the list of all the props.
   ul
@@ -804,9 +791,8 @@
       span.code.ml2 Default: false
       p Displays the first splitter when set to true. This allows maximizing the first pane on splitter double click.
 
-  h2.mt12.pt12.mb2
+  h2.mt12.pt12.mb2(id="release-notes")
     a(href="#release-notes") Release Notes
-    a(name="release-notes")
 
   div.mt4
     | #[strong Version 3.0] For Vue 3 projects.
@@ -905,6 +891,8 @@ const incrementNumber = (i) => {
 <style lang="scss">
 $primary-color: #42b983;
 $secondary-color: #78cfa8;
+
+html {scroll-behavior: smooth;}
 
 a {
   text-decoration: none;
@@ -1031,4 +1019,8 @@ em.specs {
     background: linear-gradient(#ccc, #111);
   }
 }
+
+// In order to showcase the synchronicity with the panes.
+div.w-slider__thumb, div.w-slider__range {transition: none;}
+.example--programmatic-resizing .splitpanes__pane {transition: none;}
 </style>

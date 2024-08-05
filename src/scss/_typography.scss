@@ -33,7 +33,7 @@ h3 {
 }
 
 h2 + h3,
-h2 + a[name] + h3 {
+h2 + a[id] + h3 {
   margin-top: 0;
 }
 
