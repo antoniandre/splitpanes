@@ -495,7 +495,7 @@
     a(href="#toggle-a-pane-with-v-if") Toggle a pane with #[span.code v-if]
 
   w-button.mb2(@click="hidePane2 = !hidePane2")
-    w-icon.mr2 mdi mdi-{{ hidePane2 ? 'eye' : 'eye-off'}}
+    w-icon.mr2 mdi mdi-{{ hidePane2 ? 'eye' : 'eye-off' }}
     | {{ hidePane2 ? 'Show' : 'Hide' }} Pane 2
   splitpanes.default-theme.example(style="height: 400px")
     pane
@@ -518,6 +518,56 @@
         &lt;span&gt;3&lt;/span&gt;
       &lt;/pane&gt;
     &lt;/splitpanes&gt;
+
+  //- Example.
+  h3.mt12.pt8.mb2(id="resizable-drawer")
+    a(href="#resizable-drawer") Resizable Drawer
+
+  p.
+    Sometimes, you need a resizable drawer that goes on top of your app.#[br]
+    Here's one way to do this, mostly thanks to CSS powers. The key here is to set the Splitpanes
+    container to #[code pointer-events: none;] and reactivate the pointer events in the splitter and drawer
+    so that you can click through Splitpanes on the rest of the page.
+
+  w-button.mb2(@click="showDrawer = !showDrawer")
+    w-icon.mr2 mdi mdi-{{ showDrawer ? 'eye' : 'eye-off' }}
+    | {{ showDrawer ? 'Hide' : 'Show' }} Drawer
+  splitpanes.default-theme.example.example--drawer(v-if="showDrawer")
+    pane
+    pane.drawer(size="40")
+      h3.mt12 Resizable Drawer
+
+  ssh-pre(language="html-vue" label="HTML").
+    &lt;button @click="showDrawer = !showDrawer"&gt;
+      {{ "\{\{ showDrawer ? 'Hide' : 'Show' \}\}" }} Drawer
+    &lt;/button&gt;
+
+    &lt;splitpanes v-if="showDrawer" class="default-theme"&gt;
+      &lt;pane&gt;&lt;/pane&gt;
+      &lt;pane size="40"&gt;
+        &lt;h3&gt;Resizable Drawer&lt;/h3&gt;
+      &lt;/pane&gt;
+    &lt;/splitpanes&gt;
+
+  ssh-pre(language="css" label="CSS").
+    .splitpanes {
+      position: fixed;
+      inset: 0 0 0 auto;
+      z-index: 100;
+      pointer-events: none;
+
+      .splitpanes__pane:first-child {background-color: transparent;}
+      .splitpanes__splitter {pointer-events: all;}
+
+      .splitpanes__pane ~ .splitpanes__pane {
+        pointer-events: all;
+        background-color: #fff;
+        box-shadow: none;
+        align-items: flex-start;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+    }
 
   //- Example.
   h3.mt12.pt8.mb2(id="vue-router")
@@ -864,6 +914,7 @@ const paneSize = ref(50)
 const hidePane2 = ref(false)
 const horizontal = ref(false)
 const firstSplitter = ref(false)
+const showDrawer = ref(false)
 
 const panesNumberAbs = computed(() => {
   // eslint-disable-next-line vue/no-side-effects-in-computed-properties
@@ -1017,6 +1068,25 @@ em.specs {
   &.splitpanes--horizontal > .splitpanes__splitter {
     min-height: 6px;
     background: linear-gradient(#ccc, #111);
+  }
+}
+
+.example.example--drawer {
+  position: fixed;
+  inset: 0 0 0 auto;
+  z-index: 100;
+  pointer-events: none;
+
+  .splitpanes__pane:first-child {background-color: transparent;}
+  .splitpanes__splitter {pointer-events: all;}
+
+  .splitpanes__pane.drawer {
+    pointer-events: all;
+    background-color: #fff;
+    box-shadow: none;
+    align-items: flex-start;
+    overflow: hidden;
+    white-space: nowrap;
   }
 }
 
