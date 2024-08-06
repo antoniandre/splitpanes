@@ -1,5 +1,5 @@
 <script>
-import { h } from 'vue'
+import { h, ref, computed } from 'vue'
 
 export default {
   emits: ['ready', 'resize', 'resized', 'pane-click', 'pane-maximize', 'pane-add', 'pane-remove', 'splitter-click'],
@@ -12,8 +12,26 @@ export default {
     firstSplitter: { type: Boolean }
   },
 
+  setup () {
+    const panes = ref([])
+    const panesCount = computed(() => panes.value.length)
+    // Indexed panes by id (Vue's internal component uid) of Pane components for fast lookup.
+    // Every time a pane is destroyed this index is recomputed.
+    const indexedPanes = computed(() => {
+      return panes.value.reduce((obj, pane) => (obj[~~pane.id] = pane) && obj, {})
+    })
+
+    return {
+      panes,
+      panesCount,
+      indexedPanes
+    }
+  },
+
   provide () {
     return {
+      panes: this.panes,
+      horizontal: this.horizontal,
       requestUpdate: this.requestUpdate,
       onPaneAdd: this.onPaneAdd,
       onPaneRemove: this.onPaneRemove,
@@ -24,7 +42,6 @@ export default {
   data: () => ({
     container: null,
     ready: false,
-    panes: [],
     touch: {
       mouseDown: false,
       dragging: false,
@@ -36,28 +53,7 @@ export default {
     }
   }),
 
-  computed: {
-    panesCount () {
-      return this.panes.length
-    },
-    // Indexed panes by `uid` of Pane components for fast lookup.
-    // Every time a pane is destroyed this index is recomputed.
-    indexedPanes () {
-      return this.panes.reduce((obj, pane) => (obj[pane.id] = pane) && obj, {})
-    }
-  },
-
   methods: {
-    updatePaneComponents () {
-      // On update refresh the size of each pane through the registered `update` method (in onPaneAdd).
-      this.panes.forEach(pane => {
-        pane.update && pane.update({
-          // Panes are indexed by Pane component uid, as they might be inserted at different index.
-          [this.horizontal ? 'height' : 'width']: `${this.indexedPanes[pane.id].size}%`
-        })
-      })
-    },
-
     bindEvents () {
       document.addEventListener('mousemove', this.onMouseMove, { passive: false })
       document.addEventListener('mouseup', this.onMouseUp)
@@ -151,7 +147,7 @@ export default {
       this.$emit('pane-click', this.indexedPanes[paneId])
     },
 
-    // Get the cursor position relative to the splitpane container.
+    // Get the cursor position relative to the splitpanes container.
     getCurrentMouseDrag (event) {
       const rect = this.container.getBoundingClientRect()
       const { clientX, clientY } = ('ontouchstart' in window && event.touches) ? event.touches[0] : event
@@ -162,7 +158,7 @@ export default {
       }
     },
 
-    // Returns the drag percentage of the splitter relative to the 2 panes it's inbetween.
+    // Returns the drag percentage of the splitter relative to the 2 panes it's in between.
     // if the sum of size of the 2 cells is 60%, the dragPercentage range will be 0 to 100% of this 60%.
     getCurrentDragPercentage (drag) {
       drag = drag[this.horizontal ? 'y' : 'x']
@@ -376,9 +372,9 @@ export default {
     onPaneAdd (pane) {
       // 1. Add pane to array at the same index it was inserted in the <splitpanes> tag.
       let index = -1
-      Array.from(pane.el.parentNode.children).some(el => {
+      Array.from(this.$refs.container.children).some(el => {
         if (el.className.includes('splitpanes__pane')) index++
-        return el === pane
+        return el.isSameNode(pane.el)
       })
 
       this.panes.splice(index, 0, { ...pane, index })
@@ -641,14 +637,6 @@ export default {
   },
 
   watch: {
-    panes: { // Every time a pane is updated, update the panes accordingly.
-      deep: true,
-      immediate: false,
-      handler () { this.updatePaneComponents() }
-    },
-    horizontal () {
-      this.updatePaneComponents()
-    },
     firstSplitter () {
       this.redoSplitters()
     },
@@ -682,9 +670,7 @@ export default {
         class: [
           'splitpanes',
           `splitpanes--${this.horizontal ? 'horizontal' : 'vertical'}`,
-          {
-            'splitpanes--dragging': this.touch.dragging
-          }
+          { 'splitpanes--dragging': this.touch.dragging }
         ]
       },
       this.$slots.default()
@@ -718,15 +704,18 @@ export default {
   &--vertical > .splitpanes__splitter {min-width: 1px;cursor: col-resize;}
   &--horizontal > .splitpanes__splitter {min-height: 1px;cursor: row-resize;}
 }
+
 .splitpanes.default-theme {
   .splitpanes__pane {
     background-color: #f2f2f2;
   }
+
   .splitpanes__splitter {
     background-color: #fff;
     box-sizing: border-box;
     position: relative;
     flex-shrink: 0;
+
     &:before, &:after {
       content: "";
       position: absolute;
@@ -739,6 +728,7 @@ export default {
     &:first-child {cursor: auto;}
   }
 }
+
 .default-theme {
   &.splitpanes .splitpanes .splitpanes__splitter {
     z-index: 1;
