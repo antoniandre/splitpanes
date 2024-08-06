@@ -12,7 +12,7 @@
 import { inject, ref, computed, onMounted, onBeforeUnmount, watch, getCurrentInstance } from 'vue'
 
 const props = defineProps({
-  size: { type: [Number, String], default: null },
+  size: { type: [Number, String] },
   minSize: { type: [Number, String], default: 0 },
   maxSize: { type: [Number, String], default: 100 }
 })
@@ -24,13 +24,14 @@ const onPaneRemove = inject('onPaneRemove')
 const onPaneClick = inject('onPaneClick')
 
 const uid = getCurrentInstance()?.uid
-const panes = inject('panes')
-const pane = computed(() => panes.find(pane => pane.id === uid))
+const indexedPanes = inject('indexedPanes')
+const pane = computed(() => indexedPanes.value[uid])
 
 const paneEl = ref(null)
 const sizeNumber = computed(() => {
-  const value = parseFloat(props.size)
-  return isNaN(value) ? 0 : value
+  const value = isNaN(props.size) || props.size === undefined ? 0 : parseFloat(props.size)
+
+  return Math.max(Math.min(value, maxSizeNumber.value), minSizeNumber.value)
 })
 const minSizeNumber = computed(() => {
   const value = parseFloat(props.minSize)
@@ -40,7 +41,7 @@ const maxSizeNumber = computed(() => {
   const value = parseFloat(props.maxSize)
   return isNaN(value) ? 100 : value
 })
-const styles = computed(() => `${horizontal ? 'height' : 'width'}: ${pane.value?.size}%`)
+const styles = computed(() => `${horizontal.value ? 'height' : 'width'}: ${pane.value?.size}%`)
 
 onMounted(() => {
   onPaneAdd({
@@ -49,8 +50,8 @@ onMounted(() => {
     min: minSizeNumber.value,
     max: maxSizeNumber.value,
     // The given size (useful to know the user intention).
-    givenSize: props.size === null ? null : sizeNumber.value,
-    size: props.size === null ? null : sizeNumber.value // The computed current size at any time.
+    givenSize: props.size === undefined ? null : sizeNumber.value,
+    size: sizeNumber.value // The computed current size at any time.
   })
 })
 
