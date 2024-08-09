@@ -704,14 +704,18 @@ provide('onPaneClick', onPaneClick)
 }
 
 .default-theme {
-  &.splitpanes .splitpanes .splitpanes__splitter {
-    z-index: 1;
+  .splitpanes--dragging {
+    user-select: none;
+    pointer-events: none;
   }
+
+  &.splitpanes .splitpanes .splitpanes__splitter {z-index: 1;}
   &.splitpanes--vertical > .splitpanes__splitter,
   .splitpanes--vertical > .splitpanes__splitter {
     width: 7px;
     border-left: 1px solid #eee;
     margin-left: -1px;
+
     &:before, &:after {
       transform: translateY(-50%);
       width: 1px;
