@@ -142,10 +142,9 @@ const getCurrentMouseDrag = event => {
 // if the sum of size of the 2 cells is 60%, the dragPercentage range will be 0 to 100% of this 60%.
 const getCurrentDragPercentage = drag => {
   drag = drag[props.horizontal ? 'y' : 'x']
-  // In the code bellow 'size' refers to 'width' for vertical and 'height' for horizontal layout.
+  // In the code below 'size' refers to 'width' for vertical and 'height' for horizontal layout.
   const containerSize = containerEl.value[props.horizontal ? 'clientHeight' : 'clientWidth']
   if (props.rtl && !props.horizontal) drag = containerSize - drag
-
   return drag * 100 / containerSize
 }
 
@@ -247,6 +246,7 @@ const doPushOtherPanes = (sums, dragPercentage) => {
         }
       })
     }
+
     sums.nextPanesSize = sumNextPanesSize(panesToResize[1] - 1)
     // If nothing else to push up, cancel dragging.
     if (panesToResize[1] === undefined) {
@@ -267,6 +267,7 @@ const doPushOtherPanes = (sums, dragPercentage) => {
 const sumPrevPanesSize = splitterIndex => {
   return panes.value.reduce((total, pane, i) => total + (i < splitterIndex ? pane.size : 0), 0)
 }
+
 const sumNextPanesSize = splitterIndex => {
   return panes.value.reduce((total, pane, i) => total + (i > splitterIndex + 1 ? pane.size : 0), 0)
 }
@@ -462,8 +463,8 @@ const equalizeAfterAddOrRemove = ({ addedPane, removedPane } = {}) => {
   if (Math.abs(leftToAllocate) < 0.1) return // Ok.
 
   panes.value.forEach(pane => {
-    if (addedPane?.givenSize !== null && addedPane?.id === pane.id) {}
-    else pane.size = Math.max(Math.min(equalSpace, pane.max), pane.min)
+    const addedPaneHasGivenSize = addedPane?.givenSize !== null && addedPane?.id === pane.id
+    if (!addedPaneHasGivenSize) pane.size = Math.max(Math.min(equalSpace, pane.max), pane.min)
 
     leftToAllocate -= pane.size
     if (pane.size >= pane.max) ungrowable.push(pane.id)
