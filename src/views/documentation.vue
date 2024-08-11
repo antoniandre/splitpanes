@@ -296,7 +296,7 @@
 
   //- Example.
   h3.mt12.pt8.mb2(id="lots-of-splitters")
-    a(href="#lots-of-splitters") Lots of splitters &amp; push other panes - all panes have a min width of 5%
+    a(href="#lots-of-splitters") Lots of splitters &amp; push other panes - all the panes have a min width of 5%
   splitpanes.default-theme.example(style="height: 400px")
     pane(v-for="i in 8" :key="i" :min-size="5")
       span {{ i }}

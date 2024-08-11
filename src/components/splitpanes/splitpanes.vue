@@ -138,8 +138,7 @@ const getCurrentMouseDrag = event => {
   }
 }
 
-// Returns the drag percentage of the splitter relative to the 2 panes it's in between.
-// if the sum of size of the 2 cells is 60%, the dragPercentage range will be 0 to 100% of this 60%.
+// Returns the drag percentage of the splitter relative to the container (ranging from 0 to 100%).
 const getCurrentDragPercentage = drag => {
   drag = drag[props.horizontal ? 'y' : 'x']
   // In the code below 'size' refers to 'width' for vertical and 'height' for horizontal layout.
@@ -264,6 +263,7 @@ const doPushOtherPanes = (sums, dragPercentage) => {
   }
   return { sums, panesToResize }
 }
+
 const sumPrevPanesSize = splitterIndex => {
   return panes.value.reduce((total, pane, i) => total + (i < splitterIndex ? pane.size : 0), 0)
 }
