@@ -4,6 +4,7 @@
   class="splitpanes__pane"
   @click="onPaneClick($event, _.uid)"
   :style="styles">
+  {{ pane && pane.size }}
   <slot/>
 </div>
 </template>
