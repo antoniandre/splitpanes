@@ -70,7 +70,7 @@ const onMouseMove = event => {
     touch.value.dragging = true
     touch.value.dragAmount = getCurrentMouseDrag(event)
     touch.value.dragPercentage = getCurrentDragPercentage(touch.value.dragAmount)
-    calculatePanesSize()
+    resizePanes()
     emit('resize', panes.value.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
   }
 }
@@ -151,11 +151,11 @@ const getCurrentDragPercentage = drag => {
   return Math.max(Math.min(drag * 100 / containerSize, 100), 0)
 }
 
-const calculatePanesSize = () => {
+const resizePanes = () => {
   const splitterIndex = touch.value.activeSplitter
   const prevPanesSize = sumPrevPanesSize(splitterIndex) // All sizes before splitter, not including the paneBefore.
   const nextPanesSize = sumNextPanesSize(splitterIndex) // All sizes after splitter, not including the paneAfter.
-  const sums = {
+  let sums = {
     prevPanesSize,
     nextPanesSize,
     prevReachedMinPanes: 0,
@@ -165,11 +165,11 @@ const calculatePanesSize = () => {
   const dragPercentage = touch.value.dragPercentage
 
   // If not pushing other panes, panes to resize are right before and right after splitter.
-  const panesToResize = [splitterIndex, splitterIndex + 1]
+  let panesToResize = [splitterIndex, splitterIndex + 1]
   // Note that it does not make sense to call leftPane for instance, because the layout can be vertical
   // and the text direction could be RTL.
-  const paneBefore = panes.value[panesToResize[0]] || null
-  const paneAfter = panes.value[panesToResize[1]] || null
+  let paneBefore = panes.value[panesToResize[0]] || null
+  let paneAfter = panes.value[panesToResize[1]] || null
 
   const paneBeforeIsMaxed = paneBefore.size >= paneBefore.max
   const paneBeforeIsMined = paneBefore.size <= paneBefore.min
@@ -218,41 +218,6 @@ const calculatePanesSize = () => {
     paneBefore.size = Math.min(Math.max(dragPercentage - sums.prevPanesSize, paneBefore.min), paneBefore.max)
     paneAfter.size = Math.min(100 - (sums.prevPanesSize + paneBefore.size) - sums.nextPanesSize, paneAfter.max)
   }
-}
-
-/* const calculatePanesSize = drag => {
-  const splitterIndex = touch.value.activeSplitter
-  let sums = {
-    prevPanesSize: sumPrevPanesSize(splitterIndex),
-    nextPanesSize: sumNextPanesSize(splitterIndex),
-    prevReachedMinPanes: 0,
-    nextReachedMinPanes: 0
-  }
-
-  const minDrag = 0 + (props.pushOtherPanes ? 0 : sums.prevPanesSize)
-  const maxDrag = 100 - (props.pushOtherPanes ? 0 : sums.nextPanesSize)
-  const dragPercentage = Math.max(Math.min(getCurrentDragPercentage(drag), maxDrag), minDrag)
-
-  // If not pushing other panes, panes to resize are right before and right after splitter.
-  let panesToResize = [splitterIndex, splitterIndex + 1]
-  let paneBefore = panes.value[panesToResize[0]] || null
-  let paneAfter = panes.value[panesToResize[1]] || null
-
-  const paneBeforeMaxReached = paneBefore.max < 100 && (dragPercentage >= (paneBefore.max + sums.prevPanesSize))
-  const paneAfterMaxReached = dragPercentage > (100 - (paneAfter.min + sumNextPanesMins(splitterIndex)))
-  // Prevent dragging beyond the pane min and beyond the sum of all the next panes minimums.
-  if (paneBeforeMaxReached) {
-    paneBefore.size = paneBefore.max
-    paneAfter.size = Math.max(100 - paneBefore.max - sums.prevPanesSize - sums.nextPanesSize, 0)
-    return
-  }
-  // Prevent dragging beyond the pane max and beyond the sum of all the next panes minimums.
-  else if (paneAfterMaxReached) {
-    debugger
-    paneBefore.size = Math.min(100 - (paneAfter.min + sumNextPanesMins(splitterIndex)) - sums.prevPanesSize, paneBefore.max)
-    paneAfter.size = paneAfter.min
-    return
-  }
 
   // When pushOtherPanes = true, find the closest expanded pane on each side of the splitter.
   if (props.pushOtherPanes) {
@@ -270,7 +235,7 @@ const calculatePanesSize = () => {
   if (paneAfter !== null) {
     paneAfter.size = Math.min(Math.max(100 - dragPercentage - sums.nextPanesSize - sums.nextReachedMinPanes, paneAfter.min), paneAfter.max)
   }
-} */
+}
 
 const doPushOtherPanes = (sums, dragPercentage) => {
   // console.log('🤜', 'doPushOtherPanes')
