@@ -227,13 +227,13 @@ const resizePanes = () => {
     ({ sums, panesToResize } = vars)
     paneBefore = panes.value[panesToResize[0]] || null
     paneAfter = panes.value[panesToResize[1]] || null
-  }
 
-  if (paneBefore !== null) {
-    paneBefore.size = Math.min(Math.max(dragPercentage - sums.prevPanesSize - sums.prevReachedMinPanes, paneBefore.min), paneBefore.max)
-  }
-  if (paneAfter !== null) {
-    paneAfter.size = Math.min(Math.max(100 - dragPercentage - sums.nextPanesSize - sums.nextReachedMinPanes, paneAfter.min), paneAfter.max)
+    if (paneBefore !== null) {
+      paneBefore.size = Math.min(Math.max(dragPercentage - sums.prevPanesSize - sums.prevReachedMinPanes, paneBefore.min), paneBefore.max)
+    }
+    if (paneAfter !== null) {
+      paneAfter.size = Math.min(Math.max(100 - dragPercentage - sums.nextPanesSize - sums.nextReachedMinPanes, paneAfter.min), paneAfter.max)
+    }
   }
 }
 
