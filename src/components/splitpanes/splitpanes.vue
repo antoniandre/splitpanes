@@ -1,7 +1,16 @@
 <script setup>
 import { h, ref, unref, computed, onMounted, onBeforeUnmount, nextTick, provide, useSlots, watch } from 'vue'
 
-const emit = defineEmits(['ready', 'resize', 'resized', 'pane-click', 'pane-maximize', 'pane-add', 'pane-remove', 'splitter-click'])
+const emit = defineEmits([
+  'ready',
+  'resize',
+  'resized',
+  'pane-click',
+  'pane-maximize',
+  'pane-add',
+  'pane-remove',
+  'splitter-click'
+])
 
 const props = defineProps({
   horizontal: { type: Boolean },
@@ -94,9 +103,9 @@ const onMouseUp = () => {
   setTimeout(() => {
     touch.value.dragging = false
     touch.value.mouseDown = false
-    touch.value.activeSplitter = null
-    touch.value.paneBefore = null
-    touch.value.paneAfter = null
+    touch.value.activeSplitter = undefined
+    touch.value.paneBefore = undefined
+    touch.value.paneAfter = undefined
     unbindEvents()
   }, 100)
 }
@@ -167,6 +176,7 @@ const getCurrentDragPercentage = drag => {
 
 const panesState = computed(() => {
   const { dragPercentage, activeSplitter, paneBefore, paneAfter } = touch.value
+  if (activeSplitter === undefined) return {}
   const prevPanesSize = sumPrevPanesSize(activeSplitter) // All sizes before splitter, not including the paneBefore.
   const nextPanesSize = sumNextPanesSize(activeSplitter) // All sizes after splitter, not including the paneAfter.
   const paneBeforeIsMaxed = paneBefore.size >= paneBefore.max
@@ -199,15 +209,7 @@ const panesState = computed(() => {
 
 const resizePanes = () => {
   const state = unref(panesState)
-  const {
-    prevPanesSize,
-    nextPanesSize,
-    dragPercentage,
-    paneBefore,
-    paneAfter,
-    bothPanes
-  } = state
-  let pushOtherPanes = false
+  const { prevPanesSize, nextPanesSize, dragPercentage, paneBefore, paneAfter, bothPanes } = state
 
   console.log('🧜', {
     pushingPrev: state.isPushingPreviousPanes,
@@ -479,14 +481,14 @@ const equalizeAfterAddOrRemove = ({ addedPane, removedPane } = {}) => {
   panes.value.forEach((pane, i) => {
     // Added pane - reduce the size of the next pane.
     if (addedPane && addedPane.index + 1 === i) {
-      pane.size = Math.max(Math.min(sumPrevPanesSize(isumNextPanesSize(i + 1), pane.max), pane.min)
+      pane.size = Math.max(Math.min(sumPrevPanesSize(sumNextPanesSize(i + 1), pane.max), pane.min)
       // @todo: if could not allocate correctly, try to allocate in the next pane straight away,
       // then still do the second loop if not correct.
     }
 
     // Removed pane - increase the size of the next pane.
     else if (removedPane && removedPane.index === i) {
-      pane.size = Math.max(Math.min(sumPrevPanesSize(isumNextPanesSize(i + 1), pane.max), pane.min)
+      pane.size = Math.max(Math.min(sumPrevPanesSize(sumNextPanesSize(i + 1), pane.max), pane.min)
       // @todo: if could not allocate correctly, try to allocate in the next pane straight away,
       // then still do the second loop if not correct.
     }
