@@ -267,6 +267,26 @@ const sumNextPanesSize = splitterIndex => {
   }, 0)
 }
 
+// Return the previous pane that has a size of more than 0 starting from the paneBefore - 1.
+const findPrevExpandedPane = splitterIndex => {
+  // Array of all the panes from the paneBefore not included, in reverse order.
+  const panesBefore = panes.value.slice(0, splitterIndex).reverse()
+  const pane = panesBefore.find(pane => pane.size > pane.min)
+  // Since there is an array slice, return the original pane object with panes.value[pane?.index] so it
+  // can be modified directly.
+  return panes.value[pane?.index] || null
+}
+
+// Return the next pane that has a size of more than 0 starting from the paneAfter + 1.
+const findNextExpandedPane = splitterIndex => {
+  // splitterIndex + 2 because we reduce the array of next panes to the pane after the paneAfter,
+  // for more efficiency.
+  const pane = panes.value.slice(splitterIndex + 2).find(pane => pane.size > pane.min)
+  // Since there is an array slice, return the original pane object with panes.value[pane?.index] so it
+  // can be modified directly.
+  return panes.value[pane?.index] || null
+}
+
 const checkSplitpanesNodes = () => {
   const children = Array.from(containerEl.value?.children || [])
   children.forEach(child => {
