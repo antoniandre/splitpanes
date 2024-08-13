@@ -1,5 +1,5 @@
 <script setup>
-import { h, ref, computed, onMounted, onBeforeUnmount, nextTick, provide, useSlots, watch } from 'vue'
+import { h, ref, unref, computed, onMounted, onBeforeUnmount, nextTick, provide, useSlots, watch } from 'vue'
 
 const emit = defineEmits(['ready', 'resize', 'resized', 'pane-click', 'pane-maximize', 'pane-add', 'pane-remove', 'splitter-click'])
 
@@ -25,10 +25,17 @@ const ready = ref(false)
 const touch = ref({
   mouseDown: false,
   dragging: false,
+  // The splitter being interacted with (drag, click, dblclick). An index starting from 0.
   activeSplitter: null,
-  dragAmount: 0,
+  // The pane directly before the active splitter.
+  // Note that it does not make sense to call leftPane for instance, because the layout can be vertical
+  // and the text direction could be RTL.
+  paneBefore: null,
+  paneAfter: null, // The pane directly after the active splitter.
+  dragAmount: { x: 0, y: 0 }, // In pixels.
   dragPercentage: 0
 })
+
 const splitterTaps = ref({ // Used to detect double click on touch devices.
   splitter: null,
   timeoutId: null
@@ -57,10 +64,12 @@ const unbindEvents = () => {
   }
 }
 
-const onMouseDown = (event, splitterIndex) => {
+const onMouseDown = splitterIndex => {
   bindEvents()
   touch.value.mouseDown = true
   touch.value.activeSplitter = splitterIndex
+  touch.value.paneBefore = panes.value[splitterIndex]
+  touch.value.paneAfter = panes.value[splitterIndex + 1]
 }
 
 const onMouseMove = event => {
@@ -68,8 +77,8 @@ const onMouseMove = event => {
     // Prevent scrolling while touch dragging (only works with an active event, eg. passive: false).
     event.preventDefault()
     touch.value.dragging = true
-    touch.value.dragAmount = getCurrentMouseDrag(event)
-    touch.value.dragPercentage = getCurrentDragPercentage(touch.value.dragAmount)
+    getCurrentMouseDrag(event)
+    getCurrentDragPercentage()
     resizePanes()
     emit('resize', panes.value.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
   }
@@ -79,11 +88,15 @@ const onMouseUp = () => {
   if (touch.value.dragging) {
     emit('resized', panes.value.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
   }
-  touch.value.mouseDown = false
+
   // Keep dragging flag until click event is finished (click happens immediately after mouseup)
   // in order to prevent emitting `splitter-click` event if splitter was dragged.
   setTimeout(() => {
     touch.value.dragging = false
+    touch.value.mouseDown = false
+    touch.value.activeSplitter = null
+    touch.value.paneBefore = null
+    touch.value.paneAfter = null
     unbindEvents()
   }, 100)
 }
@@ -98,7 +111,7 @@ const onSplitterClick = (event, splitterIndex) => {
       if (splitterTaps.value.splitter === splitterIndex) {
         clearTimeout(splitterTaps.value.timeoutId)
         splitterTaps.value.timeoutId = null
-        onSplitterDblClick(event, splitterIndex)
+        onSplitterDblClick(splitterIndex)
         splitterTaps.value.splitter = null // Reset for the next tap check.
       }
       else {
@@ -113,21 +126,25 @@ const onSplitterClick = (event, splitterIndex) => {
   if (!touch.value.dragging) emit('splitter-click', panes.value[splitterIndex])
 }
 
-// On splitter dbl click or dbl tap maximize this pane.
-const onSplitterDblClick = (event, splitterIndex) => {
-  let totalMinSizes = 0
-  panes.value = panes.value.map((pane, i) => {
-    pane.size = i === splitterIndex ? pane.max : pane.min
-    if (i !== splitterIndex) totalMinSizes += pane.min
+// On splitter double click or double tap maximize this pane.
+const onSplitterDblClick = splitterIndex => {
+  const paneAfter = panes.value[splitterIndex]
+  const totalOtherMinSizes = panes.value.reduce((total, pane, i) => {
+    if (i !== splitterIndex) {
+      pane.size = pane.min
+      total += pane.min
+    }
 
-    return pane
-  })
-  panes.value[splitterIndex].size -= totalMinSizes
+    return total
+  }, 0)
+  paneAfter.size = Math.min(100 - totalOtherMinSizes, paneAfter.max)
+  // @todo: in case the max size of the pane to expand minus all other min sizes is smaller than 100%,
+  // apply the leftover size to the next pane in a loop until all the remaining space is distributed.
   emit('pane-maximize', panes.value[splitterIndex])
   emit('resized', panes.value.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
 }
 
-const onPaneClick = (event, paneId) => {
+const onPaneClick = paneId => {
   emit('pane-click', indexedPanes.value[paneId])
 }
 
@@ -136,172 +153,106 @@ const getCurrentMouseDrag = event => {
   const rect = containerEl.value.getBoundingClientRect()
   const { clientX, clientY } = ('ontouchstart' in window && event.touches) ? event.touches[0] : event
 
-  return {
-    x: clientX - rect.left,
-    y: clientY - rect.top
-  }
+  touch.value.dragAmount = { x: clientX - rect.left, y: clientY - rect.top }
 }
 
 // Returns the drag percentage of the splitter relative to the container (ranging from 0 to 100%).
 const getCurrentDragPercentage = drag => {
-  drag = drag[props.horizontal ? 'y' : 'x']
+  drag = touch.value.dragAmount[props.horizontal ? 'y' : 'x']
   // In the code below 'size' refers to 'width' for vertical and 'height' for horizontal layout.
   const containerSize = containerEl.value[props.horizontal ? 'clientHeight' : 'clientWidth']
   if (props.rtl && !props.horizontal) drag = containerSize - drag
-  return Math.max(Math.min(drag * 100 / containerSize, 100), 0)
+  touch.value.dragPercentage = Math.max(Math.min(drag * 100 / containerSize, 100), 0)
 }
 
-const resizePanes = () => {
-  const splitterIndex = touch.value.activeSplitter
-  const prevPanesSize = sumPrevPanesSize(splitterIndex) // All sizes before splitter, not including the paneBefore.
-  const nextPanesSize = sumNextPanesSize(splitterIndex) // All sizes after splitter, not including the paneAfter.
-  let sums = {
-    prevPanesSize,
-    nextPanesSize,
-    prevReachedMinPanes: 0,
-    nextReachedMinPanes: 0,
-    bothPanes: 100 - (prevPanesSize + nextPanesSize)
-  }
-  const dragPercentage = touch.value.dragPercentage
-
-  // If not pushing other panes, panes to resize are right before and right after splitter.
-  let panesToResize = [splitterIndex, splitterIndex + 1]
-  // Note that it does not make sense to call leftPane for instance, because the layout can be vertical
-  // and the text direction could be RTL.
-  let paneBefore = panes.value[panesToResize[0]] || null
-  let paneAfter = panes.value[panesToResize[1]] || null
-
+const panesState = computed(() => {
+  const { dragPercentage, activeSplitter, paneBefore, paneAfter } = touch.value
+  const prevPanesSize = sumPrevPanesSize(activeSplitter) // All sizes before splitter, not including the paneBefore.
+  const nextPanesSize = sumNextPanesSize(activeSplitter) // All sizes after splitter, not including the paneAfter.
   const paneBeforeIsMaxed = paneBefore.size >= paneBefore.max
   const paneBeforeIsMined = paneBefore.size <= paneBefore.min
   const paneAfterIsMaxed = paneAfter.size >= paneAfter.max
   const paneAfterIsMined = paneAfter.size <= paneAfter.min
-  // A boolean that tells if we are increasing the size of the pane before the splitter or shrinking it.
-  const isPushingPreviousPanes = paneBeforeIsMined && !paneAfterIsMaxed && dragPercentage <= sums.prevPanesSize + paneBefore.min
-  const isPushingNextPanes = paneAfterIsMined && !paneBeforeIsMaxed && ((dragPercentage >= sums.prevPanesSize + paneBefore.max) || (paneAfter.size <= paneAfter.min) || (dragPercentage >= 100 - sums.nextPanesSize) /* || (paneAfter.size === Math.max(100 - dragPercentage - sums.nextPanesSize, paneAfter.min)) */)
-  // E.g. When dragging left and the only constraint is the paneAfter max.
-  // const isPullingNextPanes = !isPushingNextPanes && paneAfterIsMaxed && (sums.bothPanes !== paneBefore.size + paneAfter.size)
-  const isPullingNextPanes = paneAfterIsMaxed && !paneBeforeIsMined && (100 - dragPercentage >= paneAfter.max + sums.nextPanesSize)
-  const isPullingPreviousPanes = paneBeforeIsMaxed && !paneAfterIsMined && (dragPercentage >= paneBefore.max + sums.prevPanesSize)
+
+  return {
+    dragPercentage,
+    activeSplitter,
+    paneBefore,
+    paneAfter,
+    prevPanesSize,
+    nextPanesSize,
+    prevReachedMinPanes: 0,
+    nextReachedMinPanes: 0,
+    bothPanes: 100 - (prevPanesSize + nextPanesSize),
+    paneBeforeIsMaxed,
+    paneBeforeIsMined,
+    paneAfterIsMaxed,
+    paneAfterIsMined,
+    // A boolean that tells if we are increasing the size of the pane before the splitter or shrinking it.
+    isPushingPreviousPanes: paneBeforeIsMined && !paneAfterIsMaxed && dragPercentage <= prevPanesSize + paneBefore.min,
+    isPushingNextPanes: paneAfterIsMined && !paneBeforeIsMaxed && ((dragPercentage >= prevPanesSize + paneBefore.max) || (paneAfter.size <= paneAfter.min) || (dragPercentage >= 100 - nextPanesSize) /* || (paneAfter.size === Math.max(100 - dragPercentage - nextPanesSize, paneAfter.min)) */),
+    // E.g. When dragging left and the only constraint is the paneAfter max.
+    isPullingNextPanes: paneAfterIsMaxed && !paneBeforeIsMined && (100 - dragPercentage >= paneAfter.max + nextPanesSize),
+    isPullingPreviousPanes: paneBeforeIsMaxed && !paneAfterIsMined && (dragPercentage >= paneBefore.max + prevPanesSize)
+  }
+})
+
+const resizePanes = () => {
+  const state = unref(panesState)
+  const {
+    prevPanesSize,
+    nextPanesSize,
+    dragPercentage,
+    paneBefore,
+    paneAfter,
+    bothPanes
+  } = state
+  let pushOtherPanes = false
 
   console.log('🧜', {
-    pushingPrev: isPushingPreviousPanes,
-    pushingNext: isPushingNextPanes,
-    pullingNext: isPullingNextPanes,
-    pullingPrev: isPullingPreviousPanes
+    pushingPrev: state.isPushingPreviousPanes,
+    pushingNext: state.isPushingNextPanes,
+    pullingNext: state.isPullingNextPanes,
+    pullingPrev: state.isPullingPreviousPanes
   })
   // If dragging goes below the paneBefore minimum.
-  if (isPushingPreviousPanes) {
+  if (state.isPushingPreviousPanes) {
     paneBefore.size = paneBefore.min
-    // paneAfter.size = Math.min(100 - sums.nextPanesSize - sums.prevPanesSize - paneBefore.min, paneAfter.max)
-    paneAfter.size = sums.bothPanes - paneBefore.min
+    paneAfter.size = bothPanes - paneBefore.min
+    pushOtherPanes = true
   }
   // If dragging goes beyond the paneBefore maximum.
-  else if (isPushingNextPanes) {
+  else if (state.isPushingNextPanes) {
     // First calculate the paneAfter size, which can have a min and block the dragging.
-    paneAfter.size = Math.max(100 - dragPercentage - sums.nextPanesSize, paneAfter.min)
+    paneAfter.size = Math.max(100 - dragPercentage - nextPanesSize, paneAfter.min)
     // Then the beforePane size is computed from 100% - all the other panes sizes - the paneAfter size.
-    paneBefore.size = sums.bothPanes - paneAfter.size
+    paneBefore.size = bothPanes - paneAfter.size
+    pushOtherPanes = true
   }
-  else if (isPullingNextPanes) {
+  else if (state.isPullingNextPanes) {
     console.log('isPullingNextPanes!!!!')
     paneAfter.size = paneAfter.max
-    paneBefore.size = 100 - (sums.prevPanesSize + sums.nextPanesSize) - paneAfter.max
+    paneBefore.size = 100 - (prevPanesSize + nextPanesSize) - paneAfter.max
   }
-  else if (isPullingPreviousPanes) {
+  else if (state.isPullingPreviousPanes) {
     console.log('isPullingPreviousPanes!!!!')
     // paneAfter.size = paneAfter.max
-    // paneBefore.size = 100 - (sums.prevPanesSize + sums.nextPanesSize) - paneAfter.max
-    // 100 - dragPercentage >= paneAfter.max + sums.nextPanesSize
+    // paneBefore.size = 100 - (prevPanesSize + nextPanesSize) - paneAfter.max
+    // 100 - dragPercentage >= paneAfter.max + nextPanesSize
   }
   else {
-    // console.log({ isPushingPreviousPanes, paneBeforeIsMaxed, splitter: touch.value.activeSplitter })
-    paneBefore.size = Math.min(Math.max(dragPercentage - sums.prevPanesSize, paneBefore.min), paneBefore.max)
-    paneAfter.size = Math.min(100 - (sums.prevPanesSize + paneBefore.size) - sums.nextPanesSize, paneAfter.max)
+    paneBefore.size = Math.min(Math.max(dragPercentage - prevPanesSize, paneBefore.min), paneBefore.max)
+    paneAfter.size = Math.min(100 - (prevPanesSize + paneBefore.size) - nextPanesSize, paneAfter.max)
+    console.log(dragPercentage, paneBefore.size, paneAfter.size)
   }
 
   // When pushOtherPanes = true, find the closest expanded pane on each side of the splitter.
-  if (props.pushOtherPanes) {
-    const vars = doPushOtherPanes(sums, dragPercentage)
-    if (!vars) return // Prevent other calculation.
-
-    ({ sums, panesToResize } = vars)
-    paneBefore = panes.value[panesToResize[0]] || null
-    paneAfter = panes.value[panesToResize[1]] || null
-
-    if (paneBefore !== null) {
-      paneBefore.size = Math.min(Math.max(dragPercentage - sums.prevPanesSize - sums.prevReachedMinPanes, paneBefore.min), paneBefore.max)
-    }
-    if (paneAfter !== null) {
-      paneAfter.size = Math.min(Math.max(100 - dragPercentage - sums.nextPanesSize - sums.nextReachedMinPanes, paneAfter.min), paneAfter.max)
-    }
+  if (props.pushOtherPanes && pushOtherPanes) {
+    doPushOtherPanes()
   }
 }
 
-const doPushOtherPanes = (sums, dragPercentage) => {
-  // console.log('🤜', 'doPushOtherPanes')
-  const splitterIndex = touch.value.activeSplitter
-  const panesToResize = [splitterIndex, splitterIndex + 1]
-  // Pushing Down.
-  // Going smaller than the current pane min size: take the previous expanded pane.
-  if (dragPercentage < sums.prevPanesSize + panes.value[panesToResize[0]].min) {
-    panesToResize[0] = findPrevExpandedPane(splitterIndex).index
-
-    sums.prevReachedMinPanes = 0
-    // If pushing a n-2 or less pane, from splitter, then make sure all in between is at min size.
-    if (panesToResize[0] < splitterIndex) {
-      panes.value.forEach((pane, i) => {
-        if (i > panesToResize[0] && i <= splitterIndex) {
-          pane.size = pane.min
-          sums.prevReachedMinPanes += pane.min
-        }
-      })
-    }
-    sums.prevPanesSize = sumPrevPanesSize(panesToResize[0])
-    // If nothing else to push down, cancel dragging.
-    if (panesToResize[0] === undefined) {
-      sums.prevReachedMinPanes = 0
-      panes.value[0].size = panes.value[0].min
-      panes.value.forEach((pane, i) => {
-        if (i > 0 && i <= splitterIndex) {
-          pane.size = pane.min
-          sums.prevReachedMinPanes += pane.min
-        }
-      })
-      panes.value[panesToResize[1]].size = 100 - sums.prevReachedMinPanes - panes.value[0].min - sums.prevPanesSize - sums.nextPanesSize
-      return null
-    }
-  }
-  // Pushing Up.
-  // Pushing up beyond min size is reached: take the next expanded pane.
-  if (dragPercentage > 100 - sums.nextPanesSize - panes.value[panesToResize[1]].min) {
-    panesToResize[1] = findNextExpandedPane(splitterIndex).index
-    sums.nextReachedMinPanes = 0
-    // If pushing a n+2 or more pane, from splitter, then make sure all in between is at min size.
-    if (panesToResize[1] > splitterIndex + 1) {
-      panes.value.forEach((pane, i) => {
-        if (i > splitterIndex && i < panesToResize[1]) {
-          pane.size = pane.min
-          sums.nextReachedMinPanes += pane.min
-        }
-      })
-    }
-
-    sums.nextPanesSize = sumNextPanesSize(panesToResize[1] - 1)
-    // If nothing else to push up, cancel dragging.
-    if (panesToResize[1] === undefined) {
-      sums.nextReachedMinPanes = 0
-      panes.value[panesCount.value - 1].size = panes.value[panesCount.value - 1].min.value
-      panes.value.forEach((pane, i) => {
-        if (i < panesCount.value - 1 && i >= splitterIndex + 1) {
-          pane.size = pane.min
-          sums.nextReachedMinPanes += pane.min
-        }
-      })
-      panes.value[panesToResize[0]].size = 100 - sums.prevPanesSize - sums.nextReachedMinPanes - panes.value[panesCount.value - 1].min - sums.nextPanesSize.value
-      return null
-    }
-  }
-  return { sums, panesToResize }
+const doPushOtherPanes = () => {
 }
 
 const sumPrevPanesSize = splitterIndex => {
@@ -312,25 +263,6 @@ const sumNextPanesSize = splitterIndex => {
   return panes.value.reduce((total, pane, i) => {
     return total + (i > splitterIndex + 1 ? pane.size : 0)
   }, 0)
-}
-
-const sumNextPanesMins = splitterIndex => {
-  const total = panes.value.reduce((total, pane, i) => {
-    return total + (i > splitterIndex + 1 ? pane.min : 0)
-  }, 0)
-  return total
-}
-
-// Return the previous pane from siblings which has a size (width for vert or height for horz) of more than 0.
-const findPrevExpandedPane = splitterIndex => {
-  const pane = [...panes.value].reverse().find(p => (p.index < splitterIndex && p.size > p.min))
-  return pane || {}
-}
-
-// Return the next pane from siblings which has a size (width for vert or height for horz) of more than 0.
-const findNextExpandedPane = splitterIndex => {
-  const pane = panes.value.find(p => (p.index > splitterIndex + 1 && p.size > p.min))
-  return pane || {}
 }
 
 const checkSplitpanesNodes = () => {
@@ -353,16 +285,16 @@ const addSplitter = (paneIndex, nextPaneNode, isVeryFirst = false) => {
   elm.classList.add('splitpanes__splitter')
 
   if (!isVeryFirst) {
-    elm.onmousedown = event => onMouseDown(event, splitterIndex)
+    elm.onmousedown = event => onMouseDown(splitterIndex)
 
     if (typeof window !== 'undefined' && 'ontouchstart' in window) {
-      elm.ontouchstart = event => onMouseDown(event, splitterIndex)
+      elm.ontouchstart = event => onMouseDown(splitterIndex)
     }
     elm.onclick = event => onSplitterClick(event, splitterIndex + 1)
   }
 
   if (props.dblClickSplitter) {
-    elm.ondblclick = event => onSplitterDblClick(event, splitterIndex + 1)
+    elm.ondblclick = event => onSplitterDblClick(splitterIndex + 1)
   }
 
   nextPaneNode.parentNode.insertBefore(elm, nextPaneNode)
@@ -661,7 +593,7 @@ watch(() => props.firstSplitter, () => redoSplitters())
 watch(() => props.dblClickSplitter, enable => {
   const splitters = [...containerEl.value.querySelectorAll('.splitpanes__splitter')]
   splitters.forEach((splitter, i) => {
-    splitter.ondblclick = enable ? event => onSplitterDblClick(event, i) : undefined
+    splitter.ondblclick = enable ? () => onSplitterDblClick(i) : undefined
   })
 })
 

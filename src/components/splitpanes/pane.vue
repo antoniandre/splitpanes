@@ -2,7 +2,7 @@
 <div
   ref="paneEl"
   class="splitpanes__pane"
-  @click="onPaneClick($event, _.uid)"
+  @click="onPaneClick(_.uid)"
   :style="styles">
   {{ pane && pane.size }}
   <slot/>
