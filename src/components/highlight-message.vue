@@ -1,30 +1,29 @@
+<script setup>
+import { computed } from 'vue'
+
+const props = defineProps({
+  tag: { type: String, default: 'p' },
+  type: { type: String, default: 'info' },
+  noIcon: { type: Boolean, default: false }
+})
+
+const icon = computed(() => {
+  switch (props.type) {
+    case 'success': return 'wi-check'
+    case 'error': return 'wi-cross'
+    case 'warning': return 'mdi mdi-exclamation-thick'
+    case 'tips': return 'mdi mdi-lightbulb-on'
+    case 'info': return 'mdi mdi-information-symbol'
+    default: return 'wi-check'
+  }
+})
+</script>
+
 <template lang="pug">
 component(:class="`highlight highlight--${type}`" :is="tag")
   w-icon(v-if="!noIcon") {{ icon }}
   slot
 </template>
-
-<script>
-export default {
-  props: {
-    tag: { type: String, default: 'p' },
-    type: { type: String, default: 'info' },
-    noIcon: { type: Boolean, default: false }
-  },
-  computed: {
-    icon () {
-      switch (this.type) {
-        case 'success': return 'wi-check'
-        case 'error': return 'wi-cross'
-        case 'warning': return 'mdi mdi-exclamation-thick'
-        case 'tips': return 'mdi mdi-white-balance-sunny'
-        case 'info': return 'mdi mdi-information-symbol'
-        default: return 'wi-check'
-      }
-    }
-  }
-}
-</script>
 
 <style lang="scss">
 .highlight {
