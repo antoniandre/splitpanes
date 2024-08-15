@@ -3,8 +3,7 @@ import Vue from '@vitejs/plugin-vue'
 import { resolve } from 'path'
 import Delete from 'rollup-plugin-delete'
 
-// eslint-disable-next-line multiline-ternary
-const build = process.env.BUNDLE ? {
+const bundleBuild = {
   lib: {
     entry: resolve(__dirname, '/src/components/splitpanes/index.js'),
     name: 'splitpanes',
@@ -26,8 +25,6 @@ const build = process.env.BUNDLE ? {
       chunkFileNames: '[name].js'
     }
   }
-} : {
-  outDir: 'docs'
 }
 
 export default defineConfig({
@@ -52,5 +49,8 @@ export default defineConfig({
       }
     }
   },
-  build
+  build: process.env.BUNDLE ? bundleBuild : { outDir: 'docs' },
+  define: {
+    __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: false
+  }
 })
