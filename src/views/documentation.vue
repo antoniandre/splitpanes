@@ -141,15 +141,24 @@
     | on Codepen.
 
   .mt6 Then import the component and CSS:
-  ssh-pre(language="js" label="Javascript").
-    // In your Vue component.
-    import { Splitpanes, Pane } from 'splitpanes'
-    import 'splitpanes/dist/splitpanes.css'
+  w-tabs(:items="2" content-class="pa0")
+    template(#item-title.1) Composition API
+    template(#item-content.1)
+      ssh-pre.ma0.bd0(language="js").
+        // In your Vue component.
+        import { Splitpanes, Pane } from 'splitpanes'
+        import 'splitpanes/dist/splitpanes.css'
+    template(#item-title.2) Options API
+    template(#item-content.2)
+      ssh-pre.ma0.bd0(language="js").
+        // In your Vue component.
+        import { Splitpanes, Pane } from 'splitpanes'
+        import 'splitpanes/dist/splitpanes.css'
 
-    export default {
-      components: { Splitpanes, Pane },
-      ...
-    }
+        export default {
+          components: { Splitpanes, Pane },
+          ...
+        }
 
   h3.mt12 Via #[span.code &lt;script&gt;] tag
   p Include the Splitpanes script in your document #[span.code &lt;head&gt;] as follows:
@@ -334,11 +343,30 @@
       &lt;/pane&gt;
     &lt;/splitpanes&gt;
 
-  ssh-pre(language="js" label="Javascript").
-    // In your Vue component.
-    data: () =&gt; ({
-      panesNumber: 3
-    })
+  w-tabs(:items="2" content-class="pa0")
+    template(#item-title.1) Composition API
+    template(#item-content.1)
+      ssh-pre.ma0.bd0(language="js").
+        // In your Vue component.
+        import { ref } from 'vue'
+        import { Splitpanes, Pane } from 'splitpanes'
+        import 'splitpanes/dist/splitpanes.css'
+
+        const panesNumber = ref(3)
+    template(#item-title.2) Options API
+    template(#item-content.2)
+      ssh-pre.ma0.bd0(language="js").
+        // In your Vue component.
+        import { Splitpanes, Pane } from 'splitpanes'
+        import 'splitpanes/dist/splitpanes.css'
+
+        export default {
+          components: { Splitpanes, Pane },
+          data: () =&gt; ({
+            panesNumber: 3
+          }),
+          ...
+        }
 
   //- Example.
   h3.mt12.pt8.mb2(id="change-direction")
@@ -371,11 +399,32 @@
       &lt;/pane&gt;
     &lt;/splitpanes&gt;
 
-  ssh-pre(language="js" label="Javascript").
-    data: () => ({
-      horizontal: false
-      firstSplitter: false
-    })
+  w-tabs(:items="2" content-class="pa0")
+    template(#item-title.1) Composition API
+    template(#item-content.1)
+      ssh-pre.ma0.bd0(language="js").
+        // In your Vue component.
+        import { ref } from 'vue'
+        import { Splitpanes, Pane } from 'splitpanes'
+        import 'splitpanes/dist/splitpanes.css'
+
+        const horizontal = ref(false)
+        const firstSplitter = ref(false)
+    template(#item-title.2) Options API
+    template(#item-content.2)
+      ssh-pre.ma0.bd0(language="js").
+        // In your Vue component.
+        import { Splitpanes, Pane } from 'splitpanes'
+        import 'splitpanes/dist/splitpanes.css'
+
+        export default {
+          components: { Splitpanes, Pane },
+          data: () =&gt; ({
+            horizontal: false
+            firstSplitter: false
+          }),
+          ...
+        }
 
   //- Example.
   h3.mt12.pt8.mb2(id="programmatic-resizing")
@@ -410,11 +459,30 @@
       &lt;/pane&gt;
     &lt;/splitpanes&gt;
 
-  ssh-pre(language="js" label="Javascript").
-    // In your Vue component.
-    data: () => ({
-      paneSize: 50
-    })
+  w-tabs(:items="2" content-class="pa0")
+    template(#item-title.1) Composition API
+    template(#item-content.1)
+      ssh-pre.ma0.bd0(language="js").
+        // In your Vue component.
+        import { ref } from 'vue'
+        import { Splitpanes, Pane } from 'splitpanes'
+        import 'splitpanes/dist/splitpanes.css'
+
+        const paneSize = ref(50)
+    template(#item-title.2) Options API
+    template(#item-content.2)
+      ssh-pre.ma0.bd0(language="js").
+        // In your Vue component.
+        import { Splitpanes, Pane } from 'splitpanes'
+        import 'splitpanes/dist/splitpanes.css'
+
+        export default {
+          components: { Splitpanes, Pane },
+          data: () =&gt; ({
+            paneSize: 50
+          }),
+          ...
+        }
 
   //- Example.
   h3.mt12.pt8.mb2(id="in-depth-reactivity")
@@ -472,23 +540,48 @@
       &lt;/pane&gt;
     &lt;/splitpanes&gt;
 
-  ssh-pre(language="js" label="Javascript").
-    // In your Vue component.
-    data: () => ({
-      randomNums: { 1: 0, 2: 0, 3: 0 }
-    }),
-    methods: {
-      generateRandomNumber () {
-        this.randomNums = Object.assign(this.randomNums, {
-          1: Math.round(Math.random() * 100),
-          2: Math.round(Math.random() * 100),
-          3: Math.round(Math.random() * 100)
-        })
-      },
-      incrementNumber (i) {
-        this.randomNums[i]++
-      }
-    }
+  w-tabs(:items="2" content-class="pa0")
+    template(#item-title.1) Composition API
+    template(#item-content.1)
+      ssh-pre.ma0.bd0(language="js").
+        // In your Vue component.
+        import { ref } from 'vue'
+        import { Splitpanes, Pane } from 'splitpanes'
+        import 'splitpanes/dist/splitpanes.css'
+
+        const randomNums = ref({ 1: 0, 2: 0, 3: 0 })
+
+        const generateRandomNumber = () => {
+          randomNums.value = Object.assign(randomNums.value, {
+            1: Math.round(Math.random() * 100),
+            2: Math.round(Math.random() * 100),
+            3: Math.round(Math.random() * 100)
+          })
+        }
+
+        const incrementNumber = i => {
+          randomNums.value[i]++
+        }
+
+    template(#item-title.2) Options API
+    template(#item-content.2)
+      ssh-pre.ma0.bd0(language="js").
+        // In your Vue component.
+        data: () => ({
+          randomNums: { 1: 0, 2: 0, 3: 0 }
+        }),
+        methods: {
+          generateRandomNumber () {
+            this.randomNums = Object.assign(this.randomNums, {
+              1: Math.round(Math.random() * 100),
+              2: Math.round(Math.random() * 100),
+              3: Math.round(Math.random() * 100)
+            })
+          },
+          incrementNumber (i) {
+            this.randomNums[i]++
+          }
+        }
 
   //- Example.
   h3.mt12.pt8.mb2(id="toggle-a-pane-with-v-if")
@@ -849,7 +942,6 @@
     highlight-message(type="warning").
       Installing the latest splitpanes on a Vue 2 project will break it.#[br]
       For Vue 2, you need to install splitpanes from the #[span.code legacy] tag: #[code npm i splitpanes@legacy].#[br]
-      For Vue 3, you don't need the #[code next] tag anymore.
   div #[strong Version 2.3.5] Prevent splitter double taps on touch devices if #[span.code `dblClickSplitter`] is set to false.
   div #[strong Version 2.3.4] Fix removing pane DOM nodes in IE11
   div #[strong Version 2.3.1] Fix firing #[span.code `pane-click`] event on pane click
@@ -880,15 +972,15 @@
   div #[strong Version 1.10.0] Add maximum size feature on panes
   div
     | #[strong Version 1.9.0] Emit event on resize &amp; watch slots optional
-    highlight-message(type="success")
-      strong.
-        The #[span.code `resize`] event - previously firing after resize end - is now firing on resize.#[br]
-        A new #[span.code `resized`] event is emitted on resize end. Check out the
-        #[a(href="#emitted-events") Listening to emitted events] example.
-    highlight-message(type="success")
-      strong.
-        By default and for performance, the reactivity is now limited to slot deletion and slot creation.#[br]
-        With the option #[span.code `watchSlots`] you can also track any change on the slots.#[br]
+    highlight-message.text-bold(type="success")
+      ul.mt0
+        li.
+          The #[span.code `resize`] event - previously firing after resize end - is now firing on resize.#[br]
+          A new #[span.code `resized`] event is emitted on resize end. Check out the
+          #[a(href="#emitted-events") Listening to emitted events] example.
+        li.
+          By default and for performance, the reactivity is now limited to slot deletion and slot creation.#[br]
+          With the option #[span.code `watchSlots`] you can also track any change on the slots.#[br]
   div #[strong Version 1.8.0] Watch slots
   div #[strong Version 1.7.0] Double click splitter to maximize next pane
   div #[strong Version 1.6.0] Emit events
