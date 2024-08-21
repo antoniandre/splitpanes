@@ -202,8 +202,8 @@ const panesState = computed(() => {
     isPushingPreviousPanes: paneBeforeIsMined && !paneAfterIsMaxed && dragPercentage <= prevPanesSize + paneBefore.min,
     isPushingNextPanes: paneAfterIsMined && !paneBeforeIsMaxed && ((dragPercentage >= prevPanesSize + paneBefore.max) || (paneAfter.size <= paneAfter.min) || (dragPercentage >= 100 - nextPanesSize) /* || (paneAfter.size === Math.max(100 - dragPercentage - nextPanesSize, paneAfter.min)) */),
     // E.g. When dragging left and the only constraint is the paneAfter max.
-    isPullingNextPanes: paneAfterIsMaxed && !paneBeforeIsMined && (100 - dragPercentage >= paneAfter.max + nextPanesSize),
-    isPullingPreviousPanes: paneBeforeIsMaxed && !paneAfterIsMined && (dragPercentage >= paneBefore.max + prevPanesSize)
+    isPullingNextPanes: paneAfterIsMaxed && (100 - dragPercentage >= paneAfter.max + nextPanesSize),
+    isPullingPreviousPanes: paneBeforeIsMaxed && (dragPercentage >= paneBefore.max + prevPanesSize)
   }
 })
 
@@ -220,41 +220,100 @@ const resizePanes = () => {
   // If dragging goes below the paneBefore minimum.
   if (state.isPushingPreviousPanes) {
     paneBefore.size = paneBefore.min
-    paneAfter.size = bothPanes - paneBefore.min
-    pushOtherPanes = true
+    paneAfter.size = Math.min(bothPanes - paneBefore.min, paneAfter.max)
+
+    // When pushOtherPanes = true, push the closest pushable pane before the paneBefore.
+    if (props.pushOtherPanes) doPushOtherPanes()
   }
   // If dragging goes beyond the paneBefore maximum.
   else if (state.isPushingNextPanes) {
     // First calculate the paneAfter size, which can have a min and block the dragging.
     paneAfter.size = Math.max(100 - dragPercentage - nextPanesSize, paneAfter.min)
     // Then the beforePane size is computed from 100% - all the other panes sizes - the paneAfter size.
-    paneBefore.size = bothPanes - paneAfter.size
-    pushOtherPanes = true
+    paneBefore.size = Math.min(bothPanes - paneAfter.size, paneBefore.max)
+
+    // When pushOtherPanes = true, push the closest pushable pane after the paneAfter.
+    if (props.pushOtherPanes) doPushOtherPanes()
   }
   else if (state.isPullingNextPanes) {
-    console.log('isPullingNextPanes!!!!')
-    paneAfter.size = paneAfter.max
-    paneBefore.size = 100 - (prevPanesSize + nextPanesSize) - paneAfter.max
+    console.log('Pulling next panes!')
+    if (props.pushOtherPanes) pullOtherPanes()
   }
   else if (state.isPullingPreviousPanes) {
-    console.log('isPullingPreviousPanes!!!!')
-    // paneAfter.size = paneAfter.max
-    // paneBefore.size = 100 - (prevPanesSize + nextPanesSize) - paneAfter.max
+    console.log('Pulling previous panes!')
+    if (props.pushOtherPanes) pullOtherPanes()
+    // paneBefore.size = paneBefore.max
+    // paneAfter.size = 100 - (prevPanesSize + nextPanesSize) - paneAfter.max
     // 100 - dragPercentage >= paneAfter.max + nextPanesSize
   }
   else {
     paneBefore.size = Math.min(Math.max(dragPercentage - prevPanesSize, paneBefore.min), paneBefore.max)
-    paneAfter.size = Math.min(100 - (prevPanesSize + paneBefore.size) - nextPanesSize, paneAfter.max)
-    console.log(dragPercentage, paneBefore.size, paneAfter.size)
-  }
-
-  // When pushOtherPanes = true, find the closest expanded pane on each side of the splitter.
-  if (props.pushOtherPanes && pushOtherPanes) {
-    doPushOtherPanes()
+    paneAfter.size = Math.max(Math.min(100 - (prevPanesSize + paneBefore.size) - nextPanesSize, paneAfter.max), paneAfter.min)
+    console.log('👩‍🦱', 'LAAAAAAA')
   }
 }
 
 const doPushOtherPanes = () => {
+  const state = unref(panesState)
+
+  // Pushing Down.
+  // When going smaller than the current pane min size: take the previous expanded pane.
+  if (state.isPushingPreviousPanes) {
+    const paneFarBefore = findPrevExpandedPane(state.activeSplitter)
+    if (paneFarBefore) {
+      // The sum of all the panes before the paneBefore.
+      const sumOfPanesBefore = panes.value.slice(0, state.activeSplitter + 1).reduce((sum, pane) => sum + pane.size, 0)
+      // const sumOfPanesBeforeButPaneFarBefore = panes.value.slice(0, state.activeSplitter + 1).reduce((sum, pane, i) => sum + (i === paneFarBefore ? 0 : pane.size), 0)
+      paneFarBefore.size = Math.max(state.dragPercentage - sumOfPanesBefore + paneFarBefore.size, paneFarBefore.min)
+      // 100 - sumOfPanesBeforeButPaneFarBefore
+      console.log('👫', 'pushing prev', state.dragPercentage - sumOfPanesBefore + paneFarBefore.size)
+    }
+  }
+  else if (state.isPushingNextPanes) {
+    const paneFarAfter = findNextExpandedPane(state.activeSplitter)
+    if (paneFarAfter) {
+      // The sum of all the panes after the paneAfter.
+      const sumOfPanesAfter = panes.value.slice(state.activeSplitter + 1).reduce((sum, pane) => sum + pane.size, 0)
+
+      paneFarAfter.size = Math.max(100 - state.dragPercentage - sumOfPanesAfter + paneFarAfter.size, paneFarAfter.min)
+    }
+  }
+}
+
+const pullOtherPanes = () => {
+  console.log('pullOtherPanes')
+  const state = unref(panesState)
+
+  const sumOfAllPanes = panes.value.reduce((sum, pane) => sum + pane.size, 0)
+  console.log('👛', sumOfAllPanes)
+
+  if (sumOfAllPanes > 100) {
+    return
+    // debugger
+  }
+
+  if (state.isPullingPreviousPanes) {
+    const paneFarBeforeIndex = panes.value.slice(0, state.activeSplitter).reverse().find(pane => pane.size < pane.max)?.index
+    const paneFarBefore = panes.value[paneFarBeforeIndex]
+    if (paneFarBefore) {
+      // The sum of all the panes before the paneBefore.
+      const sumOfPanesBefore = panes.value.slice(0, state.activeSplitter + 1).reduce((sum, pane) => sum + pane.size, 0)
+
+      paneFarBefore.size = Math.max(Math.min(state.dragPercentage - sumOfPanesBefore + paneFarBefore.size, paneFarBefore.max), state.paneBefore.size)
+      state.paneAfter.size = Math.max(100 - state.dragPercentage - state.nextPanesSize, state.paneAfter.min)
+    }
+  }
+  else if (state.isPullingNextPanes) {
+    const paneFarAfterIndex = panes.value.slice(state.activeSplitter + 1).find(pane => pane.size < pane.max)?.index
+    const paneFarAfter = panes.value[paneFarAfterIndex]
+    if (paneFarAfter) {
+      // The sum of all the panes after the paneAfter.
+      const sumOfPanesAfter = panes.value.slice(state.activeSplitter + 3).reduce((sum, pane) => sum + pane.size, 0)
+
+      paneFarAfter.size = Math.min(100 - state.dragPercentage - state.paneAfter.max - sumOfPanesAfter, paneFarAfter.max)
+      state.paneBefore.size = Math.max(state.dragPercentage - state.prevPanesSize, state.paneBefore.min)
+    }
+  }
 }
 
 const sumPrevPanesSize = splitterIndex => {
@@ -666,24 +725,50 @@ provide('onPaneClick', onPaneClick)
   width: 100%;
   height: 100%;
 
-  &--vertical {flex-direction: row;}
-  &--horizontal {flex-direction: column;}
-  &--dragging * {user-select: none;}
+  &--vertical {
+    flex-direction: row;
+  }
+
+  &--horizontal {
+    flex-direction: column;
+  }
+
+  &--dragging * {
+    user-select: none;
+  }
 
   &__pane {
     width: 100%;
     height: 100%;
     overflow: hidden;
 
-    .splitpanes--vertical & {transition: width 0.2s ease-out;}
-    .splitpanes--horizontal & {transition: height 0.2s ease-out;}
-    .splitpanes--dragging & {transition: none;}
+    .splitpanes--vertical & {
+      transition: width 0.2s ease-out;
+    }
+
+    .splitpanes--horizontal & {
+      transition: height 0.2s ease-out;
+    }
+
+    .splitpanes--dragging & {
+      transition: none;
+    }
   }
 
   // Disable default zoom behavior on touch device when double tapping splitter.
-  &__splitter {touch-action: none;}
-  &--vertical > .splitpanes__splitter {min-width: 1px;cursor: col-resize;}
-  &--horizontal > .splitpanes__splitter {min-height: 1px;cursor: row-resize;}
+  &__splitter {
+    touch-action: none;
+  }
+
+  &--vertical>.splitpanes__splitter {
+    min-width: 1px;
+    cursor: col-resize;
+  }
+
+  &--horizontal>.splitpanes__splitter {
+    min-height: 1px;
+    cursor: row-resize;
+  }
 }
 
 .splitpanes.default-theme {
@@ -697,7 +782,8 @@ provide('onPaneClick', onPaneClick)
     position: relative;
     flex-shrink: 0;
 
-    &:before, &:after {
+    &:before,
+    &:after {
       content: "";
       position: absolute;
       top: 50%;
@@ -705,8 +791,15 @@ provide('onPaneClick', onPaneClick)
       background-color: rgba(0, 0, 0, .15);
       transition: background-color 0.3s;
     }
-    &:hover:before, &:hover:after {background-color: rgba(0, 0, 0, .25);}
-    &:first-child {cursor: auto;}
+
+    &:hover:before,
+    &:hover:after {
+      background-color: rgba(0, 0, 0, .25);
+    }
+
+    &:first-child {
+      cursor: auto;
+    }
   }
 }
 
@@ -716,35 +809,52 @@ provide('onPaneClick', onPaneClick)
     pointer-events: none;
   }
 
-  &.splitpanes .splitpanes .splitpanes__splitter {z-index: 1;}
-  &.splitpanes--vertical > .splitpanes__splitter,
-  .splitpanes--vertical > .splitpanes__splitter {
+  &.splitpanes .splitpanes .splitpanes__splitter {
+    z-index: 1;
+  }
+
+  &.splitpanes--vertical>.splitpanes__splitter,
+  .splitpanes--vertical>.splitpanes__splitter {
     width: 7px;
     border-left: 1px solid #eee;
     margin-left: -1px;
 
-    &:before, &:after {
+    &:before,
+    &:after {
       transform: translateY(-50%);
       width: 1px;
       height: 30px;
     }
-    &:before {margin-left: -2px;}
-    &:after {margin-left: 1px;}
+
+    &:before {
+      margin-left: -2px;
+    }
+
+    &:after {
+      margin-left: 1px;
+    }
   }
 
-  &.splitpanes--horizontal > .splitpanes__splitter,
-  .splitpanes--horizontal > .splitpanes__splitter {
+  &.splitpanes--horizontal>.splitpanes__splitter,
+  .splitpanes--horizontal>.splitpanes__splitter {
     height: 7px;
     border-top: 1px solid #eee;
     margin-top: -1px;
 
-    &:before, &:after {
+    &:before,
+    &:after {
       transform: translateX(-50%);
       width: 30px;
       height: 1px;
     }
-    &:before {margin-top: -2px;}
-    &:after {margin-top: 1px;}
+
+    &:before {
+      margin-top: -2px;
+    }
+
+    &:after {
+      margin-top: 1px;
+    }
   }
 }
 </style>
