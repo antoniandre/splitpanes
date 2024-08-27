@@ -206,10 +206,10 @@ const panesState = (paneA, paneB) => {
   const { dragPercentage, activeSplitter, towardA } = touch.value
   if (activeSplitter === undefined) return {}
   // All sizes before splitter, not including the paneA.
-  const sumOfPrevPanes = panes.value.slice(0, paneA.index).reduce((total, pane, i) => total + pane.size, 0)
+  const sumOfPrevPanes = panes.value.slice(0, paneA.index).reduce((total, pane) => total + pane.size, 0)
   // All sizes before splitter, not including the paneB.
-  const sumOfNextPanes = panes.value.slice(paneB.index + 1).reduce((total, pane, i) => total + pane.size, 0)
-  const sumOfInBetweenPanes = panes.value.slice(paneA.index + 1, paneB.index).reduce((total, pane, i) => total + pane.size, 0)
+  const sumOfNextPanes = panes.value.slice(paneB.index + 1).reduce((total, pane) => total + pane.size, 0)
+  const sumOfInBetweenPanes = panes.value.slice(paneA.index + 1, paneB.index).reduce((total, pane) => total + pane.size, 0)
   const paneAIsMaxed = paneA.size >= paneA.max
   const paneAIsMined = paneA.size <= paneA.min
   const paneBIsMaxed = paneB.size >= paneB.max
