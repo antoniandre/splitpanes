@@ -737,56 +737,31 @@ provide('onPaneClick', onPaneClick)
   width: 100%;
   height: 100%;
 
-  &--vertical {
-    flex-direction: row;
-  }
-
-  &--horizontal {
-    flex-direction: column;
-  }
-
-  &--dragging * {
-    user-select: none;
-  }
+  &--vertical {flex-direction: row;}
+  &--horizontal {flex-direction: column;}
+  &--dragging * {user-select: none;}
 
   &__pane {
     width: 100%;
     height: 100%;
     overflow: hidden;
 
-    .splitpanes--vertical & {
-      transition: width 0.2s ease-out;
-    }
-
-    .splitpanes--horizontal & {
-      transition: height 0.2s ease-out;
-    }
-
-    .splitpanes--dragging & {
-      transition: none;
-    }
+    .splitpanes--vertical & {transition: width 0.2s ease-out;}
+    .splitpanes--horizontal & {transition: height 0.2s ease-out;}
+    .splitpanes--dragging & {transition: none;}
   }
 
   // Disable default zoom behavior on touch device when double tapping splitter.
-  &__splitter {
-    touch-action: none;
-  }
+  &__splitter {touch-action: none;}
 
-  &--vertical>.splitpanes__splitter {
-    min-width: 1px;
-    cursor: col-resize;
-  }
-
-  &--horizontal>.splitpanes__splitter {
-    min-height: 1px;
-    cursor: row-resize;
-  }
+  &--vertical > .splitpanes__splitter {min-width: 1px;cursor: col-resize;}
+  &--horizontal > .splitpanes__splitter {min-height: 1px;cursor: row-resize;}
 }
 
+// Default theme.
+// --------------------------------------------------------
 .splitpanes.default-theme {
-  .splitpanes__pane {
-    background-color: #f2f2f2;
-  }
+  .splitpanes__pane {background-color: #f2f2f2;}
 
   .splitpanes__splitter {
     background-color: #fff;
@@ -804,14 +779,8 @@ provide('onPaneClick', onPaneClick)
       transition: background-color 0.3s;
     }
 
-    &:hover:before,
-    &:hover:after {
-      background-color: rgba(0, 0, 0, .25);
-    }
-
-    &:first-child {
-      cursor: auto;
-    }
+    &:hover:before, &:hover:after {background-color: rgba(0, 0, 0, .25);}
+    &:first-child {cursor: auto;}
   }
 }
 
@@ -821,12 +790,10 @@ provide('onPaneClick', onPaneClick)
     pointer-events: none;
   }
 
-  &.splitpanes .splitpanes .splitpanes__splitter {
-    z-index: 1;
-  }
+  &.splitpanes .splitpanes .splitpanes__splitter {z-index: 1;}
 
-  &.splitpanes--vertical>.splitpanes__splitter,
-  .splitpanes--vertical>.splitpanes__splitter {
+  &.splitpanes--vertical > .splitpanes__splitter,
+  .splitpanes--vertical > .splitpanes__splitter {
     width: 7px;
     border-left: 1px solid #eee;
     margin-left: -1px;
@@ -837,18 +804,12 @@ provide('onPaneClick', onPaneClick)
       width: 1px;
       height: 30px;
     }
-
-    &:before {
-      margin-left: -2px;
-    }
-
-    &:after {
-      margin-left: 1px;
-    }
+    &:before {margin-left: -2px;}
+    &:after {margin-left: 1px;}
   }
 
-  &.splitpanes--horizontal>.splitpanes__splitter,
-  .splitpanes--horizontal>.splitpanes__splitter {
+  &.splitpanes--horizontal > .splitpanes__splitter,
+  .splitpanes--horizontal > .splitpanes__splitter {
     height: 7px;
     border-top: 1px solid #eee;
     margin-top: -1px;
@@ -859,14 +820,8 @@ provide('onPaneClick', onPaneClick)
       width: 30px;
       height: 1px;
     }
-
-    &:before {
-      margin-top: -2px;
-    }
-
-    &:after {
-      margin-top: 1px;
-    }
+    &:before {margin-top: -2px;}
+    &:after {margin-top: 1px;}
   }
 }
 </style>
