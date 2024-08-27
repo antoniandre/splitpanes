@@ -1,4 +1,18 @@
 <script setup>
+/**
+ * Vocabulary in use in this component:
+ * - `pane` is each resizable division where you can put content in.
+ *   There's a specific Pane component to handle its layout and behavior.
+ * - `splitter` is each draggable resizer that are automatically added between panes.
+ * - `paneA` is one of the 2 panes that is being resized while dragging the splitter:
+ *   the one on the left if horizontal and LTR, on the right if horizontal and RTL or on top if vertical
+ *   layout.
+ * - `paneB` is one of the 2 panes that is being resized while dragging the splitter:
+ *   the one on the right if horizontal and LTR, on the left if horizontal and RTL or at the bottom if
+ *   vertical layout.
+ * - `size` the size of the pane can be width or height respectively for horizontal or vertical layout.
+ */
+
 import { h, ref, computed, onMounted, onBeforeUnmount, nextTick, provide, useSlots, watch } from 'vue'
 
 const emit = defineEmits([
@@ -34,7 +48,8 @@ const ready = ref(false)
 const touch = ref({
   mouseDown: false,
   dragging: false,
-  towardA: null,
+  draggingT0: null,
+  towardA: null, // Dragging is toward pane A (see vocabulary @ L.2).
   // The splitter being interacted with (drag, click, dblclick). An index starting from 0.
   activeSplitter: null,
   // The pane directly before the active splitter.
@@ -74,12 +89,13 @@ const unbindEvents = () => {
   }
 }
 
-const onMouseDown = splitterIndex => {
+const onMouseDown = (event, splitterIndex) => {
   bindEvents()
   touch.value.mouseDown = true
   touch.value.activeSplitter = splitterIndex
-  touch.value.paneA = touch.value.paneA = panes.value[splitterIndex]
-  touch.value.paneB = touch.value.paneB = panes.value[splitterIndex + 1]
+  touch.value.draggingT0 = event[props.horizontal ? 'y' : 'x']
+  touch.value.paneA = panes.value[splitterIndex]
+  touch.value.paneB = panes.value[splitterIndex + 1]
 }
 
 const onMouseMove = event => {
@@ -87,9 +103,17 @@ const onMouseMove = event => {
     // Prevent scrolling while touch dragging (only works with an active event, eg. passive: false).
     event.preventDefault()
     touch.value.dragging = true
+    touch.value.towardA = touch.value.draggingT0 - event[props.horizontal ? 'y' : 'x'] > 0
     getCurrentMouseDrag(event)
     getCurrentDragPercentage()
-    resizeTwoPanes(touch.value.paneA, touch.value.paneB)
+    // on every tick of dragging, call the resize function with paneA and paneB that are directly
+    // around the splitter being dragged.
+    // In case we are already pushing a further pane, the computation will happen multiple times
+    // until it finds the correct paneA or paneB being resized. But this is still better than starting the
+    // mousemove with the correct far paneA or paneB and having to detect after each end of pushing panes
+    // which pane to resize then if not the current far paneA or far paneB (happens when pushing other pane
+    // and changing the dragging direction in the same drag).
+    resizeTwoPanes(panes.value[touch.value.activeSplitter], panes.value[touch.value.activeSplitter + 1])
     emit('resize', panes.value.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
   }
 }
@@ -105,6 +129,8 @@ const onMouseUp = () => {
     touch.value.dragging = false
     touch.value.mouseDown = false
     touch.value.activeSplitter = undefined
+    touch.value.draggingT0 = undefined
+    touch.value.towardA = undefined
     touch.value.paneA = undefined
     touch.value.paneB = undefined
     unbindEvents()
@@ -163,7 +189,8 @@ const getCurrentMouseDrag = event => {
   const rect = containerEl.value.getBoundingClientRect()
   const { clientX, clientY } = ('ontouchstart' in window && event.touches) ? event.touches[0] : event
 
-  touch.value.dragAmount = { x: clientX - rect.left, y: clientY - rect.top }
+  const dragAmount = { x: clientX - rect.left, y: clientY - rect.top }
+  touch.value[touch.value.dragging ? 'dragAmount' : 'dragAmount0'] = dragAmount
 }
 
 // Returns the drag percentage of the splitter relative to the container (ranging from 0 to 100%).
@@ -187,6 +214,12 @@ const panesState = (paneA, paneB) => {
   const paneAIsMined = paneA.size <= paneA.min
   const paneBIsMaxed = paneB.size >= paneB.max
   const paneBIsMined = paneB.size <= paneB.min
+  // const isPushingPreviousPanesCondA = towardA && !sumOfInBetweenPanes && paneAIsMined
+  const isPushingPreviousPanesCondA = towardA && !sumOfInBetweenPanes && dragPercentage <= sumOfPrevPanes + paneA.min
+  const isPushingPreviousPanesCondB = towardA && !!sumOfInBetweenPanes && (dragPercentage <= sumOfPrevPanes + paneA.size + sumOfInBetweenPanes)
+  // const isPushingNextPanesCondA = !towardA && !sumOfInBetweenPanes && paneBIsMined
+  const isPushingNextPanesCondA = !towardA && !sumOfInBetweenPanes && dragPercentage > 100 - (sumOfInBetweenPanes + paneA.min + sumOfNextPanes)
+  const isPushingNextPanesCondB = !towardA && !!sumOfInBetweenPanes && (dragPercentage > 100 - (sumOfInBetweenPanes + paneB.size + sumOfNextPanes))
 
   return {
     dragPercentage,
@@ -203,10 +236,8 @@ const panesState = (paneA, paneB) => {
     paneAIsMined,
     paneBIsMaxed,
     paneBIsMined,
-    // A boolean that tells if we are increasing the size of the pane before the splitter or shrinking it.
-    // isPushingPreviousPanes: (paneAIsMined && dragPercentage <= sumOfPrevPanes + paneA.min) || (sumOfInBetweenPanes && dragPercentage <= sumOfPrevPanes + paneA.size + sumOfInBetweenPanes),
-    isPushingPreviousPanes: towardA && ((dragPercentage <= sumOfPrevPanes + paneA.min) || (sumOfInBetweenPanes && (dragPercentage <= sumOfPrevPanes + paneA.size + sumOfInBetweenPanes))),
-    isPushingNextPanes: !towardA && ((dragPercentage >= sumOfPrevPanes + paneB.size) || (sumOfInBetweenPanes && (100 - dragPercentage >= (sumOfInBetweenPanes + paneB.size + sumOfNextPanes)))),
+    isPushingPreviousPanes: isPushingPreviousPanesCondA || isPushingPreviousPanesCondB,
+    isPushingNextPanes: isPushingNextPanesCondA || isPushingNextPanesCondB,
     // E.g. When dragging left and the only constraint is the paneB max.
     isPullingNextPanes: paneBIsMaxed && (100 - dragPercentage >= paneB.max + sumOfNextPanes),
     isPullingPreviousPanes: paneAIsMaxed && (dragPercentage >= paneA.max + sumOfPrevPanes)
@@ -221,12 +252,9 @@ const resizeTwoPanes = (paneA, paneB) => {
     pushPrev: state.isPushingPreviousPanes,
     pushNext: state.isPushingNextPanes,
     pullNext: state.isPullingNextPanes,
-    pullPrev: state.isPullingPreviousPanes,
-    sumOfPrevPanes,
-    sumOfNextPanes,
-    sumOfInBetweenPanes
+    pullPrev: state.isPullingPreviousPanes
   })
-  console.log(paneA.el, paneB.el)
+  // console.log(paneA.el, paneB.el)
   // If dragging goes below the paneA minimum.
   if (state.isPushingPreviousPanes) {
     paneB.size = Math.min(100 - dragPercentage - sumOfNextPanes, paneB.max)
@@ -346,23 +374,23 @@ const checkSplitpanesNodes = () => {
 
 const addSplitter = (paneIndex, nextPaneNode, isVeryFirst = false) => {
   const splitterIndex = paneIndex - 1
-  const elm = document.createElement('div')
-  elm.classList.add('splitpanes__splitter')
+  const el = document.createElement('div')
+  el.classList.add('splitpanes__splitter')
 
   if (!isVeryFirst) {
-    elm.onmousedown = event => onMouseDown(splitterIndex)
+    el.onmousedown = event => onMouseDown(event, splitterIndex)
 
     if (typeof window !== 'undefined' && 'ontouchstart' in window) {
-      elm.ontouchstart = event => onMouseDown(splitterIndex)
+      el.ontouchstart = event => onMouseDown(event, splitterIndex)
     }
-    elm.onclick = event => onSplitterClick(event, splitterIndex + 1)
+    el.onclick = event => onSplitterClick(event, splitterIndex + 1)
   }
 
   if (props.dblClickSplitter) {
-    elm.ondblclick = event => onSplitterDblClick(splitterIndex + 1)
+    el.ondblclick = () => onSplitterDblClick(splitterIndex + 1)
   }
 
-  nextPaneNode.parentNode.insertBefore(elm, nextPaneNode)
+  nextPaneNode.parentNode.insertBefore(el, nextPaneNode)
 }
 
 const removeSplitter = node => {
