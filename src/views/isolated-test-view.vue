@@ -8,8 +8,18 @@ div.mx12
     pane(size="5" v-if="!hidePane2") 2
     pane(size="10") 3
 
+  h1.warning ONGOING TODO
+  ul.warning
+    li add docs example of iframe inside panes (with pointer capturing)
+    li fix going beyond min pane to the right #lots-of-splitters
+    li check the @todo
+
   splitpanes.default-theme.example(style="height: 400px")
     pane(v-for="i in 8" :key="i" :min-size="5" :max-size="50")
+      span {{ i }}
+
+  splitpanes.default-theme.example(style="height: 400px")
+    pane(v-for="i in 2" :key="i")
       span {{ i }}
 </template>
 
