@@ -164,8 +164,7 @@ export default {
       }
     },
 
-    // Returns the drag percentage of the splitter relative to the 2 panes it's inbetween.
-    // if the sum of size of the 2 cells is 60%, the dragPercentage range will be 0 to 100% of this 60%.
+    // Returns the drag percentage of the splitter relative to the container (ranging from 0 to 100%).
     getCurrentDragPercentage (drag) {
       drag = drag[this.horizontal ? 'y' : 'x']
       // In the code bellow 'size' refers to 'width' for vertical and 'height' for horizontal layout.
