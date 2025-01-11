@@ -940,6 +940,8 @@ const incrementNumber = (i) => {
 </script>
 
 <style lang="scss">
+@use 'sass:color';
+
 $primary-color: #42b983;
 $secondary-color: #78cfa8;
 
@@ -996,8 +998,8 @@ em.specs {
 // Vue Router example.
 //---------------
 .example-vue-router {
-  &.w-button--active {background-color: darken($primary-color, 10) !important;}
-  .router-link-active {color: darken($primary-color, 10);}
+  &.w-button--active {background-color: color.adjust($primary-color, $lightness: -10%) !important;}
+  .router-link-active {color: color.adjust($primary-color, $lightness: -10%);}
 }
 
 // Touch example.
