@@ -58,7 +58,9 @@ const touch = ref({
   paneA: null,
   paneB: null,
   dragAmount: { x: 0, y: 0 }, // In pixels.
-  dragPercentage: 0
+  dragPercentage: 0,
+  // Used to improve mouse following with thicker splitters.
+  offset: { x: 0, y: 0 }
 })
 
 const splitterTaps = ref({ // Used to detect double click on touch devices.
@@ -91,6 +93,8 @@ const unbindEvents = () => {
 
 const onMouseDown = (event, splitterIndex) => {
   bindEvents()
+  calculateMouseOffset(event, splitterIndex)
+
   touch.value.mouseDown = true
   touch.value.activeSplitter = splitterIndex
   touch.value.draggingT0 = event[props.horizontal ? 'y' : 'x']
@@ -104,7 +108,8 @@ const onMouseMove = event => {
     event.preventDefault()
     touch.value.dragging = true
     touch.value.towardA = touch.value.draggingT0 - event[props.horizontal ? 'y' : 'x'] > 0
-    getCurrentMouseDrag(event)
+    touch.value.dragAmount = getCurrentMouseDrag(event)
+
     getCurrentDragPercentage()
     // on every tick of dragging, call the resize function with paneA and paneB that are directly
     // around the splitter being dragged.
@@ -184,13 +189,35 @@ const onPaneClick = paneId => {
   emit('pane-click', indexedPanes.value[paneId])
 }
 
+const getMouseCoordinates = event => {
+  event = 'ontouchstart' in window && event.touches ? event.touches[0] : event
+  return { x: event.clientX, y: event.clientY }
+}
+
 // Get the cursor position relative to the splitpanes container.
 const getCurrentMouseDrag = event => {
   const rect = containerEl.value.getBoundingClientRect()
-  const { clientX, clientY } = ('ontouchstart' in window && event.touches) ? event.touches[0] : event
+  let { x, y } = getMouseCoordinates(event)
+  x -= rect.left
+  y -= rect.top
+  // if (true) {
+  //   x -= 10 //touch.value.offset.x
+  //   // y += touch.value.offset.y
+  // }
+  console.log('offset', touch.value.offset.x)
+  return { x, y }
+}
 
-  const dragAmount = { x: clientX - rect.left, y: clientY - rect.top }
-  touch.value[touch.value.dragging ? 'dragAmount' : 'dragAmount0'] = dragAmount
+// Stores the mouse position relative to the splitter.
+// “snap to mouse” mode forces this to 0 so the splitter is always under it
+const calculateMouseOffset = (event, splitterIndex) => {
+  // if (props.snapToMouse) return (touch.value.offset = { x: 0, y: 0 })
+
+  const splitter = containerEl.value.querySelectorAll(':scope > .splitpanes__splitter')[splitterIndex]
+  const rect = splitter.getBoundingClientRect()
+  const { x, y } = getMouseCoordinates(event)
+  console.log(x - rect.left)
+  touch.value.offset = { x: rect.width - y, y: (rect.top - y) / 2 }
 }
 
 // Returns the drag percentage of the splitter relative to the container (ranging from 0 to 100%).
@@ -200,6 +227,7 @@ const getCurrentDragPercentage = drag => {
   const containerSize = containerEl.value[props.horizontal ? 'clientHeight' : 'clientWidth']
   if (props.rtl && !props.horizontal) drag = containerSize - drag
   touch.value.dragPercentage = Math.max(Math.min(drag * 100 / containerSize, 100), 0)
+  touch.value.dragPercentage += (touch.value.dragPercentage * 30 / 1381) + (touch.value.offset.x / 1381)
 }
 
 const panesState = (paneA, paneB) => {
@@ -248,12 +276,12 @@ const resizeTwoPanes = (paneA, paneB) => {
   const state = panesState(paneA, paneB)
   const { sumOfPrevPanes, sumOfNextPanes, sumOfInBetweenPanes, dragPercentage, bothPanes } = state
 
-  console.log({
-    pushPrev: state.isPushingPreviousPanes,
-    pushNext: state.isPushingNextPanes,
-    pullNext: state.isPullingNextPanes,
-    pullPrev: state.isPullingPreviousPanes
-  })
+  // console.log({
+  //   pushPrev: state.isPushingPreviousPanes,
+  //   pushNext: state.isPushingNextPanes,
+  //   pullNext: state.isPullingNextPanes,
+  //   pullPrev: state.isPullingPreviousPanes
+  // })
   // console.log(paneA.el, paneB.el)
   // If dragging goes below the paneA minimum.
   if (state.isPushingPreviousPanes) {
@@ -794,7 +822,7 @@ provide('onPaneClick', onPaneClick)
 
   &.splitpanes--vertical > .splitpanes__splitter,
   .splitpanes--vertical > .splitpanes__splitter {
-    width: 7px;
+    width: 30px;
     border-left: 1px solid #eee;
     margin-left: -1px;
 
