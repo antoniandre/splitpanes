@@ -2,8 +2,9 @@
 //- This is an isolated test view. Just for testing purpose.
 div
   w-button.mr2(@click="toggleHorizontal") Horizontal
-  w-button(@click="hidePane2 = !hidePane2") toggle pane 2
-  splitpanes.default-theme(:horizontal="horizontal" style="height: 400px")
+  w-button.mr2(@click="hidePane2 = !hidePane2") toggle pane 2
+  w-button(@click="revertOrder = !revertOrder") revert order
+  splitpanes.default-theme(:horizontal="horizontal" style="height: 400px" :revert="revertOrder")
     pane(size="85") 1
     pane(size="5" v-if="!hidePane2") 2
     pane(size="10") 3
@@ -15,6 +16,7 @@ import { Splitpanes, Pane } from '@/components/splitpanes/index'
 
 const horizontal = ref(true)
 const hidePane2 = ref(false)
+const revertOrder = ref(false)
 const panesNumber = 3
 
 const togglePane2 = () => {

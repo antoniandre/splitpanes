@@ -10,6 +10,7 @@ export default {
     horizontal: { type: Boolean },
     pushOtherPanes: { type: Boolean, default: true },
     dblClickSplitter: { type: Boolean, default: true },
+    revert: { type: Boolean, default: false },
     rtl: { type: Boolean, default: false }, // Right to left direction.
     firstSplitter: { type: Boolean }
   },
@@ -686,6 +687,11 @@ export default {
   },
 
   render () {
+    let children = this.$slots.default()
+    if (this.revert) {
+      // Reverse the order of panes: [1, 2, 3] becomes [3, 2, 1]
+      children = children.slice().reverse()
+    }
     return h(
       'div',
       {
@@ -694,11 +700,12 @@ export default {
           'splitpanes',
           `splitpanes--${this.horizontal ? 'horizontal' : 'vertical'}`,
           {
-            'splitpanes--dragging': this.touch.dragging
+            'splitpanes--dragging': this.touch.dragging,
+            'splitpanes--reverse': this.revert
           }
         ]
       },
-      this.$slots.default()
+      children
     )
   }
 }
