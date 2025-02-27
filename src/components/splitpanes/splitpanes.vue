@@ -689,7 +689,6 @@ export default {
   render () {
     let children = this.$slots.default()
     if (this.revert) {
-      // Reverse the order of panes: [1, 2, 3] becomes [3, 2, 1]
       children = children.slice().reverse()
     }
     return h(
