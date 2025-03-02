@@ -44,11 +44,32 @@ div(v-scroll="onScroll")
       .xs12.sm6.text-center.smu-text-left.copyright.
         Copyright © {{ (new Date()).getFullYear() }} Antoni André, all rights reserved.
       .xs12.sm6.text-center.smu-text-right.made-with
-        .mb1.
-          This documentation is made with #[w-icon mdi mdi-vuejs],
-          #[w-icon mdi mdi-language-html5],
-          #[w-icon mdi mdi-language-css3],
-          #[w-icon mdi mdi-sass] &amp;
-          #[w-icon.heart mdi mdi-heart]
+        .mb1
+          | This documentation is made with
+          w-tooltip(top caption)
+            template(#activator="{ on }")
+              w-icon.ml1(v-on="on") mdi mdi-vuejs
+            | Vue.js
+          w-tooltip(top caption)
+            template(#activator="{ on }")
+              w-icon.ml1(v-on="on" size="1.5em") wi-wave
+            | Wave UI
+          w-tooltip(top caption)
+            template(#activator="{ on }")
+              w-icon.ml1(v-on="on") mdi mdi-language-html5
+            | HTML 5
+          w-tooltip(top caption)
+            template(#activator="{ on }")
+              w-icon.ml1(v-on="on") mdi mdi-language-css3
+            | CSS 3
+          w-tooltip(top caption)
+            template(#activator="{ on }")
+              w-icon.ml1(v-on="on") mdi mdi-sass
+            | SASS
+          span.ml1 &amp;
+          w-tooltip(top caption)
+            template(#activator="{ on }")
+              w-icon.ml1(v-on="on").heart mdi mdi-heart
+            | Love
         | View this project on #[a(href="https://github.com/antoniandre/splitpanes" target="_blank") #[w-icon mdi mdi-github] Github].
 </template>
