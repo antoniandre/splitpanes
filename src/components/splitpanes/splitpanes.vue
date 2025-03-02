@@ -39,6 +39,11 @@ const splitterTaps = ref({ // Used to detect double click on touch devices.
   timeoutId: null
 })
 
+const splitpanesClasses = computed(() => ({
+  [`splitpanes splitpanes--${props.horizontal ? 'horizontal' : 'vertical'}`]: true,
+  'splitpanes--dragging': touch.value.dragging
+}))
+
 // Methods.
 // --------------------------------------------------------
 const bindEvents = () => {
@@ -108,9 +113,7 @@ const onSplitterClick = (event, splitterIndex) => {
       }
       else {
         splitterTaps.value.splitter = splitterIndex
-        splitterTaps.value.timeoutId = setTimeout(() => {
-          splitterTaps.value.splitter = null
-        }, 500)
+        splitterTaps.value.timeoutId = setTimeout(() => (splitterTaps.value.splitter = null), 500)
       }
     }
   }
@@ -638,14 +641,7 @@ onMounted(() => {
 const render = () => {
   return h(
     'div',
-    {
-      ref: containerEl,
-      class: [
-        'splitpanes',
-        `splitpanes--${props.horizontal ? 'horizontal' : 'vertical'}`,
-        { 'splitpanes--dragging': touch.value.dragging }
-      ]
-    },
+    { ref: containerEl, class: splitpanesClasses.value },
     slots.default?.()
   )
 }
