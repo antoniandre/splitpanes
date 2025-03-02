@@ -1,7 +1,16 @@
 <script setup>
 import { h, ref, computed, onMounted, onBeforeUnmount, nextTick, provide, useSlots, watch } from 'vue'
 
-const emit = defineEmits(['ready', 'resize', 'resized', 'pane-click', 'pane-maximize', 'pane-add', 'pane-remove', 'splitter-click'])
+const emit = defineEmits([
+  'ready',
+  'resize',
+  'resized',
+  'pane-click',
+  'pane-maximize',
+  'pane-add',
+  'pane-remove',
+  'splitter-click'
+])
 
 const props = defineProps({
   horizontal: { type: Boolean },
@@ -13,12 +22,10 @@ const props = defineProps({
 
 const slots = useSlots()
 const panes = ref([])
-const panesCount = computed(() => panes.value.length)
 // Indexed panes by id (Vue's internal component uid) of Pane components for fast lookup.
 // Every time a pane is destroyed this index is recomputed.
-const indexedPanes = computed(() => {
-  return panes.value.reduce((obj, pane) => (obj[~~pane.id] = pane) && obj, {})
-})
+const indexedPanes = computed(() => panes.value.reduce((obj, pane) => (obj[~~pane.id] = pane) && obj, {}))
+const panesCount = computed(() => panes.value.length)
 
 const containerEl = ref(null)
 const ready = ref(false)
@@ -66,8 +73,10 @@ const onMouseMove = event => {
     // Prevent scrolling while touch dragging (only works with an active event, eg. passive: false).
     event.preventDefault()
     touch.value.dragging = true
-    calculatePanesSize(getCurrentMouseDrag(event))
-    emit('resize', panes.value.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
+    requestAnimationFrame(() => {
+      calculatePanesSize(getCurrentMouseDrag(event))
+      emit('resize', panes.value.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
+    })
   }
 }
 
