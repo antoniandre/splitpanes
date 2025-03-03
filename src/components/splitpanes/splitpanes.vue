@@ -470,7 +470,7 @@ const equalizeAfterAddOrRemove = ({ addedPane, removedPane } = {}) => {
   const ungrowable = []
   const unshrinkable = []
 
-  if (addedPane?.givenSize !== null) {
+  if ((addedPane?.givenSize ?? null) !== null) {
     equalSpace = (100 - addedPane.givenSize) / (panesCount.value - 1).value
   }
 
