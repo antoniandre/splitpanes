@@ -32,7 +32,8 @@ const ready = ref(false)
 const touch = ref({
   mouseDown: false,
   dragging: false,
-  activeSplitter: null
+  activeSplitter: null,
+  cursorOffset: 0 // Cursor offset within the splitter.
 })
 const splitterTaps = ref({ // Used to detect double click on touch devices.
   splitter: null,
@@ -68,6 +69,14 @@ const unbindEvents = () => {
 }
 
 const onMouseDown = (event, splitterIndex) => {
+  // Store the cursor offset within the splitter to keep the cursor in the same position while dragging.
+  const splitterEl = event.target.closest('.splitpanes__splitter')
+  if (splitterEl) {
+    const { left, top } = splitterEl.getBoundingClientRect()
+    const { clientX, clientY } = ('ontouchstart' in window && event.touches) ? event.touches[0] : event
+    touch.value.cursorOffset = props.horizontal ? (clientY - top) : (clientX - left)
+  }
+
   bindEvents()
   touch.value.mouseDown = true
   touch.value.activeSplitter = splitterIndex
@@ -145,8 +154,8 @@ const getCurrentMouseDrag = event => {
   const { clientX, clientY } = ('ontouchstart' in window && event.touches) ? event.touches[0] : event
 
   return {
-    x: clientX - rect.left,
-    y: clientY - rect.top
+    x: (clientX - (props.horizontal ? 0 : touch.value.cursorOffset)) - rect.left,
+    y: (clientY - (props.horizontal ? touch.value.cursorOffset : 0)) - rect.top
   }
 }
 
