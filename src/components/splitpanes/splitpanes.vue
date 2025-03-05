@@ -377,18 +377,7 @@ const onPaneAdd = pane => {
     return el.isSameNode(pane.el)
   })
 
-  const min = parseFloat(pane.minSize)
-  const max = parseFloat(pane.maxSize)
-  this.panes.splice(index, 0, {
-    id: pane._.uid,
-    index,
-    min: isNaN(min) ? 0 : min,
-    max: isNaN(max) ? 100 : max,
-    size: pane.size === null ? null : parseFloat(pane.size),
-    givenSize: pane.size,
-    update: pane.update
-  })
-
+  panes.value.splice(index, 0, { ...pane, index })
   // Redo indexes after insertion for other shifted panes.
   panes.value.forEach((p, i) => (p.index = i))
 
@@ -457,7 +446,7 @@ const initialPanesSizing = () => {
   // Check if pre-allocated space is 100%.
   panes.value.forEach(pane => {
     leftToAllocate -= pane.size
-    if (pane.size !== null) definedSizes++
+    if (pane.givenSize !== null) definedSizes++
     if (pane.size >= pane.max) ungrowable.push(pane.id)
     if (pane.size <= pane.min) unshrinkable.push(pane.id)
   })
@@ -466,7 +455,7 @@ const initialPanesSizing = () => {
   let leftToAllocate2 = 100
   if (leftToAllocate > 0.1) {
     panes.value.forEach(pane => {
-      if (pane.size === null) {
+      if (pane.givenSize === null) {
         pane.size = Math.max(Math.min(leftToAllocate / (panesCount.value - definedSizes), pane.max), pane.min)
       }
       leftToAllocate2 -= pane.size
@@ -496,8 +485,8 @@ const equalizeAfterAddOrRemove = ({ addedPane, removedPane } = {}) => {
   if (Math.abs(leftToAllocate) < 0.1) return // Ok.
 
   panes.value.forEach(pane => {
-    if (addedPane && addedPane.givenSize !== null && addedPane.id === pane.id) {}
-    else pane.size = Math.max(Math.min(equalSpace, pane.max), pane.min)
+    const addedPaneHasGivenSize = addedPane?.givenSize !== null && addedPane?.id === pane.id
+    if (!addedPaneHasGivenSize) pane.size = Math.max(Math.min(equalSpace, pane.max), pane.min)
 
     leftToAllocate -= pane.size
     if (pane.size >= pane.max) ungrowable.push(pane.id)
@@ -579,11 +568,6 @@ const readjustSizes = (leftToAllocate, ungrowable, unshrinkable) => {
       leftToAllocate -= allocated
       pane.size = newPaneSize
     }
-
-    // Update each pane through the registered `update` method.
-    pane.update({
-      [this.horizontal ? 'height' : 'width']: `${this.indexedPanes[pane.id].size}%`
-    })
   })
 
   if (Math.abs(leftToAllocate) > 0.1) { // > 0.1: Prevent maths rounding issues due to bytes.
