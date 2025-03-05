@@ -1,62 +1,63 @@
 <template>
-<div class="splitpanes__pane" @click="onPaneClick($event, _.uid)" :style="style">
+<div
+  ref="paneEl"
+  class="splitpanes__pane"
+  @click="onPaneClick($event, _.uid)"
+  :style="styles">
   <slot/>
 </div>
 </template>
 
-<script>
-export default {
-  // eslint-disable-next-line vue/multi-word-component-names
-  name: 'pane',
-  inject: ['requestUpdate', 'onPaneAdd', 'onPaneRemove', 'onPaneClick'],
+<script setup>
+import { inject, ref, computed, onMounted, onBeforeUnmount, watch, getCurrentInstance } from 'vue'
 
-  props: {
-    size: { type: [Number, String], default: null },
-    minSize: { type: [Number, String], default: 0 },
-    maxSize: { type: [Number, String], default: 100 }
-  },
+const props = defineProps({
+  size: { type: [Number, String] },
+  minSize: { type: [Number, String], default: 0 },
+  maxSize: { type: [Number, String], default: 100 }
+})
 
-  data: () => ({
-    style: {}
-  }),
+const requestUpdate = inject('requestUpdate')
+const onPaneAdd = inject('onPaneAdd')
+const horizontal = inject('horizontal')
+const onPaneRemove = inject('onPaneRemove')
+const onPaneClick = inject('onPaneClick')
 
-  mounted () {
-    this.onPaneAdd(this)
-  },
+const uid = getCurrentInstance()?.uid
+const indexedPanes = inject('indexedPanes')
+const pane = computed(() => indexedPanes.value[uid])
 
-  beforeUnmount () {
-    this.onPaneRemove(this)
-  },
+const paneEl = ref(null)
+const sizeNumber = computed(() => {
+  const value = isNaN(props.size) || props.size === undefined ? 0 : parseFloat(props.size)
 
-  methods: {
-    // Called from the splitpanes component.
-    update (style) {
-      this.style = style
-    }
-  },
+  return Math.max(Math.min(value, maxSizeNumber.value), minSizeNumber.value)
+})
+const minSizeNumber = computed(() => {
+  const value = parseFloat(props.minSize)
+  return isNaN(value) ? 0 : value
+})
+const maxSizeNumber = computed(() => {
+  const value = parseFloat(props.maxSize)
+  return isNaN(value) ? 100 : value
+})
+const styles = computed(() => `${horizontal.value ? 'height' : 'width'}: ${pane.value?.size}%`)
 
-  computed: {
-    sizeNumber () {
-      return (this.size || this.size === 0) ? parseFloat(this.size) : null
-    },
-    minSizeNumber () {
-      return parseFloat(this.minSize)
-    },
-    maxSizeNumber () {
-      return parseFloat(this.maxSize)
-    }
-  },
+onMounted(() => {
+  onPaneAdd({
+    id: uid,
+    el: paneEl.value,
+    min: minSizeNumber.value,
+    max: maxSizeNumber.value,
+    // The given size (useful to know the user intention).
+    givenSize: props.size === undefined ? null : sizeNumber.value,
+    size: sizeNumber.value // The computed current size at any time.
+  })
+})
 
-  watch: {
-    sizeNumber (size) {
-      this.requestUpdate({ target: this, size })
-    },
-    minSizeNumber (min) {
-      this.requestUpdate({ target: this, min })
-    },
-    maxSizeNumber (max) {
-      this.requestUpdate({ target: this, max })
-    }
-  }
-}
+watch(() => sizeNumber.value, size => requestUpdate({ uid, size }))
+watch(() => minSizeNumber.value, min => requestUpdate({ uid, min }))
+watch(() => maxSizeNumber.value, max => requestUpdate({ uid, max }))
+
+onBeforeUnmount(() => onPaneRemove(uid))
 </script>
