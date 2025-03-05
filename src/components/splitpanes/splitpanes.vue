@@ -272,17 +272,18 @@ const doPushOtherPanes = (sums, dragPercentage) => {
     // If nothing else to push up, cancel dragging.
     if (panesToResize[1] === undefined) {
       sums.nextReachedMinPanes = 0
-      panes.value[panesCount.value - 1].size = panes.value[panesCount.value - 1].min.value
       panes.value.forEach((pane, i) => {
+        // If pushing a n+2 or more pane, from splitter, then make sure all in between is at min size.
         if (i < panesCount.value - 1 && i >= splitterIndex + 1) {
           pane.size = pane.min
           sums.nextReachedMinPanes += pane.min
         }
       })
-      panes.value[panesToResize[0]].size = 100 - sums.prevPanesSize - sums.nextReachedMinPanes - panes.value[panesCount.value - 1].min - sums.nextPanesSize.value
+      panes.value[panesToResize[0]].size = 100 - sums.prevPanesSize - sumNextPanesSize(panesToResize[0] - 1)
       return null
     }
   }
+
   return { sums, panesToResize }
 }
 
