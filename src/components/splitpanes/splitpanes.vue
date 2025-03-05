@@ -48,52 +48,62 @@ const splitpanesClasses = computed(() => ({
 // Methods.
 // --------------------------------------------------------
 const bindEvents = () => {
-  document.addEventListener('mousemove', this.onMouseMove, { passive: false })
-  document.addEventListener('mouseup', this.onMouseUp)
+  document.addEventListener('mousemove', onMouseMove, { passive: false })
+  document.addEventListener('mouseup', onMouseUp)
 
   // Passive: false to prevent scrolling while touch dragging.
   if ('ontouchstart' in window) {
-    document.addEventListener('touchmove', this.onMouseMove, { passive: false })
-    document.addEventListener('touchend', this.onMouseUp)
+    document.addEventListener('touchmove', onMouseMove, { passive: false })
+    document.addEventListener('touchend', onMouseUp)
   }
 }
 
 const unbindEvents = () => {
-  document.removeEventListener('mousemove', this.onMouseMove, { passive: false })
-  document.removeEventListener('mouseup', this.onMouseUp)
+  document.removeEventListener('mousemove', onMouseMove, { passive: false })
+  document.removeEventListener('mouseup', onMouseUp)
 
   if ('ontouchstart' in window) {
-    document.removeEventListener('touchmove', this.onMouseMove, { passive: false })
-    document.removeEventListener('touchend', this.onMouseUp)
+    document.removeEventListener('touchmove', onMouseMove, { passive: false })
+    document.removeEventListener('touchend', onMouseUp)
   }
 }
 
 const onMouseDown = (event, splitterIndex) => {
-  this.bindEvents()
-  this.touch.mouseDown = true
-  this.touch.activeSplitter = splitterIndex
+  // Store the cursor offset within the splitter to keep the cursor in the same position while dragging.
+  const splitterEl = event.target.closest('.splitpanes__splitter')
+  if (splitterEl) {
+    const { left, top } = splitterEl.getBoundingClientRect()
+    const { clientX, clientY } = ('ontouchstart' in window && event.touches) ? event.touches[0] : event
+    touch.value.cursorOffset = props.horizontal ? (clientY - top) : (clientX - left)
+  }
+
+  bindEvents()
+  touch.value.mouseDown = true
+  touch.value.activeSplitter = splitterIndex
 }
 
-const onMouseMove = (event) => {
-  if (this.touch.mouseDown) {
+const onMouseMove = event => {
+  if (touch.value.mouseDown) {
     // Prevent scrolling while touch dragging (only works with an active event, eg. passive: false).
     event.preventDefault()
-    this.touch.dragging = true
-    this.calculatePanesSize(this.getCurrentMouseDrag(event))
-    this.$emit('resize', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
+    touch.value.dragging = true
+    requestAnimationFrame(() => {
+      calculatePanesSize(getCurrentMouseDrag(event))
+      emit('resize', panes.value.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
+    })
   }
 }
 
 const onMouseUp = () => {
-  if (this.touch.dragging) {
-    this.$emit('resized', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
+  if (touch.value.dragging) {
+    emit('resized', panes.value.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
   }
-  this.touch.mouseDown = false
+  touch.value.mouseDown = false
   // Keep dragging flag until click event is finished (click happens immediately after mouseup)
   // in order to prevent emitting `splitter-click` event if splitter was dragged.
   setTimeout(() => {
-    this.touch.dragging = false
-    this.unbindEvents()
+    touch.value.dragging = false
+    unbindEvents()
   }, 100)
 }
 
@@ -103,84 +113,82 @@ const onSplitterClick = (event, splitterIndex) => {
     event.preventDefault()
 
     // Detect splitter double taps if the option is on.
-    if (this.dblClickSplitter) {
-      if (this.splitterTaps.splitter === splitterIndex) {
-        clearTimeout(this.splitterTaps.timeoutId)
-        this.splitterTaps.timeoutId = null
-        this.onSplitterDblClick(event, splitterIndex)
-        this.splitterTaps.splitter = null // Reset for the next tap check.
+    if (props.dblClickSplitter) {
+      if (splitterTaps.value.splitter === splitterIndex) {
+        clearTimeout(splitterTaps.value.timeoutId)
+        splitterTaps.value.timeoutId = null
+        onSplitterDblClick(event, splitterIndex)
+        splitterTaps.value.splitter = null // Reset for the next tap check.
       }
       else {
-        this.splitterTaps.splitter = splitterIndex
-        this.splitterTaps.timeoutId = setTimeout(() => {
-          this.splitterTaps.splitter = null
-        }, 500)
+        splitterTaps.value.splitter = splitterIndex
+        splitterTaps.value.timeoutId = setTimeout(() => (splitterTaps.value.splitter = null), 500)
       }
     }
   }
 
-  if (!this.touch.dragging) this.$emit('splitter-click', this.panes[splitterIndex])
+  if (!touch.value.dragging) emit('splitter-click', panes.value[splitterIndex])
 }
 
 // On splitter dbl click or dbl tap maximize this pane.
 const onSplitterDblClick = (event, splitterIndex) => {
   let totalMinSizes = 0
-  this.panes = this.panes.map((pane, i) => {
+  panes.value = panes.value.map((pane, i) => {
     pane.size = i === splitterIndex ? pane.max : pane.min
     if (i !== splitterIndex) totalMinSizes += pane.min
 
     return pane
   })
-  this.panes[splitterIndex].size -= totalMinSizes
-  this.$emit('pane-maximize', this.panes[splitterIndex])
-  this.$emit('resized', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
+  panes.value[splitterIndex].size -= totalMinSizes
+  emit('pane-maximize', panes.value[splitterIndex])
+  emit('resized', panes.value.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
 }
 
 const onPaneClick = (event, paneId) => {
-  this.$emit('pane-click', this.indexedPanes[paneId])
+  emit('pane-click', indexedPanes.value[paneId])
 }
 
-// Get the cursor position relative to the splitpane container.
+// Get the cursor position relative to the splitpanes container.
 const getCurrentMouseDrag = event => {
-  const rect = this.container.getBoundingClientRect()
+  const rect = containerEl.value.getBoundingClientRect()
   const { clientX, clientY } = ('ontouchstart' in window && event.touches) ? event.touches[0] : event
 
   return {
-    x: clientX - rect.left,
-    y: clientY - rect.top
+    x: (clientX - (props.horizontal ? 0 : touch.value.cursorOffset)) - rect.left,
+    y: (clientY - (props.horizontal ? touch.value.cursorOffset : 0)) - rect.top
   }
 }
 
 // Returns the drag percentage of the splitter relative to the container (ranging from 0 to 100%).
 const getCurrentDragPercentage = drag => {
-  drag = drag[this.horizontal ? 'y' : 'x']
-  // In the code bellow 'size' refers to 'width' for vertical and 'height' for horizontal layout.
-  const containerSize = this.container[this.horizontal ? 'clientHeight' : 'clientWidth']
-  if (this.rtl && !this.horizontal) drag = containerSize - drag
+  drag = drag[props.horizontal ? 'y' : 'x']
+  // In the code below 'size' refers to 'width' for vertical and 'height' for horizontal layout.
+  const containerSize = containerEl.value[props.horizontal ? 'clientHeight' : 'clientWidth']
+  if (props.rtl && !props.horizontal) drag = containerSize - drag
 
   return drag * 100 / containerSize
 }
 
 const calculatePanesSize = drag => {
-  const splitterIndex = this.touch.activeSplitter
+  const splitterIndex = touch.value.activeSplitter
   let sums = {
-    prevPanesSize: this.sumPrevPanesSize(splitterIndex),
-    nextPanesSize: this.sumNextPanesSize(splitterIndex),
+    prevPanesSize: sumPrevPanesSize(splitterIndex),
+    nextPanesSize: sumNextPanesSize(splitterIndex),
     prevReachedMinPanes: 0,
     nextReachedMinPanes: 0
   }
 
-  const minDrag = 0 + (this.pushOtherPanes ? 0 : sums.prevPanesSize)
-  const maxDrag = 100 - (this.pushOtherPanes ? 0 : sums.nextPanesSize)
-  const dragPercentage = Math.max(Math.min(this.getCurrentDragPercentage(drag), maxDrag), minDrag)
+  const minDrag = 0 + (props.pushOtherPanes ? 0 : sums.prevPanesSize)
+  const maxDrag = 100 - (props.pushOtherPanes ? 0 : sums.nextPanesSize)
+  const dragPercentage = Math.max(Math.min(getCurrentDragPercentage(drag), maxDrag), minDrag)
 
   // If not pushing other panes, panes to resize are right before and right after splitter.
   let panesToResize = [splitterIndex, splitterIndex + 1]
-  let paneBefore = this.panes[panesToResize[0]] || null
-  let paneAfter = this.panes[panesToResize[1]] || null
+  let paneBefore = panes.value[panesToResize[0]] || null
+  let paneAfter = panes.value[panesToResize[1]] || null
 
   const paneBeforeMaxReached = paneBefore.max < 100 && (dragPercentage >= (paneBefore.max + sums.prevPanesSize))
-  const paneAfterMaxReached = paneAfter.max < 100 && (dragPercentage <= 100 - (paneAfter.max + this.sumNextPanesSize(splitterIndex + 1)))
+  const paneAfterMaxReached = paneAfter.max < 100 && (dragPercentage <= 100 - (paneAfter.max + sumNextPanesSize(splitterIndex + 1)))
   // Prevent dragging beyond pane max.
   if (paneBeforeMaxReached || paneAfterMaxReached) {
     if (paneBeforeMaxReached) {
@@ -188,20 +196,20 @@ const calculatePanesSize = drag => {
       paneAfter.size = Math.max(100 - paneBefore.max - sums.prevPanesSize - sums.nextPanesSize, 0)
     }
     else {
-      paneBefore.size = Math.max(100 - paneAfter.max - sums.prevPanesSize - this.sumNextPanesSize(splitterIndex + 1), 0)
+      paneBefore.size = Math.max(100 - paneAfter.max - sums.prevPanesSize - sumNextPanesSize(splitterIndex + 1), 0)
       paneAfter.size = paneAfter.max
     }
     return
   }
 
   // When pushOtherPanes = true, find the closest expanded pane on each side of the splitter.
-  if (this.pushOtherPanes) {
-    const vars = this.doPushOtherPanes(sums, dragPercentage)
+  if (props.pushOtherPanes) {
+    const vars = doPushOtherPanes(sums, dragPercentage)
     if (!vars) return // Prevent other calculation.
 
     ({ sums, panesToResize } = vars)
-    paneBefore = this.panes[panesToResize[0]] || null
-    paneAfter = this.panes[panesToResize[1]] || null
+    paneBefore = panes.value[panesToResize[0]] || null
+    paneAfter = panes.value[panesToResize[1]] || null
   }
 
   if (paneBefore !== null) {
@@ -213,64 +221,65 @@ const calculatePanesSize = drag => {
 }
 
 const doPushOtherPanes = (sums, dragPercentage) => {
-  const splitterIndex = this.touch.activeSplitter
+  const splitterIndex = touch.value.activeSplitter
   const panesToResize = [splitterIndex, splitterIndex + 1]
   // Pushing Down.
   // Going smaller than the current pane min size: take the previous expanded pane.
-  if (dragPercentage < sums.prevPanesSize + this.panes[panesToResize[0]].min) {
-    panesToResize[0] = this.findPrevExpandedPane(splitterIndex).index
+  if (dragPercentage < sums.prevPanesSize + panes.value[panesToResize[0]].min) {
+    panesToResize[0] = findPrevExpandedPane(splitterIndex).index
 
     sums.prevReachedMinPanes = 0
     // If pushing a n-2 or less pane, from splitter, then make sure all in between is at min size.
     if (panesToResize[0] < splitterIndex) {
-      this.panes.forEach((pane, i) => {
+      panes.value.forEach((pane, i) => {
         if (i > panesToResize[0] && i <= splitterIndex) {
           pane.size = pane.min
           sums.prevReachedMinPanes += pane.min
         }
       })
     }
-    sums.prevPanesSize = this.sumPrevPanesSize(panesToResize[0])
+    sums.prevPanesSize = sumPrevPanesSize(panesToResize[0])
     // If nothing else to push down, cancel dragging.
     if (panesToResize[0] === undefined) {
       sums.prevReachedMinPanes = 0
-      this.panes[0].size = this.panes[0].min
-      this.panes.forEach((pane, i) => {
+      panes.value[0].size = panes.value[0].min
+      panes.value.forEach((pane, i) => {
         if (i > 0 && i <= splitterIndex) {
           pane.size = pane.min
           sums.prevReachedMinPanes += pane.min
         }
       })
-      this.panes[panesToResize[1]].size = 100 - sums.prevReachedMinPanes - this.panes[0].min - sums.prevPanesSize - sums.nextPanesSize
+      panes.value[panesToResize[1]].size = 100 - sums.prevReachedMinPanes - panes.value[0].min - sums.prevPanesSize - sums.nextPanesSize
       return null
     }
   }
   // Pushing Up.
   // Pushing up beyond min size is reached: take the next expanded pane.
-  if (dragPercentage > 100 - sums.nextPanesSize - this.panes[panesToResize[1]].min) {
-    panesToResize[1] = this.findNextExpandedPane(splitterIndex).index
+  if (dragPercentage > 100 - sums.nextPanesSize - panes.value[panesToResize[1]].min) {
+    panesToResize[1] = findNextExpandedPane(splitterIndex).index
     sums.nextReachedMinPanes = 0
     // If pushing a n+2 or more pane, from splitter, then make sure all in between is at min size.
     if (panesToResize[1] > splitterIndex + 1) {
-      this.panes.forEach((pane, i) => {
+      panes.value.forEach((pane, i) => {
         if (i > splitterIndex && i < panesToResize[1]) {
           pane.size = pane.min
           sums.nextReachedMinPanes += pane.min
         }
       })
     }
-    sums.nextPanesSize = this.sumNextPanesSize(panesToResize[1] - 1)
+
+    sums.nextPanesSize = sumNextPanesSize(panesToResize[1] - 1)
     // If nothing else to push up, cancel dragging.
     if (panesToResize[1] === undefined) {
       sums.nextReachedMinPanes = 0
-      this.panes[this.panesCount - 1].size = this.panes[this.panesCount - 1].min
-      this.panes.forEach((pane, i) => {
-        if (i < this.panesCount - 1 && i >= splitterIndex + 1) {
+      panes.value[panesCount.value - 1].size = panes.value[panesCount.value - 1].min.value
+      panes.value.forEach((pane, i) => {
+        if (i < panesCount.value - 1 && i >= splitterIndex + 1) {
           pane.size = pane.min
           sums.nextReachedMinPanes += pane.min
         }
       })
-      this.panes[panesToResize[0]].size = 100 - sums.prevPanesSize - sums.nextReachedMinPanes - this.panes[this.panesCount - 1].min - sums.nextPanesSize
+      panes.value[panesToResize[0]].size = 100 - sums.prevPanesSize - sums.nextReachedMinPanes - panes.value[panesCount.value - 1].min - sums.nextPanesSize.value
       return null
     }
   }
@@ -278,35 +287,34 @@ const doPushOtherPanes = (sums, dragPercentage) => {
 }
 
 const sumPrevPanesSize = splitterIndex => {
-  return this.panes.reduce((total, pane, i) => total + (i < splitterIndex ? pane.size : 0), 0)
+  return panes.value.reduce((total, pane, i) => total + (i < splitterIndex ? pane.size : 0), 0)
 }
 
 const sumNextPanesSize = splitterIndex => {
-  return this.panes.reduce((total, pane, i) => total + (i > splitterIndex + 1 ? pane.size : 0), 0)
+  return panes.value.reduce((total, pane, i) => total + (i > splitterIndex + 1 ? pane.size : 0), 0)
 }
 
 // Return the previous pane from siblings which has a size (width for vert or height for horz) of more than 0.
 const findPrevExpandedPane = splitterIndex => {
-  const pane = [...this.panes].reverse().find(p => (p.index < splitterIndex && p.size > p.min))
+  const pane = [...panes.value].reverse().find(p => (p.index < splitterIndex && p.size > p.min))
   return pane || {}
 }
 
 // Return the next pane from siblings which has a size (width for vert or height for horz) of more than 0.
 const findNextExpandedPane = splitterIndex => {
-  const pane = this.panes.find(p => (p.index > splitterIndex + 1 && p.size > p.min))
+  const pane = panes.value.find(p => (p.index > splitterIndex + 1 && p.size > p.min))
   return pane || {}
 }
 
 const checkSplitpanesNodes = () => {
-  const children = Array.from(this.container.children)
+  const children = Array.from(containerEl.value?.children || [])
   children.forEach(child => {
     const isPane = child.classList.contains('splitpanes__pane')
     const isSplitter = child.classList.contains('splitpanes__splitter')
 
     // Node is not a Pane or a splitter: remove it.
     if (!isPane && !isSplitter) {
-      child.parentNode.removeChild(child) // el.remove() doesn't work on IE11.
-      // eslint-disable-next-line no-console
+      child.remove()
       console.warn('Splitpanes: Only <pane> elements are allowed at the root of <splitpanes>. One of your DOM nodes was removed.')
     }
   })
@@ -318,16 +326,16 @@ const addSplitter = (paneIndex, nextPaneNode, isVeryFirst = false) => {
   elm.classList.add('splitpanes__splitter')
 
   if (!isVeryFirst) {
-    elm.onmousedown = event => this.onMouseDown(event, splitterIndex)
+    elm.onmousedown = event => onMouseDown(event, splitterIndex)
 
     if (typeof window !== 'undefined' && 'ontouchstart' in window) {
-      elm.ontouchstart = event => this.onMouseDown(event, splitterIndex)
+      elm.ontouchstart = event => onMouseDown(event, splitterIndex)
     }
-    elm.onclick = event => this.onSplitterClick(event, splitterIndex + 1)
+    elm.onclick = event => onSplitterClick(event, splitterIndex + 1)
   }
 
-  if (this.dblClickSplitter) {
-    elm.ondblclick = event => this.onSplitterDblClick(event, splitterIndex + 1)
+  if (props.dblClickSplitter) {
+    elm.ondblclick = event => onSplitterDblClick(event, splitterIndex + 1)
   }
 
   nextPaneNode.parentNode.insertBefore(elm, nextPaneNode)
@@ -337,36 +345,36 @@ const removeSplitter = node => {
   node.onmousedown = undefined
   node.onclick = undefined
   node.ondblclick = undefined
-  node.parentNode.removeChild(node) // el.remove() doesn't work on IE11.
+  node.remove()
 }
 
 const redoSplitters = () => {
-  const children = Array.from(this.container.children)
+  const children = Array.from(containerEl.value?.children || [])
   children.forEach(el => {
-    if (el.className.includes('splitpanes__splitter')) this.removeSplitter(el)
+    if (el.className.includes('splitpanes__splitter')) removeSplitter(el)
   })
   let paneIndex = 0
   children.forEach(el => {
     if (el.className.includes('splitpanes__pane')) {
-      if (!paneIndex && this.firstSplitter) this.addSplitter(paneIndex, el, true)
-      else if (paneIndex) this.addSplitter(paneIndex, el)
+      if (!paneIndex && props.firstSplitter) addSplitter(paneIndex, el, true)
+      else if (paneIndex) addSplitter(paneIndex, el)
       paneIndex++
     }
   })
 }
 
 // Called by Pane component on programmatic resize.
-const requestUpdate = ({ target, ...args }) => {
-  const pane = this.indexedPanes[target._.uid]
+const requestUpdate = ({ uid, ...args }) => {
+  const pane = indexedPanes.value[uid]
   Object.entries(args).forEach(([key, value]) => (pane[key] = value))
 }
 
 const onPaneAdd = pane => {
   // 1. Add pane to array at the same index it was inserted in the <splitpanes> tag.
   let index = -1
-  Array.from(pane.$el.parentNode.children).some(el => {
+  Array.from(containerEl.value?.children || []).some(el => {
     if (el.className.includes('splitpanes__pane')) index++
-    return el === pane.$el
+    return el.isSameNode(pane.el)
   })
 
   const min = parseFloat(pane.minSize)
@@ -382,55 +390,54 @@ const onPaneAdd = pane => {
   })
 
   // Redo indexes after insertion for other shifted panes.
-  this.panes.forEach((p, i) => (p.index = i))
+  panes.value.forEach((p, i) => (p.index = i))
 
-  if (this.ready) {
-    this.$nextTick(() => {
+  if (ready.value) {
+    nextTick(() => {
       // 2. Add the splitter.
-      this.redoSplitters()
+      redoSplitters()
 
       // 3. Resize the panes.
-      this.resetPaneSizes({ addedPane: this.panes[index] })
+      resetPaneSizes({ addedPane: panes.value[index] })
 
       // 4. Fire `pane-add` event.
-      this.$emit('pane-add', { index, panes: this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })) })
+      emit('pane-add', { index, panes: panes.value.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })) })
     })
   }
 }
 
-const onPaneRemove = pane => {
+const onPaneRemove = uid => {
   // 1. Remove the pane from array and redo indexes.
-  const index = this.panes.findIndex(p => p.id === pane._.uid)
-  const removed = this.panes.splice(index, 1)[0]
-  this.panes.forEach((p, i) => (p.index = i))
+  const index = panes.value.findIndex(p => p.id === uid)
+  const removed = panes.value.splice(index, 1)[0]
+  panes.value.forEach((p, i) => (p.index = i))
 
-  this.$nextTick(() => {
+  nextTick(() => {
     // 2. Remove the splitter.
-    this.redoSplitters()
+    redoSplitters()
 
     // 3. Resize the panes.
-    this.resetPaneSizes({ removedPane: { ...removed, index } })
+    resetPaneSizes({ removedPane: { ...removed, index } })
 
     // 4. Fire `pane-remove` event.
-    this.$emit('pane-remove', { removed, panes: this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })) })
+    emit('pane-remove', { removed, panes: panes.value.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })) })
   })
 }
 
 const resetPaneSizes = (changedPanes = {}) => {
-  if (!changedPanes.addedPane && !changedPanes.removedPane) this.initialPanesSizing()
-  else if (this.panes.some(pane => pane.givenSize !== null || pane.min || pane.max < 100)) this.equalizeAfterAddOrRemove(changedPanes)
-  else this.equalize()
-
-  if (this.ready) this.$emit('resized', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
+  if (!changedPanes.addedPane && !changedPanes.removedPane) initialPanesSizing()
+  else if (panes.value.some(pane => pane.givenSize !== null || pane.min || pane.max < 100)) equalizeAfterAddOrRemove(changedPanes)
+  else equalize()
+  if (ready.value) emit('resized', panes.value.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
 }
 
 const equalize = () => {
-  const equalSpace = 100 / this.panesCount
+  const equalSpace = 100 / panesCount.value
   let leftToAllocate = 0
   const ungrowable = []
   const unshrinkable = []
 
-  this.panes.forEach(pane => {
+  panes.value.forEach(pane => {
     pane.size = Math.max(Math.min(equalSpace, pane.max), pane.min)
 
     leftToAllocate -= pane.size
@@ -438,7 +445,7 @@ const equalize = () => {
     if (pane.size <= pane.min) unshrinkable.push(pane.id)
   })
 
-  if (leftToAllocate > 0.1) this.readjustSizes(leftToAllocate, ungrowable, unshrinkable)
+  if (leftToAllocate > 0.1) readjustSizes(leftToAllocate, ungrowable, unshrinkable)
 }
 
 const initialPanesSizing = () => {
@@ -448,39 +455,39 @@ const initialPanesSizing = () => {
   let definedSizes = 0
 
   // Check if pre-allocated space is 100%.
-  this.panes.forEach(pane => {
+  panes.value.forEach(pane => {
     leftToAllocate -= pane.size
     if (pane.size !== null) definedSizes++
     if (pane.size >= pane.max) ungrowable.push(pane.id)
     if (pane.size <= pane.min) unshrinkable.push(pane.id)
   })
 
-  // set pane sizes if not set.
+  // Set pane sizes if not set.
   let leftToAllocate2 = 100
   if (leftToAllocate > 0.1) {
-    this.panes.forEach(pane => {
+    panes.value.forEach(pane => {
       if (pane.size === null) {
-        pane.size = Math.max(Math.min(leftToAllocate / (this.panesCount - definedSizes), pane.max), pane.min)
+        pane.size = Math.max(Math.min(leftToAllocate / (panesCount.value - definedSizes), pane.max), pane.min)
       }
       leftToAllocate2 -= pane.size
     })
 
-    if (leftToAllocate2 > 0.1) this.readjustSizes(leftToAllocate, ungrowable, unshrinkable)
+    if (leftToAllocate2 > 0.1) readjustSizes(leftToAllocate2, ungrowable, unshrinkable)
   }
 }
 
 const equalizeAfterAddOrRemove = ({ addedPane, removedPane } = {}) => {
-  let equalSpace = 100 / this.panesCount
+  let equalSpace = 100 / panesCount.value
   let leftToAllocate = 0
   const ungrowable = []
   const unshrinkable = []
 
-  if (addedPane && addedPane.givenSize !== null) {
-    equalSpace = (100 - addedPane.givenSize) / (this.panesCount - 1)
+  if ((addedPane?.givenSize ?? null) !== null) {
+    equalSpace = (100 - addedPane.givenSize) / (panesCount.value - 1).value
   }
 
   // Check if pre-allocated space is 100%.
-  this.panes.forEach(pane => {
+  panes.value.forEach(pane => {
     leftToAllocate -= pane.size
     if (pane.size >= pane.max) ungrowable.push(pane.id)
     if (pane.size <= pane.min) unshrinkable.push(pane.id)
@@ -488,7 +495,7 @@ const equalizeAfterAddOrRemove = ({ addedPane, removedPane } = {}) => {
 
   if (Math.abs(leftToAllocate) < 0.1) return // Ok.
 
-  this.panes.forEach(pane => {
+  panes.value.forEach(pane => {
     if (addedPane && addedPane.givenSize !== null && addedPane.id === pane.id) {}
     else pane.size = Math.max(Math.min(equalSpace, pane.max), pane.min)
 
@@ -497,12 +504,12 @@ const equalizeAfterAddOrRemove = ({ addedPane, removedPane } = {}) => {
     if (pane.size <= pane.min) unshrinkable.push(pane.id)
   })
 
-  if (leftToAllocate > 0.1) this.readjustSizes(leftToAllocate, ungrowable, unshrinkable)
+  if (leftToAllocate > 0.1) readjustSizes(leftToAllocate, ungrowable, unshrinkable)
 }
 
 /* const recalculatePaneSizes = ({ addedPane, removedPane } = {}) => {
   let leftToAllocate = 100
-  let equalSpaceToAllocate = leftToAllocate / this.panesCount
+  let equalSpaceToAllocate = leftToAllocate / panesCount.value
   let ungrowable = []
   let unshrinkable = []
 
@@ -511,7 +518,7 @@ const equalizeAfterAddOrRemove = ({ addedPane, removedPane } = {}) => {
   // if (addedPane && addedPane.size === null) {
   //   if (addedPane.min) addedPane.size = addedPane.min
   //   else {
-  //     const paneToDivide = this.panes[addedPane.index + 1] || this.panes[addedPane.index - 1]
+  //     const paneToDivide = panes.value[addedPane.index + 1] || panes.value[addedPane.index - 1]
   //     if (paneToDivide) {
   //       // @todo: Dividing that pane in 2 could be incorrect if becoming lower than its min size.
   //       addedPane.size = paneToDivide.size / 2
@@ -520,17 +527,17 @@ const equalizeAfterAddOrRemove = ({ addedPane, removedPane } = {}) => {
   //   }
   // }
 
-  this.panes.forEach((pane, i) => {
+  panes.value.forEach((pane, i) => {
     // Added pane - reduce the size of the next pane.
     if (addedPane && addedPane.index + 1 === i) {
-      pane.size = Math.max(Math.min(100 - this.sumPrevPanesSize(i) - this.sumNextPanesSize(i + 1), pane.max), pane.min)
+      pane.size = Math.max(Math.min(100 - sumPrevPanesSize(i) - sumNextPanesSize(i + 1), pane.max), pane.min)
       // @todo: if could not allocate correctly, try to allocate in the next pane straight away,
       // then still do the second loop if not correct.
     }
 
     // Removed pane - increase the size of the next pane.
     else if (removedPane && removedPane.index === i) {
-      pane.size = Math.max(Math.min(100 - this.sumPrevPanesSize(i) - this.sumNextPanesSize(i + 1), pane.max), pane.min)
+      pane.size = Math.max(Math.min(100 - sumPrevPanesSize(i) - sumNextPanesSize(i + 1), pane.max), pane.min)
       // @todo: if could not allocate correctly, try to allocate in the next pane straight away,
       // then still do the second loop if not correct.
     }
@@ -548,16 +555,16 @@ const equalizeAfterAddOrRemove = ({ addedPane, removedPane } = {}) => {
 
   // Do one more loop to adjust sizes if still wrong.
   // > 0.1: Prevent maths rounding issues due to bytes.
-  if (Math.abs(leftToAllocate) > 0.1) this.readjustSizes(leftToAllocate, ungrowable, unshrinkable)
+  if (Math.abs(leftToAllocate) > 0.1) readjustSizes(leftToAllocate, ungrowable, unshrinkable)
 } */
 
 // Second loop to adjust sizes now that we know more about the panes constraints.
 const readjustSizes = (leftToAllocate, ungrowable, unshrinkable) => {
   let equalSpaceToAllocate
-  if (leftToAllocate > 0) equalSpaceToAllocate = leftToAllocate / (this.panesCount - ungrowable.length)
-  else equalSpaceToAllocate = leftToAllocate / (this.panesCount - unshrinkable.length)
+  if (leftToAllocate > 0) equalSpaceToAllocate = leftToAllocate / (panesCount.value - ungrowable.length)
+  else equalSpaceToAllocate = leftToAllocate / (panesCount.value - unshrinkable.length)
 
-  this.panes.forEach((pane, i) => {
+  panes.value.forEach((pane, i) => {
     if (leftToAllocate > 0 && !ungrowable.includes(pane.id)) {
       // Need to diff the size before and after to get the exact allocated space.
       const newPaneSize = Math.max(Math.min(pane.size + equalSpaceToAllocate, pane.max), pane.min)
@@ -581,9 +588,8 @@ const readjustSizes = (leftToAllocate, ungrowable, unshrinkable) => {
 
   if (Math.abs(leftToAllocate) > 0.1) { // > 0.1: Prevent maths rounding issues due to bytes.
     // Don't emit on hot reload when Vue destroys panes.
-    this.$nextTick(() => {
-      if (this.ready) {
-        // eslint-disable-next-line no-console
+    nextTick(() => {
+      if (ready.value) {
         console.warn('Splitpanes: Could not resize panes correctly due to their constraints.')
       }
     })
@@ -592,15 +598,15 @@ const readjustSizes = (leftToAllocate, ungrowable, unshrinkable) => {
 
 /* const distributeEmptySpace = () => {
   let growablePanes = []
-  let collapsedPanesCount = 0
+  let collapsedPanesCount.value = 0
   let growableAmount = 0 // Total of how much the current panes can grow to fill blank space.
-  let spaceToDistribute = 100 - this.panes.reduce((sum, pane) => (sum += pane.size) && sum, 0)
+  let spaceToDistribute = 100 - panes.value.reduce((sum, pane) => (sum += pane.size) && sum, 0)
   // Do a first loop to determine if we can distribute the new blank space between all the
   // expandedPanes, without expanding the collapsed ones.
-  this.panes.forEach(pane => {
+  panes.value.forEach(pane => {
     if (pane.size < pane.max) growablePanes.push(pane)
 
-    if (!pane.size) collapsedPanesCount++
+    if (!pane.size) collapsedPanesCount.value++
     else growableAmount += pane.max - pane.size
   })
 
@@ -608,9 +614,9 @@ const readjustSizes = (leftToAllocate, ungrowable, unshrinkable) => {
   let expandCollapsedPanes = growableAmount < spaceToDistribute
 
   // New space to distribute equally.
-  let growablePanesCount = (growablePanes.length - (expandCollapsedPanes ? 0 : collapsedPanesCount))
-  let equalSpaceToDistribute = spaceToDistribute / growablePanesCount
-  // if (growablePanesCount === 1) equalSpace = 100 / this.panesCount
+  let growablePanesCount.value = (growablePanes.length - (expandCollapsedPanes ? 0 : collapsedPanesCount.value))
+  let equalSpaceToDistribute = spaceToDistribute / growablePanesCount.value
+  // if (growablePanesCount.value === 1) equalSpace = 100 / panesCount.value
   let spaceLeftToDistribute = spaceToDistribute
 
   // Now add the equalSpaceToDistribute to each pane size accordingly.
@@ -623,18 +629,18 @@ const readjustSizes = (leftToAllocate, ungrowable, unshrinkable) => {
       // If the equalSpaceToDistribute is not fully added to the current pane, distribute the remainder
       // to the next panes.
       // Also fix decimal issue due to bites - E.g. calculating 8.33 and getting 8.3299999999999
-      if (equalSpaceToDistribute - allocatedSpace > 0.1) equalSpaceToDistribute = spaceLeftToDistribute / (--growablePanesCount)
+      if (equalSpaceToDistribute - allocatedSpace > 0.1) equalSpaceToDistribute = spaceLeftToDistribute / (--growablePanesCount.value)
     }
   })
 
   /* Disabled otherwise will show up on hot reload.
   // if there is still space to allocate show warning message.
-  if (this.panesCount && ~~spaceLeftToDistribute) {
+  if (panesCount.value && ~~spaceLeftToDistribute) {
     // eslint-disable-next-line no-console
     console.warn('Splitpanes: Could not distribute all the empty space between panes due to their constraints.')
   } *\/
 
-  this.$emit('resized', this.panes.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
+  emit('resized', panes.value.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
 } */
 
 // Watchers.
