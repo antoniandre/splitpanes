@@ -729,15 +729,18 @@ export default {
   &--vertical > .splitpanes__splitter {min-width: 1px;cursor: col-resize;}
   &--horizontal > .splitpanes__splitter {min-height: 1px;cursor: row-resize;}
 }
+
 .splitpanes.default-theme {
   .splitpanes__pane {
     background-color: #f2f2f2;
   }
+
   .splitpanes__splitter {
     background-color: #fff;
     box-sizing: border-box;
     position: relative;
     flex-shrink: 0;
+
     &:before, &:after {
       content: "";
       position: absolute;
@@ -750,15 +753,20 @@ export default {
     &:first-child {cursor: auto;}
   }
 }
+
 .default-theme {
-  &.splitpanes .splitpanes .splitpanes__splitter {
-    z-index: 1;
+  .splitpanes--dragging {
+    user-select: none;
+    pointer-events: none;
   }
+
+  &.splitpanes .splitpanes .splitpanes__splitter {z-index: 1;}
   &.splitpanes--vertical > .splitpanes__splitter,
   .splitpanes--vertical > .splitpanes__splitter {
     width: 7px;
     border-left: 1px solid #eee;
     margin-left: -1px;
+
     &:before, &:after {
       transform: translateY(-50%);
       width: 1px;
@@ -767,13 +775,14 @@ export default {
     &:before {margin-left: -2px;}
     &:after {margin-left: 1px;}
   }
+
   &.splitpanes--horizontal > .splitpanes__splitter,
   .splitpanes--horizontal > .splitpanes__splitter {
     height: 7px;
     border-top: 1px solid #eee;
     margin-top: -1px;
-    &:before,
-    &:after {
+
+    &:before, &:after {
       transform: translateX(-50%);
       width: 30px;
       height: 1px;
