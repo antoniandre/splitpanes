@@ -1,1 +1,0 @@
-import{c as t,a as s,o,_ as n}from"./index-BVRpZQXS.js";const r={class:"green-light5--bg w-flex align-center justify-center"};function a(i,e){return o(),t("div",r,e[0]||(e[0]=[s("div",{class:"title1"},"This is home",-1)]))}const c={},d=n(c,[["render",a]]);export{d as default};

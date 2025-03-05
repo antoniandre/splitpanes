@@ -1,0 +1,1 @@
+import{c as t,a as s,o}from"./index-CtNYLK4S.js";import{_ as r}from"./_plugin-vue_export-helper-DlAUqK2U.js";const n={class:"blue-light5--bg w-flex align-center justify-center"};function a(c,e){return o(),t("div",n,e[0]||(e[0]=[s("div",{class:"title1"},"This is another view",-1)]))}const i={},d=r(i,[["render",a]]);export{d as default};
