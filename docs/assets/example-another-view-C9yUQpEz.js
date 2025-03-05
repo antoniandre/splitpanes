@@ -1,0 +1,1 @@
+import{c as t,a as s,o as n,_ as o}from"./index-BVRpZQXS.js";const r={class:"blue-light5--bg w-flex align-center justify-center"};function a(i,e){return n(),t("div",r,e[0]||(e[0]=[s("div",{class:"title1"},"This is another view",-1)]))}const c={},d=o(c,[["render",a]]);export{d as default};

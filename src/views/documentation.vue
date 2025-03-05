@@ -40,7 +40,7 @@
       | Programmatically add and remove panes
     li
       w-icon.mr2(color="primary" size="20") wi-check
-      | Also supports Vue 2
+      | Also supports Vue 2 (legacy branch)
 
   h2.mt12.mb4.title2 Github project &nbsp;&amp;&nbsp; important notes
   w-flex(align-center shrink)
