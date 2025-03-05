@@ -938,6 +938,11 @@
     a(href="#release-notes") Release Notes
 
   div.mt4
+    | #[strong Version 3.2.0]
+    ul
+      li Account for cursor position when dragging a splitter. (#204)
+      li Components fully rewritten with Composition API. Faster and more efficient resizing.
+  div.mt4
     | #[strong Version 3.0] For Vue 3 projects.
     highlight-message(type="warning").
       Installing the latest splitpanes on a Vue 2 project will break it.#[br]
