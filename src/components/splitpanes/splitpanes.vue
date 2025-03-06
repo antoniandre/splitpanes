@@ -9,13 +9,14 @@ const emit = defineEmits([
   'pane-maximize',
   'pane-add',
   'pane-remove',
-  'splitter-click'
+  'splitter-click',
+  'splitter-dblclick'
 ])
 
 const props = defineProps({
   horizontal: { type: Boolean },
   pushOtherPanes: { type: Boolean, default: true },
-  dblClickSplitter: { type: Boolean, default: true },
+  maximizePanes: { type: Boolean, default: true }, // Maximize pane on splitter double click/tap.
   rtl: { type: Boolean, default: false }, // Right to left direction.
   firstSplitter: { type: Boolean }
 })
@@ -89,16 +90,17 @@ const onMouseMove = event => {
     touch.value.dragging = true
     requestAnimationFrame(() => {
       calculatePanesSize(getCurrentMouseDrag(event))
-      emit('resize', panes.value.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
+      emitEvent('resize', { event }, true)
     })
   }
 }
 
-const onMouseUp = () => {
+const onMouseUp = event => {
   if (touch.value.dragging) {
-    emit('resized', panes.value.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
+    emitEvent('resized', { event }, true)
   }
   touch.value.mouseDown = false
+  touch.value.activeSplitter = null
   // Keep dragging flag until click event is finished (click happens immediately after mouseup)
   // in order to prevent emitting `splitter-click` event if splitter was dragged.
   setTimeout(() => {
@@ -112,40 +114,49 @@ const onSplitterClick = (event, splitterIndex) => {
   if ('ontouchstart' in window) {
     event.preventDefault()
 
-    // Detect splitter double taps if the option is on.
-    if (props.dblClickSplitter) {
-      if (splitterTaps.value.splitter === splitterIndex) {
-        clearTimeout(splitterTaps.value.timeoutId)
-        splitterTaps.value.timeoutId = null
-        onSplitterDblClick(event, splitterIndex)
-        splitterTaps.value.splitter = null // Reset for the next tap check.
-      }
-      else {
-        splitterTaps.value.splitter = splitterIndex
-        splitterTaps.value.timeoutId = setTimeout(() => (splitterTaps.value.splitter = null), 500)
-      }
+    // Detect splitter double taps.
+    if (splitterTaps.value.splitter === splitterIndex) {
+      clearTimeout(splitterTaps.value.timeoutId)
+      splitterTaps.value.timeoutId = null
+      onSplitterDblClick(event, splitterIndex)
+      splitterTaps.value.splitter = null // Reset for the next tap check.
+    }
+    else {
+      splitterTaps.value.splitter = splitterIndex
+      // Store the fist tap and wait for the second one.
+      splitterTaps.value.timeoutId = setTimeout(() => (splitterTaps.value.splitter = null), 500)
     }
   }
 
-  if (!touch.value.dragging) emit('splitter-click', panes.value[splitterIndex])
+  if (!touch.value.dragging) {
+    emitEvent('splitter-click', { event, index: splitterIndex }, true)
+  }
 }
 
 // On splitter dbl click or dbl tap maximize this pane.
 const onSplitterDblClick = (event, splitterIndex) => {
-  let totalMinSizes = 0
-  panes.value = panes.value.map((pane, i) => {
-    pane.size = i === splitterIndex ? pane.max : pane.min
-    if (i !== splitterIndex) totalMinSizes += pane.min
+  emitEvent('splitter-dblclick', { event, index: splitterIndex }, true)
 
-    return pane
-  })
-  panes.value[splitterIndex].size -= totalMinSizes
-  emit('pane-maximize', panes.value[splitterIndex])
-  emit('resized', panes.value.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
+  if (props.maximizePanes) {
+    let totalMinSizes = 0
+    panes.value = panes.value.map((pane, i) => {
+      pane.size = i === splitterIndex ? pane.max : pane.min
+      if (i !== splitterIndex) totalMinSizes += pane.min
+
+      return pane
+    })
+    panes.value[splitterIndex].size -= totalMinSizes
+    emitEvent('pane-maximize', { event, index: splitterIndex, pane: panes.value[splitterIndex] })
+    emitEvent('resized', { event, index: splitterIndex }, true)
+  }
 }
 
 const onPaneClick = (event, paneId) => {
-  emit('pane-click', indexedPanes.value[paneId])
+  emitEvent('pane-click', {
+    event,
+    index: indexedPanes.value[paneId].index,
+    pane: indexedPanes.value[paneId]
+  })
 }
 
 // Get the cursor position relative to the splitpanes container.
@@ -335,9 +346,7 @@ const addSplitter = (paneIndex, nextPaneNode, isVeryFirst = false) => {
     elm.onclick = event => onSplitterClick(event, splitterIndex + 1)
   }
 
-  if (props.dblClickSplitter) {
-    elm.ondblclick = event => onSplitterDblClick(event, splitterIndex + 1)
-  }
+  elm.ondblclick = event => onSplitterDblClick(event, splitterIndex + 1)
 
   nextPaneNode.parentNode.insertBefore(elm, nextPaneNode)
 }
@@ -387,11 +396,11 @@ const onPaneAdd = pane => {
       // 2. Add the splitter.
       redoSplitters()
 
-      // 3. Resize the panes.
+      // 3. Resize the panes (before pane-add so it will contain correct width).
       resetPaneSizes({ addedPane: panes.value[index] })
 
       // 4. Fire `pane-add` event.
-      emit('pane-add', { index, panes: panes.value.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })) })
+      emitEvent('pane-add', { pane: panes.value[index] })
     })
   }
 }
@@ -400,17 +409,17 @@ const onPaneRemove = uid => {
   // 1. Remove the pane from array and redo indexes.
   const index = panes.value.findIndex(p => p.id === uid)
   const removed = panes.value.splice(index, 1)[0]
-  panes.value.forEach((p, i) => (p.index = i))
+  panes.value.forEach((p, i) => (p.index = i)) // Redo indexes after removal.
 
   nextTick(() => {
     // 2. Remove the splitter.
     redoSplitters()
 
-    // 3. Resize the panes.
-    resetPaneSizes({ removedPane: { ...removed, index } })
+    // 3. Fire `pane-remove` event.
+    emitEvent('pane-remove', { pane: removed })
 
-    // 4. Fire `pane-remove` event.
-    emit('pane-remove', { removed, panes: panes.value.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })) })
+    // 4. Resize the panes.
+    resetPaneSizes({ removedPane: { ...removed, index } })
   })
 }
 
@@ -418,7 +427,7 @@ const resetPaneSizes = (changedPanes = {}) => {
   if (!changedPanes.addedPane && !changedPanes.removedPane) initialPanesSizing()
   else if (panes.value.some(pane => pane.givenSize !== null || pane.min || pane.max < 100)) equalizeAfterAddOrRemove(changedPanes)
   else equalize()
-  if (ready.value) emit('resized', panes.value.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
+  if (ready.value) emitEvent('resized')
 }
 
 const equalize = () => {
@@ -625,18 +634,25 @@ const readjustSizes = (leftToAllocate, ungrowable, unshrinkable) => {
     console.warn('Splitpanes: Could not distribute all the empty space between panes due to their constraints.')
   } *\/
 
-  emit('resized', panes.value.map(pane => ({ min: pane.min, max: pane.max, size: pane.size })))
+  emitEvent('resized', { index: touch.value.activeSplitter }, true)
 } */
+
+const emitEvent = (name, data = undefined, injectPrevAndNextPanes = false) => {
+  const index = data?.index ?? touch.value.activeSplitter ?? null
+  emit(name, {
+    ...data,
+    ...(index !== null && { index }),
+    ...(injectPrevAndNextPanes && index !== null && {
+      prevPane: panes.value[index - 1],
+      nextPane: panes.value[index]
+    }),
+    panes: panes.value.map(pane => ({ min: pane.min, max: pane.max, size: pane.size }))
+  })
+}
 
 // Watchers.
 // --------------------------------------------------------
 watch(() => props.firstSplitter, () => redoSplitters())
-watch(() => props.dblClickSplitter, enable => {
-  const splitters = [...containerEl.value.querySelectorAll('.splitpanes__splitter')]
-  splitters.forEach((splitter, i) => {
-    splitter.ondblclick = enable ? event => onSplitterDblClick(event, i) : undefined
-  })
-})
 
 // Prevent emitting console warnings on hot reloading.
 onBeforeUnmount(() => (ready.value = false))
@@ -645,7 +661,7 @@ onMounted(() => {
   checkSplitpanesNodes()
   redoSplitters()
   resetPaneSizes()
-  emit('ready')
+  emitEvent('ready')
   ready.value = true
 })
 
