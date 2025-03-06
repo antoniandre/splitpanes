@@ -956,24 +956,24 @@
       ul.mt0
         li #[strong.code event]: the native JavaScript event.
         li #[strong.code index]: the index of the resizing splitter. The counter always starts from zero but the first splitter may be hidden.
-        li #[strong.code prevPane]: the object of the previous pane (on the left if ltr, on the right if rtl, above if vertical layout) from the splitter with its dimensions and DOM element.
-        li #[strong.code nextPane]: the object of the next pane (on the right if ltr, on the left if rtl, below if vertical layout) from the splitter with its dimensions and DOM element.
+        li #[strong.code prevPane]: the object of the previous pane (on the left if ltr, on the right if rtl, above if horizontal layout) from the splitter with its dimensions and DOM element.
+        li #[strong.code nextPane]: the object of the next pane (on the right if ltr, on the left if rtl, below if horizontal layout) from the splitter with its dimensions and DOM element.
         li #[strong.code panes]: an array of all the panes objects with their dimensions.
     li
       p.mb0
         strong.code.mr2 resized
-        | Fires while resizing (on mousemove/touchmove), or also after the free space redistribution
+        | Fires after resizing (on mousemove/touchmove), or also after the free space redistribution
         | occurring after adding or removing a pane. Returns an object containing:
       ul.mt0
         li #[strong.code event]: the native JavaScript event.
         li #[strong.code index]: the index of the resizing splitter. The counter always starts from zero but the first splitter may be hidden.
-        li #[strong.code prevPane]: the object of the previous pane (on the left if ltr, on the right if rtl, above if vertical layout) from the splitter with its dimensions and DOM element.
-        li #[strong.code nextPane]: the object of the next pane (on the right if ltr, on the left if rtl, below if vertical layout) from the splitter with its dimensions and DOM element.
+        li #[strong.code prevPane]: the object of the previous pane (on the left if ltr, on the right if rtl, above if horizontal layout) from the splitter with its dimensions and DOM element.
+        li #[strong.code nextPane]: the object of the next pane (on the right if ltr, on the left if rtl, below if horizontal layout) from the splitter with its dimensions and DOM element.
         li #[strong.code panes]: an array of all the panes objects with their dimensions.
     li
       p.mb0
         strong.code.mr2 pane-click
-        | Returns the clicked pane object with its dimensions. Fired on pane click/tap.
+        | Fires on pane click/tap. Returns an object containing:
       ul.mt0
         li #[strong.code event]: the native JavaScript event.
         li #[strong.code index]: the index of the pane. The counter starts from zero.
@@ -982,7 +982,7 @@
     li
       p.mb0
         strong.code.mr2 pane-maximize
-        | Returns the maximized pane object with its dimensions. Fired on splitter double click/tap.
+        | Fires on splitter double click/tap. Returns an object containing:
       ul.mt0
         li #[strong.code event]: the native JavaScript event.
         li #[strong.code index]: the index of the pane. The counter starts from zero.
@@ -991,7 +991,7 @@
     li
       p.mb0
         strong.code.mr2 pane-add
-        | Returns an object containing the index of the added pane and the new array of panes after resize.
+        | Fires on added pane. Returns an object containing:
       ul.mt0
         li #[strong.code event]: the native JavaScript event.
         li #[strong.code pane]: the added pane object with its dimensions and DOM element.
@@ -999,10 +999,10 @@
     li
       p.mb0
         strong.code.mr2 pane-remove
-        | Returns an object containing the removed pane and an array of all the remaining panes objects with their dimensions after resize.
+        | Fires on removed pane. Returns an object containing:
       ul.mt0
         li #[strong.code event]: the native JavaScript event.
-        li #[strong.code pane]: the removed pane object with its dimensions and DOM element.
+        li #[strong.code pane]: the removed pane object with its dimensions.
         li #[strong.code panes]: an array of all the panes objects with their dimensions.
     li
       p.mb0
@@ -1012,8 +1012,8 @@
       ul.mt0
         li #[strong.code event]: the native JavaScript event.
         li #[strong.code index]: the index of the resizing splitter. The counter always starts from zero but the first splitter may be hidden.
-        li #[strong.code prevPane]: the object of the previous pane (on the left if ltr, on the right if rtl, above if vertical layout) from the splitter with its dimensions and DOM element.
-        li #[strong.code nextPane]: the object of the next pane (on the right if ltr, on the left if rtl, below if vertical layout) from the splitter with its dimensions and DOM element.
+        li #[strong.code prevPane]: the object of the previous pane (on the left if ltr, on the right if rtl, above if horizontal layout) from the splitter with its dimensions and DOM element.
+        li #[strong.code nextPane]: the object of the next pane (on the right if ltr, on the left if rtl, below if horizontal layout) from the splitter with its dimensions and DOM element.
         li #[strong.code panes]: an array of all the panes objects with their dimensions.
     li
       p.mb0
@@ -1022,29 +1022,29 @@
       ul.mt0
         li #[strong.code event]: the native JavaScript event.
         li #[strong.code index]: the index of the resizing splitter. The counter always starts from zero but the first splitter may be hidden.
-        li #[strong.code prevPane]: the object of the previous pane (on the left if ltr, on the right if rtl, above if vertical layout) from the splitter with its dimensions and DOM element.
-        li #[strong.code nextPane]: the object of the next pane (on the right if ltr, on the left if rtl, below if vertical layout) from the splitter with its dimensions and DOM element.
+        li #[strong.code prevPane]: the object of the previous pane (on the left if ltr, on the right if rtl, above if horizontal layout) from the splitter with its dimensions and DOM element.
+        li #[strong.code nextPane]: the object of the next pane (on the right if ltr, on the left if rtl, below if horizontal layout) from the splitter with its dimensions and DOM element.
         li #[strong.code panes]: an array of all the panes objects with their dimensions.
 
   h2.mt12.pt12.mb2(id="release-notes")
     a(href="#release-notes") Release Notes
 
-  .mt4
-    strong Version 4.0.0
-    ul
-      li Emit #[code splitter-dblclick] on splitter dblclick event. (#120, #181, 182, #183)
-      li Renamed dblClickSplitter to maximizePanes, and still on by default on splitter double click.
+  .mt6
+    strong.title2 Version 4.0.0
+    ul.mt1
+      li Emit #[code splitter-dblclick] on splitter dblclick event. (#120, #181, #182, #183)
+      li Renamed #[code dblClickSplitter] to #[code maximizePanes], and still on by default on splitter double click.
       li.
         Refactored all the emitted events to always return a single object containing as much information
         as possible. E.g. event, index, pane, prevPane, nextPane, panes.
 
   .mt4
     strong Version 3.2.0
-    ul
+    ul.mt1
       li Account for cursor position when dragging a splitter. (#204)
       li Components fully rewritten with Composition API. Faster and more efficient resizing.
-  .mt4
-    | #[strong Version 3.0] For Vue 3 projects.
+  .mt6
+    | #[strong.title2.mr2 Version 3.0.0] For Vue 3 projects.
     highlight-message(type="warning").
       Installing the latest splitpanes on a Vue 2 project will break it.#[br]
       For Vue 2, you need to install splitpanes from the #[span.code legacy] tag: #[code npm i splitpanes@legacy].#[br]
@@ -1061,8 +1061,8 @@
       li Emit a #[span.code `pane-remove`] event after pane was removed
       li Support #[span.code `v-if`] on a Pane and allow inserting a Pane at any position between others. ref: #[a(href="#toggle-a-pane-with-v-if") Toggle a pane with v-if]
 
-  .mt4
-    | #[strong Version 2.0.0] Fix reactivity issues.
+  .mt6
+    | #[strong.title2.mr2 Version 2.0.0] Fix reactivity issues.
     highlight-message(type="success")
       ul.mt1
         li
