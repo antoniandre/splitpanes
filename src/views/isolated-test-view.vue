@@ -1,29 +1,20 @@
 <template lang="pug">
-//- This is an isolated test view. Just for testing purpose.
-div
-  w-button.mr2(@click="toggleHorizontal") Horizontal
-  w-button(@click="hidePane2 = !hidePane2") toggle pane 2
-  splitpanes.default-theme(:horizontal="horizontal" style="height: 400px")
-    pane(size="85") 1
-    pane(size="5" v-if="!hidePane2") 2
-    pane(size="10") 3
+splitpanes.default-theme(horizontal style="height: 500px")
+  pane.w-flex.align-center.justify-center(v-for="pane in panes" :size="pane.size")
+    | {{ pane.content }}
+
+w-button.ma3(@click="panes.reverse()") Reverse panes order
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { reactive } from 'vue'
 import { Splitpanes, Pane } from '@/components/splitpanes/index'
 
-const horizontal = ref(true)
-const hidePane2 = ref(false)
-const panesNumber = 3
-
-const togglePane2 = () => {
-  hidePane2.value = !hidePane2.value
-}
-
-const toggleHorizontal = () => {
-  horizontal.value = !horizontal.value
-}
+const panes = reactive([
+  { content: 'Pane 1 content.', size: 30 },
+  { content: 'Pane 2 content.', size: 15 },
+  { content: 'Pane 3 content.', size: 25 }
+])
 </script>
 
 <style lang="scss">
