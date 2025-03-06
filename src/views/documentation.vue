@@ -205,8 +205,8 @@
   //- Example.
   h3.mt10.mb2(id="horizontal-layout")
     a(href="#horizontal-layout") Horizontal layout, push other panes, min &amp; max use
-  p You can also double click a splitter to maximize the next pane! (First pane splitter will be an option soon)
-  p If you want to disable the 'double click splitter to maximize' behavior, you can add this attribute: #[span.code :dbl-click-splitter="false"].
+  p By default, you can also double click a splitter to maximize the next pane (displaying the first pane splitter is an option).
+  p But if you want to disable this feature, you can set: #[span.code :maximize-panes="false"].
   splitpanes.default-theme.example(horizontal style="height: 400px")
     pane(min-size="20", max-size="70")
       span 1#[br]#[em.specs I have a min height of 20% &amp; max height of 70%]
@@ -229,8 +229,8 @@
     &lt;/splitpanes&gt;
 
   //- Example.
-  h3.mt12.pt8.mb2(id="default-pane-width")
-    a(href="#default-pane-width") Default pane width or height
+  h3.mt12.pt8.mb2(id="ex--default-pane-width")
+    a(href="#ex--default-pane-width") Default pane width or height
   p
     | Provide dimension of your panes when they first load (will be used for the width or height respectively for the vertical or horizontal layout).#[br]
     strong.
@@ -260,8 +260,8 @@
     &lt;/splitpanes&gt;
 
   //- Example.
-  h3.mt12.pt8.mb2(id="nested-splitpanes")
-    a(href="#nested-splitpanes") Mix layout with nested splitpanes &amp; prevent pushing other panes
+  h3.mt12.pt8.mb2(id="ex--nested-splitpanes")
+    a(href="#ex--nested-splitpanes") Mix layout with nested splitpanes &amp; prevent pushing other panes
   p
     a(href="https://codepen.io/antoniandre/pen/PypgKY" target="_blank")
       | Try it yourself on Codepen
@@ -304,8 +304,8 @@
     &lt;/splitpanes&gt;
 
   //- Example.
-  h3.mt12.pt8.mb2(id="lots-of-splitters")
-    a(href="#lots-of-splitters") Lots of splitters &amp; push other panes - all the panes have a min width of 5%
+  h3.mt12.pt8.mb2(id="ex--lots-of-splitters")
+    a(href="#ex--lots-of-splitters") Lots of splitters &amp; push other panes - all the panes have a min width of 5%
   splitpanes.default-theme.example(style="height: 400px")
     pane(v-for="i in 8" :key="i" :min-size="5")
       span {{ i }}
@@ -318,8 +318,8 @@
     &lt;/splitpanes&gt;
 
   //- Example.
-  h3.mt12.pt8.mb2(id="adding-splitters-on-the-fly")
-    a(href="#adding-splitters-on-the-fly") Adding splitters on the fly
+  h3.mt12.pt8.mb2(id="ex--adding-splitters-on-the-fly")
+    a(href="#ex--adding-splitters-on-the-fly") Adding splitters on the fly
   p
     | This example shows the reactivity when you add a new element dynamically in splitpanes.
     w-button.ml2(@click="panesNumber++")
@@ -369,8 +369,8 @@
         }
 
   //- Example.
-  h3.mt12.pt8.mb2(id="change-direction")
-    a(href="#change-direction") Change direction &amp; first splitter
+  h3.mt12.pt8.mb2(id="ex--change-direction")
+    a(href="#ex--change-direction") Change direction &amp; first splitter
   p When changing direction, all the panes current width or height will flip to adapt to the new layout.
   p.
     Showing the first splitter is an option which allows user to double click the splitter to maximize the next pane.#[br]
@@ -427,8 +427,8 @@
         }
 
   //- Example.
-  h3.mt12.pt8.mb2(id="programmatic-resizing")
-    a(href="#programmatic-resizing") Programmatic resizing
+  h3.mt12.pt8.mb2(id="ex--programmatic-resizing")
+    a(href="#ex--programmatic-resizing") Programmatic resizing
   p.mb6 This example shows the programmatic way of resizing panes and how it works both ways.
   p.mt0.mb6.
     In this example, the default transition on the .splitpanes__pane element is removed
@@ -485,8 +485,8 @@
         }
 
   //- Example.
-  h3.mt12.pt8.mb2(id="in-depth-reactivity")
-    a(href="#in-depth-reactivity") In-depth reactivity
+  h3.mt12.pt8.mb2(id="ex--in-depth-reactivity")
+    a(href="#ex--in-depth-reactivity") In-depth reactivity
   p
     | This example shows the reactivity when you modify anything in your component inside splitpanes.#[br]
     w-button.mt2.mr2(@click="generateRandomNumber")
@@ -584,8 +584,8 @@
         }
 
   //- Example.
-  h3.mt12.pt8.mb2(id="toggle-a-pane-with-v-if")
-    a(href="#toggle-a-pane-with-v-if") Toggle a pane with #[span.code v-if]
+  h3.mt12.pt8.mb2(id="ex--toggle-a-pane-with-v-if")
+    a(href="#ex--toggle-a-pane-with-v-if") Toggle a pane with #[span.code v-if]
 
   w-button.mb2(@click="hidePane2 = !hidePane2")
     w-icon.mr2 mdi mdi-{{ hidePane2 ? 'eye' : 'eye-off' }}
@@ -613,8 +613,8 @@
     &lt;/splitpanes&gt;
 
   //- Example.
-  h3.mt12.pt8.mb2(id="resizable-drawer")
-    a(href="#resizable-drawer") Resizable Drawer
+  h3.mt12.pt8.mb2(id="ex--resizable-drawer")
+    a(href="#ex--resizable-drawer") Resizable Drawer
 
   p.
     Sometimes, you need a resizable drawer that goes on top of your app.#[br]
@@ -663,8 +663,8 @@
     }
 
   //- Example.
-  h3.mt12.pt8.mb2(id="vue-router")
-    a(href="#vue-router") Vue Router inside splitpanes
+  h3.mt12.pt8.mb2(id="ex--vue-router")
+    a(href="#ex--vue-router") Vue Router inside splitpanes
   p.mb1.
     This is another reactivity example of a rather common case: Vue Router inside splitpanes.#[br]
     The navigation is in the left pane, but you can also access from outside of splitpanes, through those buttons:
@@ -729,22 +729,22 @@
     &lt;/template&gt;
 
   //- Example.
-  h3.mt12.pt8.mb2(id="emitted-events")
-    a(href="#emitted-events") Listening to emitted events
-  p Here is the list of events that are emitted from splitpanes:
-  ul
-    li #[code.mr2 ready] has no parameter and fires when splitpanes is ready
-    li #[code.mr2 resize] returns an array of all the panes objects with their dimensions, and fires while resizing (on mousemove/touchmove)
-    li.
-      #[code.mr2 resized] returns an array of all the panes objects with their dimensions, and fires once when the resizing stops after user drag (on mouseup/touchend).#[br]
-      This event is also fired after the internal resizing of panes that occurs after adding or removing a pane.
-    li #[code.mr2 pane-click] returns the clicked pane object with its dimensions.
-    li #[code.mr2 pane-maximize] returns the maximized pane object with its dimensions.
-    li #[code.mr2 pane-add] returns an object containing the index of the added pane and the new array of panes after resize.
-    li #[code.mr2 pane-remove] returns an object containing the removed pane and an array of all the remaining panes objects with their dimensions after resize.
-    li.
-      #[code.mr2 splitter-click] returns the next pane object (with its dimensions) directly after the clicked splitter.#[br]
-      This event is only emitted if dragging did not occur between mousedown and mouseup.
+  h3.mt12.pt8.mb2(id="ex--emitted-events")
+    a(href="#ex--emitted-events") Listening to emitted events
+
+  p.mb2.
+    Splitpanes fires several events that you can listen to. Here's a quick list, but you can also
+    check the #[a(href="#emitted-events") Emitted Events section] for more details.
+  ul.mt0
+    li #[code ready]: When the component is ready.
+    li #[code resize]: When a pane is being resized.
+    li #[code resized]: When a pane has been resized.
+    li #[code pane-click]: When a pane is clicked.
+    li #[code pane-maximize]: When a pane is maximized.
+    li #[code pane-add]: When a pane is added.
+    li #[code pane-remove]: When a pane is removed.
+    li #[code splitter-click]: When a splitter is clicked.
+    li #[code splitter-dblclick]: When a splitter is double clicked.
   p.mt4 Try resizing panes and check the logs bellow.
 
   splitpanes.default-theme.example(
@@ -754,6 +754,7 @@
     @pane-click="log('pane-click', $event)"
     @ready="log('ready', $event)"
     @splitter-click="log('splitter-click', $event)"
+    @splitter-dblclick="log('splitter-dblclick', $event)"
     style="height: 400px")
     pane(v-for="i in 3" :key="i" :min-size="10")
       span {{ i }}
@@ -783,8 +784,8 @@
     &lt;/splitpanes&gt;
 
   //- Example.
-  h3.mt12.pt8.mb2(id="increased-touch-zone")
-    a(href="#increased-touch-zone") Increased reactive touch zone for touch devices
+  h3.mt12.pt8.mb2(id="ex--increased-touch-zone")
+    a(href="#ex--increased-touch-zone") Increased reactive touch zone for touch devices
   p
     a(href="https://codepen.io/antoniandre/pen/XxRZmB" target="_blank")
       | Try it yourself on Codepen
@@ -844,8 +845,8 @@
     .splitpanes--horizontal &gt; .splitpanes__splitter:before {top: -30px;bottom: -30px;width: 100%;}
 
   //- Example.
-  h3.mt12.pt8.mb2(id="do-your-own-style")
-    a(href="#do-your-own-style") Do your own style
+  h3.mt12.pt8.mb2(id="ex--do-your-own-style")
+    a(href="#ex--do-your-own-style") Do your own style
   p If you don't want to use the default style, here is how to do your own.
   p
     a(href="https://codepen.io/antoniandre/pen/mzGZXR" target="_blank")
@@ -906,6 +907,7 @@
       background: linear-gradient(0deg, #ccc, #111);
     }
 
+  //- API section.
   h2.mt12.pt12.mb2(id="api")
     a(href="#api") API
 
@@ -934,15 +936,114 @@
       span.code.ml2 Default: false
       p Displays the first splitter when set to true. This allows maximizing the first pane on splitter double click.
 
+  //- Emitted events section.
+  h2.mt12.pt12(id="emitted-events")
+    a(href="#emitted-events") Emitted Events
+  p.
+    Here is the list of events that are emitted from splitpanes along with their parameters.#[br]
+    View them in action in the #[a(href="#ex--emitted-events") Listening to emitted events] example.
+  ul
+    li
+      p.mb0
+        strong.code.mr2 ready
+        | Fires when splitpanes is ready. Returns an object containing:
+      ul.mt0
+        li #[strong.code panes]: an array of all the panes objects with their dimensions.
+    li
+      p.mb0
+        strong.code.mr2 resize
+        | Fires while resizing (on mousemove/touchmove). Returns an object containing:
+      ul.mt0
+        li #[strong.code event]: the native JavaScript event.
+        li #[strong.code index]: the index of the resizing splitter. The counter always starts from zero but the first splitter may be hidden.
+        li #[strong.code prevPane]: the object of the previous pane (on the left if ltr, on the right if rtl, above if vertical layout) from the splitter with its dimensions and DOM element.
+        li #[strong.code nextPane]: the object of the next pane (on the right if ltr, on the left if rtl, below if vertical layout) from the splitter with its dimensions and DOM element.
+        li #[strong.code panes]: an array of all the panes objects with their dimensions.
+    li
+      p.mb0
+        strong.code.mr2 resized
+        | Fires while resizing (on mousemove/touchmove), or also after the free space redistribution
+        | occurring after adding or removing a pane. Returns an object containing:
+      ul.mt0
+        li #[strong.code event]: the native JavaScript event.
+        li #[strong.code index]: the index of the resizing splitter. The counter always starts from zero but the first splitter may be hidden.
+        li #[strong.code prevPane]: the object of the previous pane (on the left if ltr, on the right if rtl, above if vertical layout) from the splitter with its dimensions and DOM element.
+        li #[strong.code nextPane]: the object of the next pane (on the right if ltr, on the left if rtl, below if vertical layout) from the splitter with its dimensions and DOM element.
+        li #[strong.code panes]: an array of all the panes objects with their dimensions.
+    li
+      p.mb0
+        strong.code.mr2 pane-click
+        | Returns the clicked pane object with its dimensions. Fired on pane click/tap.
+      ul.mt0
+        li #[strong.code event]: the native JavaScript event.
+        li #[strong.code index]: the index of the pane. The counter starts from zero.
+        li #[strong.code pane]: the clicked pane object with its dimensions and DOM element.
+        li #[strong.code panes]: an array of all the panes objects with their dimensions.
+    li
+      p.mb0
+        strong.code.mr2 pane-maximize
+        | Returns the maximized pane object with its dimensions. Fired on splitter double click/tap.
+      ul.mt0
+        li #[strong.code event]: the native JavaScript event.
+        li #[strong.code index]: the index of the pane. The counter starts from zero.
+        li #[strong.code pane]: the maximized pane object with its dimensions and DOM element.
+        li #[strong.code panes]: an array of all the panes objects with their dimensions.
+    li
+      p.mb0
+        strong.code.mr2 pane-add
+        | Returns an object containing the index of the added pane and the new array of panes after resize.
+      ul.mt0
+        li #[strong.code event]: the native JavaScript event.
+        li #[strong.code pane]: the added pane object with its dimensions and DOM element.
+        li #[strong.code panes]: an array of all the panes objects with their dimensions.
+    li
+      p.mb0
+        strong.code.mr2 pane-remove
+        | Returns an object containing the removed pane and an array of all the remaining panes objects with their dimensions after resize.
+      ul.mt0
+        li #[strong.code event]: the native JavaScript event.
+        li #[strong.code pane]: the removed pane object with its dimensions and DOM element.
+        li #[strong.code panes]: an array of all the panes objects with their dimensions.
+    li
+      p.mb0
+        strong.code.mr2 splitter-click
+        | Returns the next pane object (with its dimensions) directly after the clicked splitter.#[br]
+        | This event is only emitted if dragging did not occur between mousedown and mouseup.
+      ul.mt0
+        li #[strong.code event]: the native JavaScript event.
+        li #[strong.code index]: the index of the resizing splitter. The counter always starts from zero but the first splitter may be hidden.
+        li #[strong.code prevPane]: the object of the previous pane (on the left if ltr, on the right if rtl, above if vertical layout) from the splitter with its dimensions and DOM element.
+        li #[strong.code nextPane]: the object of the next pane (on the right if ltr, on the left if rtl, below if vertical layout) from the splitter with its dimensions and DOM element.
+        li #[strong.code panes]: an array of all the panes objects with their dimensions.
+    li
+      p.mb0
+        strong.code.mr2 splitter-dblclick
+        | Fires when the user double clicks a splitter and returns the an object containing
+      ul.mt0
+        li #[strong.code event]: the native JavaScript event.
+        li #[strong.code index]: the index of the resizing splitter. The counter always starts from zero but the first splitter may be hidden.
+        li #[strong.code prevPane]: the object of the previous pane (on the left if ltr, on the right if rtl, above if vertical layout) from the splitter with its dimensions and DOM element.
+        li #[strong.code nextPane]: the object of the next pane (on the right if ltr, on the left if rtl, below if vertical layout) from the splitter with its dimensions and DOM element.
+        li #[strong.code panes]: an array of all the panes objects with their dimensions.
+
   h2.mt12.pt12.mb2(id="release-notes")
     a(href="#release-notes") Release Notes
 
-  div.mt4
-    | #[strong Version 3.2.0]
+  .mt4
+    strong Version 4.0.0
+    ul
+      li Emit #[code splitter-dblclick] on splitter dblclick event. (#120, #181, 182, #183)
+      li Renamed dblClickSplitter to maximizePanes, and still on by default on splitter double click.
+      li.
+        Refactored all the emitted events to always return a single object containing as much information
+        as possible. E.g. event, index, pane, prevPane, nextPane, panes.
+
+  .mt4
+    strong Version 3.2.0
     ul
       li Account for cursor position when dragging a splitter. (#204)
       li Components fully rewritten with Composition API. Faster and more efficient resizing.
-  div.mt4
+  .mt4
     | #[strong Version 3.0] For Vue 3 projects.
     highlight-message(type="warning").
       Installing the latest splitpanes on a Vue 2 project will break it.#[br]
@@ -960,7 +1061,7 @@
       li Emit a #[span.code `pane-remove`] event after pane was removed
       li Support #[span.code `v-if`] on a Pane and allow inserting a Pane at any position between others. ref: #[a(href="#toggle-a-pane-with-v-if") Toggle a pane with v-if]
 
-  div.mt4
+  .mt4
     | #[strong Version 2.0.0] Fix reactivity issues.
     highlight-message(type="success")
       ul.mt1
