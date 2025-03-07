@@ -482,7 +482,7 @@ const equalizeAfterAddOrRemove = ({ addedPane, removedPane } = {}) => {
   const unshrinkable = []
 
   if ((addedPane?.givenSize ?? null) !== null) {
-    equalSpace = (100 - addedPane.givenSize) / (panesCount.value - 1).value
+    equalSpace = (100 - addedPane.givenSize) / (panesCount.value - 1)
   }
 
   // Check if pre-allocated space is 100%.
