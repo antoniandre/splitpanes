@@ -145,13 +145,11 @@
     template(#item-title.1) Composition API
     template(#item-content.1)
       ssh-pre.ma0.bd0(language="js").
-        // In your Vue component.
         import { Splitpanes, Pane } from 'splitpanes'
         import 'splitpanes/dist/splitpanes.css'
     template(#item-title.2) Options API
     template(#item-content.2)
       ssh-pre.ma0.bd0(language="js").
-        // In your Vue component.
         import { Splitpanes, Pane } from 'splitpanes'
         import 'splitpanes/dist/splitpanes.css'
 
@@ -347,7 +345,6 @@
     template(#item-title.1) Composition API
     template(#item-content.1)
       ssh-pre.ma0.bd0(language="js").
-        // In your Vue component.
         import { ref } from 'vue'
         import { Splitpanes, Pane } from 'splitpanes'
         import 'splitpanes/dist/splitpanes.css'
@@ -356,7 +353,6 @@
     template(#item-title.2) Options API
     template(#item-content.2)
       ssh-pre.ma0.bd0(language="js").
-        // In your Vue component.
         import { Splitpanes, Pane } from 'splitpanes'
         import 'splitpanes/dist/splitpanes.css'
 
@@ -403,7 +399,6 @@
     template(#item-title.1) Composition API
     template(#item-content.1)
       ssh-pre.ma0.bd0(language="js").
-        // In your Vue component.
         import { ref } from 'vue'
         import { Splitpanes, Pane } from 'splitpanes'
         import 'splitpanes/dist/splitpanes.css'
@@ -413,7 +408,6 @@
     template(#item-title.2) Options API
     template(#item-content.2)
       ssh-pre.ma0.bd0(language="js").
-        // In your Vue component.
         import { Splitpanes, Pane } from 'splitpanes'
         import 'splitpanes/dist/splitpanes.css'
 
@@ -442,7 +436,9 @@
     thumb-size="25"
     :min="0"
     :max="100")
-  splitpanes.default-theme.example.example--programmatic-resizing(@resize="paneSize = $event[0].size" style="height: 400px")
+  splitpanes.default-theme.example.example--programmatic-resizing(
+    @resize="({ prevPane }) => paneSize = prevPane.size"
+    style="height: 400px")
     pane(:size="paneSize")
       span {{ ~~(paneSize * 100) / 100 }}%
     pane(:size="100 - paneSize")
@@ -450,7 +446,10 @@
 
   ssh-pre(language="html-vue" label="HTML").
     &lt;w-slider v-model="paneSize" label="First pane size" :min="0" :max="100"&gt;
-    &lt;splitpanes class="default-theme" @resize="paneSize = $event[0].size" style="height: 400px"&gt;
+    &lt;splitpanes
+      class="default-theme"
+      @resize="({ prevPane }) => paneSize = prevPane.size"
+      style="height: 400px"&gt;
       &lt;pane :size="paneSize"&gt;
         &lt;span&gt;{{ '\{\{ paneSize \}\}' }}%&lt;/span&gt;
       &lt;/pane&gt;
@@ -463,7 +462,6 @@
     template(#item-title.1) Composition API
     template(#item-content.1)
       ssh-pre.ma0.bd0(language="js").
-        // In your Vue component.
         import { ref } from 'vue'
         import { Splitpanes, Pane } from 'splitpanes'
         import 'splitpanes/dist/splitpanes.css'
@@ -472,7 +470,6 @@
     template(#item-title.2) Options API
     template(#item-content.2)
       ssh-pre.ma0.bd0(language="js").
-        // In your Vue component.
         import { Splitpanes, Pane } from 'splitpanes'
         import 'splitpanes/dist/splitpanes.css'
 
@@ -482,6 +479,72 @@
             paneSize: 50
           }),
           ...
+        }
+
+  //- Example.
+  h3.mt12.pt8.mb2(id="ex--persistent-size")
+    a(href="#ex--persistent-size") Persistent size after page reload
+  p This example shows how to maintain and restore the size of the panes after a page reload.
+  w-button.mb2(@click="reloadPage")
+
+    w-icon.mr1 mdi mdi-refresh
+    | Reload the page
+  splitpanes.default-theme.example.example--persistent-size(
+    @resize="({ prevPane }) => persistentPaneSize = prevPane.size"
+    @resized="storePaneSize"
+    style="height: 400px")
+    pane(:size="persistentPaneSize")
+      span {{ ~~(persistentPaneSize * 100) / 100 }}%
+    pane(:size="100 - persistentPaneSize")
+      span {{ ~~((100 - persistentPaneSize) * 100) / 100 }}%
+
+  ssh-pre(language="html-vue" label="HTML").
+    &lt;w-slider v-model="paneSize" label="First pane size" :min="0" :max="100"&gt;
+    &lt;splitpanes
+      class="default-theme"
+      @resized="storePaneSize"
+      style="height: 400px"&gt;
+      &lt;pane :size="paneSize"&gt;
+        &lt;span&gt;{{ '\{\{ paneSize \}\}' }}%&lt;/span&gt;
+      &lt;/pane&gt;
+      &lt;pane :size="100 - paneSize"&gt;
+        &lt;span&gt;{{ '\{\{ 100 - paneSize \}\}' }}%&lt;/span&gt;
+      &lt;/pane&gt;
+    &lt;/splitpanes&gt;
+
+  w-tabs(:items="2" content-class="pa0")
+    template(#item-title.1) Composition API
+    template(#item-content.1)
+      ssh-pre.ma0.bd0(language="js").
+        import { ref } from 'vue'
+        import { Splitpanes, Pane } from 'splitpanes'
+        import 'splitpanes/dist/splitpanes.css'
+
+        const paneSize = ref(localStorage.paneSize ?? 30) // Read from persistent localStorage.
+        const storePaneSize = ({ prevPane }) => {
+          localStorage.paneSize = prevPane.size // Store in persistent localStorage.
+        }
+
+        const reloadPage = () => window.location.reload() // Button action to reload the page.
+
+    template(#item-title.2) Options API
+    template(#item-content.2)
+      ssh-pre.ma0.bd0(language="js").
+        import { Splitpanes, Pane } from 'splitpanes'
+        import 'splitpanes/dist/splitpanes.css'
+
+        export default {
+          components: { Splitpanes, Pane },
+          data: () =&gt; ({
+            paneSize: localStorage.paneSize ?? 30, // Read from persistent localStorage.
+          }),
+          methods: {
+            storePaneSize: ({ prevPane }) => {
+              localStorage.paneSize = prevPane.size // Store in persistent localStorage.
+            },
+
+            reloadPage: () => window.location.reload() // Button action to reload the page.
+          }
         }
 
   //- Example.
@@ -544,7 +607,6 @@
     template(#item-title.1) Composition API
     template(#item-content.1)
       ssh-pre.ma0.bd0(language="js").
-        // In your Vue component.
         import { ref } from 'vue'
         import { Splitpanes, Pane } from 'splitpanes'
         import 'splitpanes/dist/splitpanes.css'
@@ -566,7 +628,6 @@
     template(#item-title.2) Options API
     template(#item-content.2)
       ssh-pre.ma0.bd0(language="js").
-        // In your Vue component.
         data: () => ({
           randomNums: { 1: 0, 2: 0, 3: 0 }
         }),
@@ -955,7 +1016,7 @@
         | Fires while resizing (on mousemove/touchmove). Returns an object containing:
       ul.mt0
         li #[strong.code event]: the native JavaScript event.
-        li #[strong.code index]: the index of the resizing splitter. The counter always starts from zero but the first splitter may be hidden.
+        li #[strong.code index]: the index of the resizing splitter. The counter always starts from zero.
         li #[strong.code prevPane]: the object of the previous pane (on the left if ltr, on the right if rtl, above if horizontal layout) from the splitter with its dimensions and DOM element.
         li #[strong.code nextPane]: the object of the next pane (on the right if ltr, on the left if rtl, below if horizontal layout) from the splitter with its dimensions and DOM element.
         li #[strong.code panes]: an array of all the panes objects with their dimensions.
@@ -966,7 +1027,7 @@
         | occurring after adding or removing a pane. Returns an object containing:
       ul.mt0
         li #[strong.code event]: the native JavaScript event.
-        li #[strong.code index]: the index of the resizing splitter. The counter always starts from zero but the first splitter may be hidden.
+        li #[strong.code index]: the index of the resizing splitter. The counter always starts from zero.
         li #[strong.code prevPane]: the object of the previous pane (on the left if ltr, on the right if rtl, above if horizontal layout) from the splitter with its dimensions and DOM element.
         li #[strong.code nextPane]: the object of the next pane (on the right if ltr, on the left if rtl, below if horizontal layout) from the splitter with its dimensions and DOM element.
         li #[strong.code panes]: an array of all the panes objects with their dimensions.
@@ -1011,7 +1072,7 @@
         | This event is only emitted if dragging did not occur between mousedown and mouseup.
       ul.mt0
         li #[strong.code event]: the native JavaScript event.
-        li #[strong.code index]: the index of the resizing splitter. The counter always starts from zero but the first splitter may be hidden.
+        li #[strong.code index]: the index of the resizing splitter. The counter always starts from zero.
         li #[strong.code prevPane]: the object of the previous pane (on the left if ltr, on the right if rtl, above if horizontal layout) from the splitter with its dimensions and DOM element.
         li #[strong.code nextPane]: the object of the next pane (on the right if ltr, on the left if rtl, below if horizontal layout) from the splitter with its dimensions and DOM element.
         li #[strong.code panes]: an array of all the panes objects with their dimensions.
@@ -1021,7 +1082,7 @@
         | Fires when the user double clicks a splitter and returns the an object containing
       ul.mt0
         li #[strong.code event]: the native JavaScript event.
-        li #[strong.code index]: the index of the resizing splitter. The counter always starts from zero but the first splitter may be hidden.
+        li #[strong.code index]: the index of the resizing splitter. The counter always starts from zero.
         li #[strong.code prevPane]: the object of the previous pane (on the left if ltr, on the right if rtl, above if horizontal layout) from the splitter with its dimensions and DOM element.
         li #[strong.code nextPane]: the object of the next pane (on the right if ltr, on the left if rtl, below if horizontal layout) from the splitter with its dimensions and DOM element.
         li #[strong.code panes]: an array of all the panes objects with their dimensions.
@@ -1109,6 +1170,7 @@ const panesNumber = ref(3)
 const logs = ref([])
 const randomNums = ref({ 1: 0, 2: 0, 3: 0 })
 const paneSize = ref(50)
+const persistentPaneSize = ref(localStorage.paneSize ?? 30)
 const hidePane2 = ref(false)
 const horizontal = ref(false)
 const firstSplitter = ref(false)
@@ -1135,6 +1197,12 @@ const generateRandomNumber = () => {
 const incrementNumber = (i) => {
   randomNums.value[i]++
 }
+
+const storePaneSize = ({ prevPane }) => {
+  localStorage.paneSize = prevPane.size
+}
+
+const reloadPage = () => window.location.reload()
 </script>
 
 <style lang="scss">
