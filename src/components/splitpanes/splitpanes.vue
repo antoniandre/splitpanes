@@ -644,8 +644,8 @@ const emitEvent = (name, data = undefined, injectPrevAndNextPanes = false) => {
     ...data,
     ...(index !== null && { index }),
     ...(injectPrevAndNextPanes && index !== null && {
-      prevPane: panes.value[index - 1],
-      nextPane: panes.value[index]
+      prevPane: panes.value[index - (props.firstSplitter ? 1 : 0)],
+      nextPane: panes.value[index + (props.firstSplitter ? 0 : 1)]
     }),
     panes: panes.value.map(pane => ({ min: pane.min, max: pane.max, size: pane.size }))
   })
