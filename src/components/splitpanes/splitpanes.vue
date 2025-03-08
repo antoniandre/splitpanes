@@ -408,6 +408,7 @@ const onPaneAdd = pane => {
 const onPaneRemove = uid => {
   // 1. Remove the pane from array and redo indexes.
   const index = panes.value.findIndex(p => p.id === uid)
+  panes.value[index].el = null // Prevent memory leaks.
   const removed = panes.value.splice(index, 1)[0]
   panes.value.forEach((p, i) => (p.index = i)) // Redo indexes after removal.
 
@@ -654,9 +655,6 @@ const emitEvent = (name, data = undefined, injectPrevAndNextPanes = false) => {
 // --------------------------------------------------------
 watch(() => props.firstSplitter, () => redoSplitters())
 
-// Prevent emitting console warnings on hot reloading.
-onBeforeUnmount(() => (ready.value = false))
-
 onMounted(() => {
   checkSplitpanesNodes()
   redoSplitters()
@@ -664,6 +662,9 @@ onMounted(() => {
   emitEvent('ready')
   ready.value = true
 })
+
+// Prevent emitting console warnings on hot reloading.
+onBeforeUnmount(() => (ready.value = false))
 
 const render = () => {
   return h(

@@ -43,6 +43,10 @@ const maxSizeNumber = computed(() => {
 })
 const styles = computed(() => `${horizontal.value ? 'height' : 'width'}: ${pane.value?.size}%`)
 
+watch(() => sizeNumber.value, size => requestUpdate({ uid, size }))
+watch(() => minSizeNumber.value, min => requestUpdate({ uid, min }))
+watch(() => maxSizeNumber.value, max => requestUpdate({ uid, max }))
+
 onMounted(() => {
   onPaneAdd({
     id: uid,
@@ -54,10 +58,6 @@ onMounted(() => {
     size: sizeNumber.value // The computed current size at any time.
   })
 })
-
-watch(() => sizeNumber.value, size => requestUpdate({ uid, size }))
-watch(() => minSizeNumber.value, min => requestUpdate({ uid, min }))
-watch(() => maxSizeNumber.value, max => requestUpdate({ uid, max }))
 
 onBeforeUnmount(() => onPaneRemove(uid))
 </script>
