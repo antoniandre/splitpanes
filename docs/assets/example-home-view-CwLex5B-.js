@@ -1,1 +1,0 @@
-import{c as t,a as s,o}from"./index-vofUTGVT.js";import{_ as r}from"./_plugin-vue_export-helper-DlAUqK2U.js";const n={class:"green-light5--bg w-flex align-center justify-center"};function a(i,e){return o(),t("div",n,e[0]||(e[0]=[s("div",{class:"title1"},"This is home",-1)]))}const c={},f=r(c,[["render",a]]);export{f as default};
