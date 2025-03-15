@@ -695,7 +695,10 @@ provide('onPaneClick', onPaneClick)
 
   &--vertical {flex-direction: row;}
   &--horizontal {flex-direction: column;}
-  &--dragging * {user-select: none;}
+  &--dragging .splitpanes__pane {
+    user-select: none;
+    pointer-events: none;
+  }
 
   &__pane {
     width: 100%;
@@ -738,11 +741,6 @@ provide('onPaneClick', onPaneClick)
 }
 
 .default-theme {
-  .splitpanes--dragging {
-    user-select: none;
-    pointer-events: none;
-  }
-
   &.splitpanes .splitpanes .splitpanes__splitter {z-index: 1;}
   &.splitpanes--vertical > .splitpanes__splitter,
   .splitpanes--vertical > .splitpanes__splitter {
