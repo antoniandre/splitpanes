@@ -14,11 +14,11 @@ const emit = defineEmits([
 ])
 
 const props = defineProps({
-  horizontal: { type: Boolean },
+  horizontal: { type: Boolean, default: false },
   pushOtherPanes: { type: Boolean, default: true },
   maximizePanes: { type: Boolean, default: true }, // Maximize pane on splitter double click/tap.
   rtl: { type: Boolean, default: false }, // Right to left direction.
-  firstSplitter: { type: Boolean }
+  firstSplitter: { type: Boolean, default: false }
 })
 
 const slots = useSlots()
@@ -320,7 +320,7 @@ const findNextExpandedPane = splitterIndex => {
 
 const checkSplitpanesNodes = () => {
   const children = Array.from(containerEl.value?.children || [])
-  children.forEach(child => {
+  for (const child of children) {
     const isPane = child.classList.contains('splitpanes__pane')
     const isSplitter = child.classList.contains('splitpanes__splitter')
 
@@ -329,7 +329,7 @@ const checkSplitpanesNodes = () => {
       child.remove()
       console.warn('Splitpanes: Only <pane> elements are allowed at the root of <splitpanes>. One of your DOM nodes was removed.')
     }
-  })
+  }
 }
 
 const addSplitter = (paneIndex, nextPaneNode, isVeryFirst = false) => {
@@ -360,23 +360,23 @@ const removeSplitter = node => {
 
 const redoSplitters = () => {
   const children = Array.from(containerEl.value?.children || [])
-  children.forEach(el => {
+  for (const el of children) {
     if (el.className.includes('splitpanes__splitter')) removeSplitter(el)
-  })
+  }
   let paneIndex = 0
-  children.forEach(el => {
+  for (const el of children) {
     if (el.className.includes('splitpanes__pane')) {
       if (!paneIndex && props.firstSplitter) addSplitter(paneIndex, el, true)
       else if (paneIndex) addSplitter(paneIndex, el)
       paneIndex++
     }
-  })
+  }
 }
 
 // Called by Pane component on programmatic resize.
 const requestUpdate = ({ uid, ...args }) => {
   const pane = indexedPanes.value[uid]
-  Object.entries(args).forEach(([key, value]) => (pane[key] = value))
+  for (const [key, value] of Object.entries(args)) pane[key] = value
 }
 
 const onPaneAdd = pane => {
@@ -437,13 +437,13 @@ const equalize = () => {
   const ungrowable = []
   const unshrinkable = []
 
-  panes.value.forEach(pane => {
+  for (const pane of panes.value) {
     pane.size = Math.max(Math.min(equalSpace, pane.max), pane.min)
 
     leftToAllocate -= pane.size
     if (pane.size >= pane.max) ungrowable.push(pane.id)
     if (pane.size <= pane.min) unshrinkable.push(pane.id)
-  })
+  }
 
   if (leftToAllocate > 0.1) readjustSizes(leftToAllocate, ungrowable, unshrinkable)
 }
@@ -455,22 +455,22 @@ const initialPanesSizing = () => {
   let definedSizes = 0
 
   // Check if pre-allocated space is 100%.
-  panes.value.forEach(pane => {
+  for (const pane of panes.value) {
     leftToAllocate -= pane.size
     if (pane.givenSize !== null) definedSizes++
     if (pane.size >= pane.max) ungrowable.push(pane.id)
     if (pane.size <= pane.min) unshrinkable.push(pane.id)
-  })
+  }
 
   // Set pane sizes if not set.
   let leftToAllocate2 = 100
   if (leftToAllocate > 0.1) {
-    panes.value.forEach(pane => {
+    for (const pane of panes.value) {
       if (pane.givenSize === null) {
         pane.size = Math.max(Math.min(leftToAllocate / (panesCount.value - definedSizes), pane.max), pane.min)
       }
       leftToAllocate2 -= pane.size
-    })
+    }
 
     if (leftToAllocate2 > 0.1) readjustSizes(leftToAllocate2, ungrowable, unshrinkable)
   }
@@ -487,22 +487,22 @@ const equalizeAfterAddOrRemove = ({ addedPane, removedPane } = {}) => {
   }
 
   // Check if pre-allocated space is 100%.
-  panes.value.forEach(pane => {
+  for (const pane of panes.value) {
     leftToAllocate -= pane.size
     if (pane.size >= pane.max) ungrowable.push(pane.id)
     if (pane.size <= pane.min) unshrinkable.push(pane.id)
-  })
+  }
 
   if (Math.abs(leftToAllocate) < 0.1) return // Ok.
 
-  panes.value.forEach(pane => {
+  for (const pane of panes.value) {
     const addedPaneHasGivenSize = addedPane?.givenSize !== null && addedPane?.id === pane.id
     if (!addedPaneHasGivenSize) pane.size = Math.max(Math.min(equalSpace, pane.max), pane.min)
 
     leftToAllocate -= pane.size
     if (pane.size >= pane.max) ungrowable.push(pane.id)
     if (pane.size <= pane.min) unshrinkable.push(pane.id)
-  })
+  }
 
   if (leftToAllocate > 0.1) readjustSizes(leftToAllocate, ungrowable, unshrinkable)
 }
