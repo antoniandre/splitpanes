@@ -97,6 +97,7 @@ const onMouseMove = event => {
 
 const onMouseUp = event => {
   if (touch.value.dragging) {
+    window.getSelection().removeAllRanges()
     emitEvent('resized', { event }, true)
   }
   touch.value.mouseDown = false
@@ -695,7 +696,8 @@ provide('onPaneClick', onPaneClick)
 
   &--vertical {flex-direction: row;}
   &--horizontal {flex-direction: column;}
-  &--dragging .splitpanes__pane {
+  // Disable any selection and pointer events in all the document when a splitpanes dragging is detected.
+  &--dragging .splitpanes__pane, *:has(&--dragging) {
     user-select: none;
     pointer-events: none;
   }
