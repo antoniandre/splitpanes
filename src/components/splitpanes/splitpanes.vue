@@ -707,8 +707,8 @@ provide('onPaneClick', onPaneClick)
     height: 100%;
     overflow: hidden;
 
-    .splitpanes--vertical & {transition: width 0.2s ease-out;}
-    .splitpanes--horizontal & {transition: height 0.2s ease-out;}
+    .splitpanes--vertical & {transition: width 0.2s ease-out;will-change: width;}
+    .splitpanes--horizontal & {transition: height 0.2s ease-out;will-change: height;}
     .splitpanes--dragging & {transition: none;}
   }
 
@@ -718,12 +718,10 @@ provide('onPaneClick', onPaneClick)
   &--horizontal > .splitpanes__splitter {min-height: 1px;cursor: row-resize;}
 }
 
-.splitpanes.default-theme {
-  .splitpanes__pane {
-    background-color: #f2f2f2;
-  }
+.default-theme {
+  &.splitpanes .splitpanes__pane {background-color: #f2f2f2;}
 
-  .splitpanes__splitter {
+  &.splitpanes .splitpanes__splitter {
     background-color: #fff;
     box-sizing: border-box;
     position: relative;
@@ -740,9 +738,7 @@ provide('onPaneClick', onPaneClick)
     &:hover:before, &:hover:after {background-color: rgba(0, 0, 0, .25);}
     &:first-child {cursor: auto;}
   }
-}
 
-.default-theme {
   &.splitpanes .splitpanes .splitpanes__splitter {z-index: 1;}
   &.splitpanes--vertical > .splitpanes__splitter,
   .splitpanes--vertical > .splitpanes__splitter {
