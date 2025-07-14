@@ -15,8 +15,10 @@
     "dist",
     "src/components/splitpanes"
   ],
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/splitpanes.es.js",
       "require": "./dist/splitpanes.umd.js"
     },
@@ -58,6 +60,7 @@
     "sass": "^1.89.0",
     "simple-syntax-highlighter": "^3.1.1",
     "vite": "^6.3.5",
+    "vite-plugin-dts": "^4.5.4",
     "vue": "^3.5.14",
     "vue-router": "^4.5.1",
     "wave-ui": "^3.21.1"
