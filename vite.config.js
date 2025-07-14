@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import Vue from '@vitejs/plugin-vue'
 import { resolve } from 'path'
 import Delete from 'rollup-plugin-delete'
+import dtsPlugin from 'vite-plugin-dts'
 
 const bundleBuild = {
   lib: {
@@ -35,7 +36,8 @@ export default defineConfig({
           whitespace: 'preserve'
         }
       }
-    })
+    }),
+    process.env.BUNDLE ? [dtsPlugin()] : []
   ], // https://vitejs.dev/config/
   resolve: {
     alias: {
