@@ -498,7 +498,7 @@ const equalizeAfterAddOrRemove = ({ addedPane, removedPane } = {}) => {
 
   for (const pane of panes.value) {
     const addedPaneHasGivenSize = addedPane?.givenSize !== null && addedPane?.id === pane.id
-    if (!addedPaneHasGivenSize) pane.size = Math.max(Math.min(equalSpace, pane.max), pane.min)
+    if (addedPane && !addedPaneHasGivenSize) pane.size = Math.max(Math.min(equalSpace, pane.max), pane.min)
 
     leftToAllocate -= pane.size
     if (pane.size >= pane.max) ungrowable.push(pane.id)
