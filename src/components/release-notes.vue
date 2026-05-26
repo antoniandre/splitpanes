@@ -4,6 +4,18 @@
     a(href="#release-notes") Release Notes
 
   ul.history.ml2
+    li.patch
+      strong.version 4.1.1
+      ul
+        li Fixed crash (Cannot read properties of null/undefined) when dragging a splitter quickly to its limit. (#240, #243)
+        li Fixed pane min-size not enforced when the opposite pane reaches its max. (#160, #201)
+        li Fixed last pane with #[code min-size] causing a visible size jump when pushed to its limit. (#215)
+        li Fixed resize cursor disappearing over pane area during drag. (#245)
+        li Fixed pane with explicit #[code size="0"] being overridden by auto-equalization when other panes are added. (#246)
+        li Fixed text selection occurring on the first drag frame in Firefox. (#168)
+        li Fixed initialization transition flash when panes first mount. (#242)
+        li Fixed incorrect panel order when multiple panes are added in the same tick. (#202)
+
     li.minor
       strong.version 4.1.0
       ul
