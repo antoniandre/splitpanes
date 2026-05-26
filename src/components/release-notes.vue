@@ -10,6 +10,7 @@
         li Added TypeScript definitions. (#247)
         li Fixed #237.
         li Fixed null pointer error when dragging a splitter to its min/max limit, along with other added safeguards. (#255)
+        li Fix fallthrough attributes (e.g. #[code id], #[code class]) not being applied to the root element. (#252)
 
     li.major
       strong.version 4.0.0
