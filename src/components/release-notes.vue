@@ -65,7 +65,7 @@
         .w-divider.primary--bg.grow
 
 w-transition-expand(y)
-  ul.history.history--more.ml2.pl4(v-if="seeOldReleaseNotes")
+  ul.history.history--more.ml11.mt12(v-if="seeOldReleaseNotes")
     li.patch
       strong.version 2.3.5
       p Prevent splitter double taps on touch devices if #[code dblClickSplitter] is set to false.
