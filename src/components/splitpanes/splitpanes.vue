@@ -97,7 +97,7 @@ const onMouseMove = event => {
 
 const onMouseUp = event => {
   if (touch.value.dragging) {
-    window.getSelection().removeAllRanges()
+    window.getSelection()?.removeAllRanges()
     emitEvent('resized', { event }, true)
   }
   touch.value.mouseDown = false
@@ -356,9 +356,9 @@ const addSplitter = (paneIndex, nextPaneNode, isVeryFirst = false) => {
 }
 
 const removeSplitter = node => {
-  node.onmousedown = undefined
-  node.onclick = undefined
-  node.ondblclick = undefined
+  node.onmousedown = null
+  node.onclick = null
+  node.ondblclick = null
   node.remove()
 }
 
@@ -500,7 +500,7 @@ const equalizeAfterAddOrRemove = ({ addedPane, removedPane } = {}) => {
   if (Math.abs(leftToAllocate) < 0.1) return // Ok.
 
   for (const pane of panes.value) {
-    const addedPaneHasGivenSize = addedPane?.givenSize !== null && addedPane?.id === pane.id
+    const addedPaneHasGivenSize = addedPane != null && addedPane.givenSize !== null && addedPane.id === pane.id
     if (!addedPaneHasGivenSize) pane.size = Math.max(Math.min(equalSpace, pane.max), pane.min)
 
     leftToAllocate -= pane.size
