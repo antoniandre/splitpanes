@@ -47,7 +47,8 @@ const splitterTaps = ref({ // Used to detect double click on touch devices.
 
 const splitpanesClasses = computed(() => ({
   [`splitpanes splitpanes--${props.horizontal ? 'horizontal' : 'vertical'}`]: true,
-  'splitpanes--dragging': touch.value.dragging
+  'splitpanes--dragging': touch.value.dragging,
+  'splitpanes--ready': ready.value
 }))
 
 // Methods.
@@ -85,13 +86,18 @@ const onMouseDown = (event, splitterIndex) => {
   bindEvents()
   touch.value.mouseDown = true
   touch.value.activeSplitter = splitterIndex
+  document.documentElement.style.cursor = props.horizontal ? 'row-resize' : 'col-resize'
 }
 
 const onMouseMove = event => {
   if (touch.value.mouseDown) {
     // Prevent scrolling while touch dragging (only works with an active event, eg. passive: false).
     event.preventDefault()
-    touch.value.dragging = true
+    if (!touch.value.dragging) {
+      // Clear any accidental text selection on the very first drag frame (noticeable in Firefox).
+      window.getSelection()?.removeAllRanges()
+      touch.value.dragging = true
+    }
     requestAnimationFrame(() => {
       calculatePanesSize(getCurrentMouseDrag(event))
       emitEvent('resize', { event }, true)
@@ -111,6 +117,7 @@ const onMouseUp = event => {
   setTimeout(() => {
     touch.value.dragging = false
     unbindEvents()
+    document.documentElement.style.cursor = ''
   }, 100)
 }
 
@@ -214,7 +221,8 @@ const calculatePanesSize = drag => {
 
 const calculatePanesSizeFromDragPercentage = dragPercentage => {
   const splitterIndex = touch.value.activeSplitter
-  if (splitterIndex === null) return
+  // Guard: null (mouseup fired before rAF) or stale index (pane removed mid-drag).
+  if (splitterIndex === null || splitterIndex >= panes.value.length - 1) return
   let sums = {
     prevPanesSize: sumPrevPanesSize(splitterIndex),
     nextPanesSize: sumNextPanesSize(splitterIndex),
@@ -282,7 +290,6 @@ const doPushOtherPanes = (sums, dragPercentage) => {
         }
       })
     }
-    sums.prevPanesSize = sumPrevPanesSize(panesToResize[0])
     // If nothing else to push down, cancel dragging.
     if (panesToResize[0] === undefined) {
       sums.prevReachedMinPanes = 0
@@ -296,6 +303,7 @@ const doPushOtherPanes = (sums, dragPercentage) => {
       panes.value[panesToResize[1]].size = 100 - sums.prevReachedMinPanes - panes.value[0].min - sums.prevPanesSize - sums.nextPanesSize
       return null
     }
+    sums.prevPanesSize = sumPrevPanesSize(panesToResize[0])
   }
   // Pushing Up.
   // Pushing up beyond min size is reached: take the next expanded pane.
@@ -312,7 +320,7 @@ const doPushOtherPanes = (sums, dragPercentage) => {
       })
     }
 
-    sums.nextPanesSize = sumNextPanesSize(panesToResize[1] - 1)
+    sums.nextPanesSize = panesToResize[1] !== undefined ? sumNextPanesSize(panesToResize[1] - 1) : 0
     // If nothing else to push up, cancel dragging.
     if (panesToResize[1] === undefined) {
       sums.nextReachedMinPanes = 0
@@ -323,7 +331,9 @@ const doPushOtherPanes = (sums, dragPercentage) => {
           sums.nextReachedMinPanes += pane.min
         }
       })
-      panes.value[panesToResize[0]].size = 100 - sums.prevPanesSize - sumNextPanesSize(panesToResize[0] - 1)
+      if (panesToResize[0] !== undefined) {
+        panes.value[panesToResize[0]].size = 100 - sums.prevPanesSize - sumNextPanesSize(panesToResize[0] - 1)
+      }
       return null
     }
   }
@@ -420,6 +430,9 @@ const requestUpdate = ({ uid, ...args }) => {
   for (const [key, value] of Object.entries(args)) pane[key] = value
 }
 
+// Coalesce multiple simultaneous pane additions (e.g. v-for / v-if toggling) into a single
+// layout pass so splitters are rebuilt only once and panel order is preserved.
+let pendingPaneAdd = false
 const onPaneAdd = pane => {
   // 1. Add pane to array at the same index it was inserted in the <splitpanes> tag.
   let index = -1
@@ -432,7 +445,8 @@ const onPaneAdd = pane => {
   // Redo indexes after insertion for other shifted panes.
   panes.value.forEach((p, i) => (p.index = i))
 
-  if (ready.value) {
+  if (ready.value && !pendingPaneAdd) {
+    pendingPaneAdd = true
     nextTick(() => {
       // 2. Add the splitter.
       redoSplitters()
@@ -442,6 +456,7 @@ const onPaneAdd = pane => {
 
       // 4. Fire `pane-add` event.
       emitEvent('pane-add', { pane: panes.value[index] })
+      pendingPaneAdd = false
     })
   }
 }
@@ -748,9 +763,9 @@ provide('onPaneClick', onPaneClick)
     height: 100%;
     overflow: hidden;
 
-    .splitpanes--vertical & {transition: width 0.2s ease-out;will-change: width;}
-    .splitpanes--horizontal & {transition: height 0.2s ease-out;will-change: height;}
-    .splitpanes--dragging & {transition: none;}
+    // Only animate after initial sizing is complete to avoid a transition flash on mount.
+    .splitpanes--ready & {transition: width 0.2s ease-out, height 0.2s ease-out;will-change: width, height;}
+    .splitpanes--ready.splitpanes--dragging & {transition: none;}
   }
 
   // Disable default zoom behavior on touch device when double tapping splitter.
