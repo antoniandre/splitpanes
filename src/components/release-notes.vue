@@ -194,7 +194,7 @@ const seeOldReleaseNotes = ref(false)
     }
     > li.major:before {
       font-size: 14px;
-      box-shadow: 0 0 0 0 #09c;
+      box-shadow: 0 0 0 0 var(--w-primary-color);
       border-color: var(--w-primary-color);
       animation: rn-pulse-sonar 3s infinite cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
@@ -210,7 +210,7 @@ const seeOldReleaseNotes = ref(false)
     > li.minor .version {color: color-mix(in srgb, var(--w-base-color) 60%, transparent);}
     > li.major:before,
     > li.major .version {
-      color: #09c;
+      color: var(--w-primary-color);
       font-size: 1.4rem;
     }
 
@@ -259,7 +259,7 @@ const seeOldReleaseNotes = ref(false)
   }
   @keyframes rn-pulse-sonar {
     0% {
-      box-shadow: 0 0 0 0 #09c;
+      box-shadow: 0 0 0 0 var(--w-primary-color);
       transform: translate(-50%, -50%) scale(1);
       border-color: var(--w-primary-color);
       opacity: 0.5;
@@ -267,7 +267,7 @@ const seeOldReleaseNotes = ref(false)
     50% {
       box-shadow: 0 0 0 15px rgba(9, 204, 204, 0);
       transform: translate(-50%, -50%) scale(1.05);
-      border-color: #09c;
+      border-color: var(--w-primary-color);
     }
     100% {
       box-shadow: 0 0 0 0 rgba(9, 204, 204, 0);
