@@ -972,22 +972,22 @@
   h2.mt12.pt12.mb2(id="api")
     a(href="#api") API
 
-  p Here is the list of all the props.
+  h3.mt6.mb2 #[code &lt;splitpanes&gt;] props
   ul
     li
       code horizontal
       span.code.ml2 Default: false
       p.
         The orientation of the panes splitting.#[br]
-        Vertical by default, meaning the splitters are vertical, but you can resize horizontally
+        Vertical by default, meaning the splitters are vertical, but you can resize horizontally.
     li
       code push-other-panes
       span.code.ml2 Default: true
       p Whether it should push the next splitter when dragging a splitter until it reached another one.
     li
-      code dbl-click-splitter
+      code maximize-panes
       span.code.ml2 Default: true
-      p Double click on splitter to maximize the next pane.
+      p Double click (or double tap) a splitter to maximize the next pane.
     li
       code rtl
       span.code.ml2 Default: false
@@ -996,6 +996,30 @@
       code first-splitter
       span.code.ml2 Default: false
       p Displays the first splitter when set to true. This allows maximizing the first pane on splitter double click.
+    li
+      code keyboard-step
+      span.code.ml2 Default: 5
+      p.
+        The percentage step applied when moving a focused splitter with arrow keys.#[br]
+        Set to #[code 0] to disable keyboard support entirely.
+
+  h3.mt8.mb2 #[code &lt;pane&gt;] props
+  ul
+    li
+      code size
+      span.code.ml2 Default: equal share
+      p.
+        Initial size of the pane in percent.#[br]
+        If provided for all panes, the values must add up to 100.#[br]
+        Panes without a size will share the remaining space equally.
+    li
+      code min-size
+      span.code.ml2 Default: 0
+      p Minimum allowed size of the pane in percent.
+    li
+      code max-size
+      span.code.ml2 Default: 100
+      p Maximum allowed size of the pane in percent.
 
   //- Emitted events section.
   h2.mt12.pt12(id="emitted-events")
