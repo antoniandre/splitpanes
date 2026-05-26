@@ -20,7 +20,12 @@ const vScroll = {
     const f = evt => {
       if (binding.value(evt, el)) window.removeEventListener('scroll', f)
     }
+    el._scrollHandler = f
     window.addEventListener('scroll', f)
+  },
+  unmounted: el => {
+    window.removeEventListener('scroll', el._scrollHandler)
+    el._scrollHandler = null
   }
 }
 </script>
