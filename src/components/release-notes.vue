@@ -4,6 +4,16 @@
     a(href="#release-notes") Release Notes
 
   ul.history.ml2
+    li.minor
+      strong.version 4.1.0
+      ul
+        li Added keyboard accessibility: splitters are now focusable and can be resized with arrow keys.
+        li New #[code keyboard-step] prop (default #[code 5]) to control the % step per key press. Set to #[code 0] to disable.
+        li Respects all existing constraints: #[code min], #[code max], #[code push-other-panes], and #[code rtl].
+        li Fires the same #[code resize] and #[code resized] events as mouse dragging.
+        li Splitters get #[code role="separator"] and #[code aria-orientation] ARIA attributes automatically.
+        li Default theme shows a #[code focus-visible] ring for keyboard-only users.
+
     li.patch
       strong.version 4.0.5
       ul
