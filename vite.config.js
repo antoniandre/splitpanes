@@ -27,7 +27,8 @@ const bundleBuild = {
   }
 }
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
+  base: (command === 'build' && !process.env.BUNDLE) ? '/splitpanes/' : '/',
   plugins: [
     Vue({
       template: {
@@ -54,4 +55,4 @@ export default defineConfig({
   define: {
     __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: false
   }
-})
+}))
