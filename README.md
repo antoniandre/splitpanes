@@ -42,9 +42,8 @@ ___
 
 ## Donating
 
-If you like this library, you can buy me a beer or [become a sponsor](https://github.com/sponsors/antoniandre)!
+If you like this library, you can [buy me a beer](https://github.com/sponsors/antoniandre) or [become a sponsor](https://github.com/sponsors/antoniandre)!
 
-[![paypal](https://www.paypalobjects.com/en_AU/i/btn/btn_donateCC_LG.gif)](https://www.paypal.me/antoniandre1)
 Thank you!
 
 If you are using this library for profit business, please consider [backing me](https://github.com/sponsors/antoniandre)!
@@ -60,19 +59,25 @@ ___
 
 ## Release Notes
 
-- __Version 2.3.0__ Support rtl direction
-- __Version 2.2.0__ Add `firstSplitter` option allow `v-if` on panes and other improvements
+- __Version 4.1.1__ Bug fixes: crash on fast drag, min/max enforcement, size jump, cursor disappear, `size="0"` override, Firefox text selection, init flash, panel order, nested transition
+- __Version 4.1.0__ Keyboard accessibility: splitters focusable with arrow keys, `keyboard-step` prop, ARIA attributes
+- __Version 4.0.5__ TypeScript definitions, null pointer safeguards, fallthrough attributes fix
+- __Version 4.0.0__ Emit `splitter-dblclick` event, rename `dblClickSplitter` to `maximizePanes`, refactored emitted events
+- __Version 3.2.0__ Account for cursor position when dragging, Composition API rewrite
+- __Version 3.0.0__ Vue 3 support (use `splitpanes@legacy` for Vue 2)
+- __Version 2.3.0__ Support RTL direction
+- __Version 2.2.0__ Add `firstSplitter` option, allow `v-if` on panes and other improvements
 - __Version 2.0.0__ Fix reactivity issues
 - __Version 1.14.0__ Programmatically set pane size
 - __Version 1.13.0__ Emit event on splitter click
 - __Version 1.12.0__ Double click splitter to maximize is now an option
 - __Version 1.11.0__ Persist panes size after slots changed
 - __Version 1.10.0__ Add maximum size feature on panes
-- __Version 1.9.0__ Emit event on resize &amp; watch slots optional
+- __Version 1.9.0__ Emit event on resize & watch slots optional
 - __Version 1.8.0__ Watch slots
 - __Version 1.7.0__ Double click splitter to maximize next pane
 - __Version 1.6.0__ Emit events
-- __Version 1.5.0__ Add default size feature on panes (max feature coming soon!)
+- __Version 1.5.0__ Add default size feature on panes
 - __Version 1.4.0__ Add minimum size feature on panes
 - __Version 1.3.0__ Splitpanes slots are now reactive (add/remove on the fly)
 - __Version 1.2.0__ Add a `default-theme` CSS class to load default theme
