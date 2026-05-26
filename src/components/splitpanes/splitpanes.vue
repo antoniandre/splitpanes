@@ -10,7 +10,8 @@ const emit = defineEmits([
   'pane-add',
   'pane-remove',
   'splitter-click',
-  'splitter-dblclick'
+  'splitter-dblclick',
+  'direction-changed'
 ])
 
 const props = defineProps({
@@ -708,6 +709,12 @@ const emitEvent = (name, data = undefined, injectPrevAndNextPanes = false) => {
 // Watchers.
 // --------------------------------------------------------
 watch(() => props.firstSplitter, () => redoSplitters())
+watch(() => props.horizontal, horizontal => nextTick(() => {
+  emit('direction-changed', {
+    horizontal,
+    panes: panes.value.map(pane => ({ min: pane.min, max: pane.max, size: pane.size }))
+  })
+}))
 
 onMounted(() => {
   checkSplitpanesNodes()

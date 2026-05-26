@@ -74,6 +74,11 @@ export interface SplitpanesSplitterClickPayload {
   panes: PaneData[]
 }
 
+export interface SplitpanesDirectionChangedPayload {
+  horizontal: boolean
+  panes: PaneData[]
+}
+
 // ---- Component props ----
 
 export interface SplitpanesProps {
@@ -110,6 +115,7 @@ export declare const Splitpanes: DefineComponent<
     'pane-remove': (payload: SplitpanesPaneRemovePayload) => void
     'splitter-click': (payload: SplitpanesSplitterClickPayload) => void
     'splitter-dblclick': (payload: SplitpanesSplitterClickPayload) => void
+    'direction-changed': (payload: SplitpanesDirectionChangedPayload) => void
   }
 >
 
