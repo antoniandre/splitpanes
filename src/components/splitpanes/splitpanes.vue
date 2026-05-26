@@ -489,7 +489,7 @@ const resetPaneSizes = (changedPanes = {}) => {
 
 const equalize = () => {
   const equalSpace = 100 / panesCount.value
-  let leftToAllocate = 0
+  let leftToAllocate = 100
   const ungrowable = []
   const unshrinkable = []
 
@@ -501,7 +501,7 @@ const equalize = () => {
     if (pane.size <= pane.min) unshrinkable.push(pane.id)
   }
 
-  if (leftToAllocate > 0.1) readjustSizes(leftToAllocate, ungrowable, unshrinkable)
+  if (Math.abs(leftToAllocate) > 0.1) readjustSizes(leftToAllocate, ungrowable, unshrinkable)
 }
 
 const initialPanesSizing = () => {
@@ -550,6 +550,7 @@ const equalizeAfterAddOrRemove = ({ addedPane, removedPane } = {}) => {
 
   if (Math.abs(leftToAllocate) < 0.1) return // Ok.
 
+  leftToAllocate = 100 // Reset for round 2.
   for (const pane of panes.value) {
     // Preserve the size of any pane that has an explicit givenSize (not just the newly added one).
     if (pane.givenSize === null) pane.size = Math.max(Math.min(equalSpace, pane.max), pane.min)
@@ -559,7 +560,7 @@ const equalizeAfterAddOrRemove = ({ addedPane, removedPane } = {}) => {
     if (pane.size <= pane.min) unshrinkable.push(pane.id)
   }
 
-  if (leftToAllocate > 0.1) readjustSizes(leftToAllocate, ungrowable, unshrinkable)
+  if (Math.abs(leftToAllocate) > 0.1) readjustSizes(leftToAllocate, ungrowable, unshrinkable)
 }
 
 /* const recalculatePaneSizes = ({ addedPane, removedPane } = {}) => {
@@ -636,13 +637,11 @@ const readjustSizes = (leftToAllocate, ungrowable, unshrinkable) => {
     }
   })
 
-  if (Math.abs(leftToAllocate) > 0.1) { // > 0.1: Prevent maths rounding issues due to bytes.
-    // Don't emit on hot reload when Vue destroys panes.
-    nextTick(() => {
-      if (ready.value) {
-        console.warn('Splitpanes: Could not resize panes correctly due to their constraints.')
-      }
-    })
+  // > 0.1: Prevent maths rounding issues due to bytes.
+  // Synchronous check: ready.value is still false during onMounted so the warning
+  // is correctly suppressed on initial mount and on hot-reload teardown.
+  if (Math.abs(leftToAllocate) > 0.1 && ready.value) {
+    console.warn('Splitpanes: Could not resize panes correctly due to their constraints.')
   }
 }
 

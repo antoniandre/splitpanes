@@ -33,15 +33,21 @@ const sizeNumber = computed(() => {
 
   return Math.max(Math.min(value, maxSizeNumber.value), minSizeNumber.value)
 })
+
 const minSizeNumber = computed(() => {
   const value = parseFloat(props.minSize)
   return isNaN(value) ? 0 : value
 })
+
 const maxSizeNumber = computed(() => {
   const value = parseFloat(props.maxSize)
   return isNaN(value) ? 100 : value
 })
-const styles = computed(() => `${horizontal.value ? 'height' : 'width'}: ${pane.value?.size}%`)
+
+const styles = computed(() => {
+  const size = pane.value?.size ?? (props.size !== undefined ? sizeNumber.value : undefined)
+  return size !== undefined ? `${horizontal.value ? 'height' : 'width'}: ${size}%` : ''
+})
 
 watch(() => sizeNumber.value, size => requestUpdate({ uid, size }))
 watch(() => minSizeNumber.value, min => requestUpdate({ uid, min }))
