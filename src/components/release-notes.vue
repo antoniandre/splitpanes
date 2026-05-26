@@ -1,77 +1,254 @@
 <template lang="pug">
-div
-  h2.mt12.pt12.mb2(id="release-notes")
+.release-notes
+  h2.mt12.pt12.mb6(id="release-notes")
     a(href="#release-notes") Release Notes
 
-  .mt6
-    strong.title2 Version 4.0.0
-    ul.mt1
-      li Emit #[code splitter-dblclick] on splitter dblclick event. (#120, #181, #182, #183)
-      li Renamed #[code dblClickSplitter] to #[code maximizePanes], and still on by default on splitter double click.
-      li.
-        Refactored all the emitted events to always return a single object containing as much information
-        as possible. E.g. event, index, pane, prevPane, nextPane, panes.
+  ul.history.ml2
+    li.patch
+      strong.version 4.0.5
+      ul
+        li Added TypeScript definitions. (#247)
+        li Fixed #237.
 
-  .mt4
-    strong Version 3.2.0
-    ul.mt1
-      li Account for cursor position when dragging a splitter. (#204)
-      li Components fully rewritten with Composition API. Faster and more efficient resizing.
-  .mt6
-    | #[strong.title2.mr2 Version 3.0.0] For Vue 3 projects.
-    highlight-message(type="warning").
-      Installing the latest splitpanes on a Vue 2 project will break it.#[br]
-      For Vue 2, you need to install splitpanes from the #[span.code legacy] tag: #[code npm i splitpanes@legacy].#[br]
-  div #[strong Version 2.3.5] Prevent splitter double taps on touch devices if #[span.code `dblClickSplitter`] is set to false.
-  div #[strong Version 2.3.4] Fix removing pane DOM nodes in IE11
-  div #[strong Version 2.3.1] Fix firing #[span.code `pane-click`] event on pane click
-  div #[strong Version 2.3.0] Support rtl direction
-  div #[strong Version 2.2.0]
-    ul
-      li Added the #[span.code `firstSplitter`] option, disabled by default. ref: #[a(href="#change-direction") Change direction &amp; first splitter]
-      li Adapt panes width and height after direction change. ref: #[a(href="#change-direction") Change direction &amp; first splitter]
-      li Emit a #[span.code `resized`] event after pane was added/removed
-      li Emit a #[span.code `pane-add`] event after pane was added
-      li Emit a #[span.code `pane-remove`] event after pane was removed
-      li Support #[span.code `v-if`] on a Pane and allow inserting a Pane at any position between others. ref: #[a(href="#toggle-a-pane-with-v-if") Toggle a pane with v-if]
-
-  .mt6
-    | #[strong.title2.mr2 Version 2.0.0] Fix reactivity issues.
-    highlight-message(type="success")
-      ul.mt1
-        li
-          strong.
-            Children must now be wrapped into a #[span.code `pane`] component.
-        li The attribute #[span.code `splitpanes-size`] is now replaced with #[span.code `size`] on the #[span.code `pane`] component.
-        li you can still add CSS classes on the #[span.code `pane`] component tag.
-
-  div #[strong Version 1.14.0] Programmatically set pane size
-  div #[strong Version 1.13.0] Emit event on splitter click
-  div #[strong Version 1.12.0] double click splitter to maximize is now an option
-  div #[strong Version 1.11.0] Persist panes size after slots changed
-  div #[strong Version 1.10.0] Add maximum size feature on panes
-  div
-    | #[strong Version 1.9.0] Emit event on resize &amp; watch slots optional
-    highlight-message.text-bold(type="success")
-      ul.mt0
+    li.major
+      strong.version 4.0.0
+      ul
+        li Emit #[code splitter-dblclick] on splitter dblclick event. (#120, #181, #182, #183)
+        li Renamed #[code dblClickSplitter] to #[code maximizePanes], still on by default on splitter double click.
         li.
-          The #[span.code `resize`] event - previously firing after resize end - is now firing on resize.#[br]
-          A new #[span.code `resized`] event is emitted on resize end. Check out the
-          #[a(href="#emitted-events") Listening to emitted events] example.
-        li.
-          By default and for performance, the reactivity is now limited to slot deletion and slot creation.#[br]
-          With the option #[span.code `watchSlots`] you can also track any change on the slots.#[br]
-  div #[strong Version 1.8.0] Watch slots
-  div #[strong Version 1.7.0] Double click splitter to maximize next pane
-  div #[strong Version 1.6.0] Emit events
-  div #[strong Version 1.5.0] Add default size feature on panes
-  div #[strong Version 1.4.0] Add minimum size feature on panes
-  div #[strong Version 1.3.0] Splitpanes slots are now reactive (add/remove on the fly)
-  div #[strong Version 1.2.0] Add a `default-theme` CSS class to load default theme
-  div #[strong Version 1.1.0] Allow pushing other panes while dragging splitter
-  div #[strong Version 1.0.0] First public release
+          Refactored all emitted events to always return a single object containing as much
+          information as possible. E.g. event, index, pane, prevPane, nextPane, panes.
+
+    li.minor
+      strong.version 3.2.0
+      ul
+        li Account for cursor position when dragging a splitter. (#204)
+        li Components fully rewritten with Composition API. Faster and more efficient resizing.
+
+    li.major
+      strong.version 3.0.0
+      p For Vue 3 projects.
+      highlight-message(type="warning").
+        Installing the latest splitpanes on a Vue 2 project will break it.#[br]
+        For Vue 2, install splitpanes from the #[code legacy] tag: #[code npm i splitpanes@legacy].
+
+    li.patch.mb-5.view-more
+      .w-flex.align-center
+        .w-divider.primary--bg.px3
+        w-button(round outline @click="seeOldReleaseNotes = !seeOldReleaseNotes")
+          strong {{ seeOldReleaseNotes ? 'Hide' : 'View' }} older release notes
+          w-icon.ml2(:rotate90a="!seeOldReleaseNotes") wi-arrow-down
+        .w-divider.primary--bg.grow
+
+w-transition-expand(y)
+  ul.history.history--more.ml2.pl4(v-if="seeOldReleaseNotes")
+    li.patch
+      strong.version 2.3.5
+      p Prevent splitter double taps on touch devices if #[code dblClickSplitter] is set to false.
+
+    li.patch
+      strong.version 2.3.4
+      p Fix removing pane DOM nodes in IE11.
+
+    li.patch
+      strong.version 2.3.1
+      p Fix firing #[code pane-click] event on pane click.
+
+    li.minor
+      strong.version 2.3.0
+      p Support RTL direction.
+
+    li.minor
+      strong.version 2.2.0
+      ul
+        li Added the #[code firstSplitter] option, disabled by default. ref: #[a(href="#change-direction") Change direction &amp; first splitter]
+        li Adapt panes width and height after direction change.
+        li Emit a #[code resized] event after pane was added/removed.
+        li Emit a #[code pane-add] event after pane was added.
+        li Emit a #[code pane-remove] event after pane was removed.
+        li Support #[code v-if] on a Pane and allow inserting a Pane at any position. ref: #[a(href="#toggle-a-pane-with-v-if") Toggle a pane with v-if]
+
+    li.major
+      strong.version 2.0.0
+      p Fix reactivity issues.
+      highlight-message(type="success")
+        ul.mt1
+          li
+            strong Children must now be wrapped into a #[code pane] component.
+          li The attribute #[code splitpanes-size] is now replaced with #[code size] on the #[code pane] component.
+          li You can still add CSS classes on the #[code pane] component tag.
+
+    li.minor #[strong.version 1.14.0] Programmatically set pane size.
+    li.minor #[strong.version 1.13.0] Emit event on splitter click.
+    li.minor #[strong.version 1.12.0] Double click splitter to maximize is now an option.
+    li.minor #[strong.version 1.11.0] Persist panes size after slots changed.
+    li.minor #[strong.version 1.10.0] Add maximum size feature on panes.
+    li.minor
+      strong.version 1.9.0
+      p Emit event on resize &amp; watch slots optional.
+      highlight-message(type="success")
+        ul.mt0
+          li.
+            The #[code resize] event — previously firing after resize end — now fires on resize.#[br]
+            A new #[code resized] event is emitted on resize end. Check out the
+            #[a(href="#emitted-events") Listening to emitted events] example.
+          li.
+            By default and for performance, reactivity is now limited to slot deletion and creation.#[br]
+            With the option #[code watchSlots] you can also track any change on the slots.
+    li.minor #[strong.version 1.8.0] Watch slots.
+    li.minor #[strong.version 1.7.0] Double click splitter to maximize next pane.
+    li.minor #[strong.version 1.6.0] Emit events.
+    li.minor #[strong.version 1.5.0] Add default size feature on panes.
+    li.minor #[strong.version 1.4.0] Add minimum size feature on panes.
+    li.minor #[strong.version 1.3.0] Splitpanes slots are now reactive (add/remove on the fly).
+    li.minor #[strong.version 1.2.0] Add a #[code default-theme] CSS class to load default theme.
+    li.minor #[strong.version 1.1.0] Allow pushing other panes while dragging splitter.
+    li.major #[strong.version 1.0.0] First public release.
 </template>
 
 <script setup>
+import { ref } from 'vue'
 import HighlightMessage from '@/components/highlight-message.vue'
+
+const seeOldReleaseNotes = ref(false)
 </script>
+
+<style lang="scss">
+.release-notes {
+  .history {
+    > li {padding-left: 24px;}
+    > li + li {margin-top: 28px;}
+
+    li {
+      position: relative;
+      list-style-type: none;
+    }
+    h2 {margin-top: 0;}
+    .view-more > div {bottom: 2px;position: relative;}
+
+    // Bullet.
+    > li:before {
+      content: '';
+      position: absolute;
+      top: 11px;
+      left: 0;
+      background-color: var(--w-base-bg-color);
+      border-radius: 99em;
+      border: 1px solid currentColor;
+      width: 1em;
+      aspect-ratio: 1;
+      transform: translate(-50%, -50%);
+      z-index: 1;
+    }
+
+    &.history--more > li:first-child:before {display: none;}
+
+    // Left border.
+    > li:after {
+      content: '';
+      position: absolute;
+      top: 11px;
+      bottom: -39px; // 11px top + 28px margin between each li.
+      left: -0.5px;
+      border-left: 1px solid var(--w-base-color);
+      opacity: 0.25;
+    }
+
+    > li:last-child:after {display: none;}
+    > li.dashed:after {border-left-style: dashed;}
+    > li.patch:before {
+      font-size: 7px;
+      border-style: dashed;
+      width: 1.1rem;
+      animation: rn-spin 10s linear infinite;
+    }
+    > li.minor:before {
+      font-size: 11px;
+      width: 1.1rem;
+      animation: rn-pulse 3s ease-in-out infinite;
+    }
+    > li.major:before {
+      font-size: 14px;
+      box-shadow: 0 0 0 0 #09c;
+      border-color: var(--w-primary-color);
+      animation: rn-pulse-sonar 3s infinite cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .version {
+      font: bold 1.2rem monospace;
+      display: block;
+    }
+
+    > li.patch:before,
+    > li.patch .version {color: color-mix(in srgb, var(--w-base-color) 40%, transparent);}
+    > li.minor:before,
+    > li.minor .version {color: color-mix(in srgb, var(--w-base-color) 60%, transparent);}
+    > li.major:before,
+    > li.major .version {
+      color: #09c;
+      font-size: 1.4rem;
+    }
+
+    ul {margin-left: -2px;}
+
+    li li {
+      padding-left: 20px;
+      margin-top: 2px;
+    }
+
+    // Bullet.
+    li li:before {
+      content: '\e002';
+      font-family: "wave-ui" !important;
+      font-style: normal !important;
+      font-weight: normal !important;
+      font-variant: normal !important;
+      text-transform: none !important;
+      line-height: 1;
+      -webkit-font-smoothing: antialiased;
+      position: absolute;
+      top: 3px;
+      left: 0;
+      width: 1em;
+      aspect-ratio: 1;
+    }
+
+    li li li:before {content: '\e007';}
+
+    p {
+      margin: 0.2em 0 0;
+      line-height: 1.2;
+    }
+
+    code {padding: 0 4px;}
+  }
+
+  @keyframes rn-spin {
+    from {transform: translate(-50%, -50%) rotate(0deg);}
+    to {transform: translate(-50%, -50%) rotate(360deg);}
+  }
+  @keyframes rn-pulse {
+    0% {transform: translate(-50%, -50%) scale(1);}
+    50% {transform: translate(-50%, -50%) scale(1.1);}
+    100% {transform: translate(-50%, -50%) scale(1);}
+  }
+  @keyframes rn-pulse-sonar {
+    0% {
+      box-shadow: 0 0 0 0 #09c;
+      transform: translate(-50%, -50%) scale(1);
+      border-color: var(--w-primary-color);
+      opacity: 0.5;
+    }
+    50% {
+      box-shadow: 0 0 0 15px rgba(9, 204, 204, 0);
+      transform: translate(-50%, -50%) scale(1.05);
+      border-color: #09c;
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(9, 204, 204, 0);
+      transform: translate(-50%, -50%) scale(1);
+      border-color: var(--w-primary-color);
+    }
+  }
+}
+</style>
