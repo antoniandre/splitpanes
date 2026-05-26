@@ -37,9 +37,9 @@
   ],
   "scripts": {
     "dev": "vite",
-    "build": "vite build --base /splitpanes/",
+    "build": "vite build",
     "build-bundle": "BUNDLE=true vite build",
-    "serve": "vite preview --base /splitpanes/",
+    "serve": "vite preview",
     "publish-doc": "npm run build && npm run build-bundle && git add . && git commit -m 'Publish documentation on Github.' && git push && git push --tag"
   },
   "devDependencies": {
