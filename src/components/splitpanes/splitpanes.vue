@@ -245,10 +245,10 @@ const calculatePanesSizeFromDragPercentage = dragPercentage => {
   if (paneBeforeMaxReached || paneAfterMaxReached) {
     if (paneBeforeMaxReached) {
       paneBefore.size = paneBefore.max
-      paneAfter.size = Math.max(100 - paneBefore.max - sums.prevPanesSize - sums.nextPanesSize, 0)
+      paneAfter.size = Math.min(Math.max(100 - paneBefore.max - sums.prevPanesSize - sums.nextPanesSize, paneAfter.min), paneAfter.max)
     }
     else {
-      paneBefore.size = Math.max(100 - paneAfter.max - sums.prevPanesSize - sumNextPanesSize(splitterIndex + 1), 0)
+      paneBefore.size = Math.min(Math.max(100 - paneAfter.max - sums.prevPanesSize - sumNextPanesSize(splitterIndex + 1), paneBefore.min), paneBefore.max)
       paneAfter.size = paneAfter.max
     }
     return
@@ -325,8 +325,8 @@ const doPushOtherPanes = (sums, dragPercentage) => {
     if (panesToResize[1] === undefined) {
       sums.nextReachedMinPanes = 0
       panes.value.forEach((pane, i) => {
-        // If pushing a n+2 or more pane, from splitter, then make sure all in between is at min size.
-        if (i < panesCount.value - 1 && i >= splitterIndex + 1) {
+        // Set ALL next panes (including the last one) to min so sumNextPanesSize is accurate.
+        if (i >= splitterIndex + 1) {
           pane.size = pane.min
           sums.nextReachedMinPanes += pane.min
         }
@@ -533,14 +533,13 @@ const initialPanesSizing = () => {
 }
 
 const equalizeAfterAddOrRemove = ({ addedPane, removedPane } = {}) => {
-  let equalSpace = 100 / panesCount.value
+  // Distribute space only among panes without an explicit givenSize.
+  const totalGivenSize = panes.value.reduce((sum, p) => sum + (p.givenSize !== null ? p.givenSize : 0), 0)
+  const freeCount = panes.value.filter(p => p.givenSize === null).length
+  let equalSpace = freeCount > 0 ? (100 - totalGivenSize) / freeCount : 0
   let leftToAllocate = 0
   const ungrowable = []
   const unshrinkable = []
-
-  if ((addedPane?.givenSize ?? null) !== null) {
-    equalSpace = (100 - addedPane.givenSize) / (panesCount.value - 1)
-  }
 
   // Check if pre-allocated space is 100%.
   for (const pane of panes.value) {
@@ -552,8 +551,8 @@ const equalizeAfterAddOrRemove = ({ addedPane, removedPane } = {}) => {
   if (Math.abs(leftToAllocate) < 0.1) return // Ok.
 
   for (const pane of panes.value) {
-    const addedPaneHasGivenSize = addedPane != null && addedPane.givenSize !== null && addedPane.id === pane.id
-    if (!addedPaneHasGivenSize) pane.size = Math.max(Math.min(equalSpace, pane.max), pane.min)
+    // Preserve the size of any pane that has an explicit givenSize (not just the newly added one).
+    if (pane.givenSize === null) pane.size = Math.max(Math.min(equalSpace, pane.max), pane.min)
 
     leftToAllocate -= pane.size
     if (pane.size >= pane.max) ungrowable.push(pane.id)
