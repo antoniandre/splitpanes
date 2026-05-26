@@ -808,6 +808,7 @@
     li #[code pane-remove]: When a pane is removed.
     li #[code splitter-click]: When a splitter is clicked.
     li #[code splitter-dblclick]: When a splitter is double clicked.
+    li #[code direction-changed]: When the layout direction changes (horizontal / vertical).
   p.mt4 Try resizing panes and check the logs bellow.
 
   splitpanes.default-theme.example(
@@ -1111,6 +1112,13 @@
         li #[strong.code index]: the index of the resizing splitter. The counter always starts from zero.
         li #[strong.code prevPane]: the object of the previous pane (on the left if ltr, on the right if rtl, above if horizontal layout) from the splitter with its dimensions and DOM element.
         li #[strong.code nextPane]: the object of the next pane (on the right if ltr, on the left if rtl, below if horizontal layout) from the splitter with its dimensions and DOM element.
+        li #[strong.code panes]: an array of all the panes objects with their dimensions.
+    li
+      p.mb0
+        strong.code.mr2 direction-changed
+        | Fires when the #[code horizontal] prop changes (i.e. the layout direction is toggled). Returns an object containing:
+      ul.mt0
+        li #[strong.code horizontal]: #[code true] if the new direction is horizontal, #[code false] if vertical.
         li #[strong.code panes]: an array of all the panes objects with their dimensions.
 
   release-notes

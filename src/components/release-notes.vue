@@ -5,6 +5,14 @@
 
   ul.history.ml2
     li.patch
+      strong.version 4.1.2
+      ul
+        li Fixed remaining unallocated space when panes have min/max constraints after a pane is added or removed. (#194)
+        li Fixed false "Could not resize panes correctly" warning appearing on initial mount. (#188)
+        li Fixed panes ignoring the #[code size] prop on first render (showing 50%/50% flash). (#108)
+        li Added #[code direction-changed] event fired when the #[code horizontal] prop is toggled. (#79)
+
+    li.patch
       strong.version 4.1.1
       ul
         li Fixed crash (Cannot read properties of null/undefined) when dragging a splitter quickly to its limit. (#240, #243)
