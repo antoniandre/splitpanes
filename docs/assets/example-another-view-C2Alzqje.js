@@ -1,1 +1,0 @@
-import{i as e,l as t,o as n}from"./index-BfhrSKpI.js";import{t as r}from"./_plugin-vue_export-helper-BDNMzG2s.js";var i={class:`blue-light5--bg w-flex align-center justify-center`};function a(r,a){return t(),n(`div`,i,[...a[0]||=[e(`div`,{class:`title1`},`This is another view`,-1)]])}var o=r({},[[`render`,a]]);export{o as default};
