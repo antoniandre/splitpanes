@@ -46,30 +46,18 @@ div(v-scroll="onScroll")
       .xs12.sm6.text-center.smu-text-right.made-with
         .mb1
           | This documentation is made with
-          w-tooltip(top caption)
-            template(#activator="{ on }")
-              w-icon.ml1(v-on="on") mdi mdi-vuejs
-            | Vue.js
-          w-tooltip(top caption)
-            template(#activator="{ on }")
-              w-icon.ml1(v-on="on" size="1.5em") wi-wave
-            | Wave UI
-          w-tooltip(top caption)
-            template(#activator="{ on }")
-              w-icon.ml1(v-on="on") mdi mdi-language-html5
-            | HTML 5
-          w-tooltip(top caption)
-            template(#activator="{ on }")
-              w-icon.ml1(v-on="on") mdi mdi-language-css3
-            | CSS 3
-          w-tooltip(top caption)
-            template(#activator="{ on }")
-              w-icon.ml1(v-on="on") mdi mdi-sass
-            | SASS
+          w-tooltip(top caption tooltip="Vue.js")
+            w-icon.ml1 mdi mdi-vuejs
+          w-tooltip(top caption tooltip="Wave UI")
+            w-icon.ml1(size="1.5em") wi-wave
+          w-tooltip(top caption tooltip="HTML 5")
+            w-icon.ml1 mdi mdi-language-html5
+          w-tooltip(top caption tooltip="CSS 3")
+            w-icon.ml1 mdi mdi-language-css3
+          w-tooltip(top caption tooltip="SASS")
+            w-icon.ml1 mdi mdi-sass
           span.ml1 &amp;
-          w-tooltip(top caption)
-            template(#activator="{ on }")
-              w-icon.ml1(v-on="on").heart mdi mdi-heart
-            | Love
+          w-tooltip(top caption tooltip="Love")
+            w-icon.ml1.heart mdi mdi-heart
         | View this project on #[a(href="https://github.com/antoniandre/splitpanes" target="_blank") #[w-icon mdi mdi-github] Github].
 </template>
