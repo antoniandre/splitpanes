@@ -153,11 +153,14 @@ const onSplitterDblClick = (event, splitterIndex) => {
 }
 
 const onPaneClick = (event, paneId) => {
-  emitEvent('pane-click', {
-    event,
-    index: indexedPanes.value[paneId].index,
-    pane: indexedPanes.value[paneId]
-  })
+  const pane = indexedPanes.value[paneId]
+  if (pane) {
+    emitEvent('pane-click', {
+      event,
+      index: pane.index,
+      pane
+    })
+  }
 }
 
 // Get the cursor position relative to the splitpanes container.
