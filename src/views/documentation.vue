@@ -1091,7 +1091,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { Splitpanes, Pane } from '@/components/splitpanes/index.js'
 import HighlightMessage from '@/components/highlight-message.vue'
 import ReleaseNotes from '@/components/release-notes.vue'
@@ -1108,22 +1108,19 @@ const horizontal = ref(false)
 const firstSplitter = ref(false)
 const showDrawer = ref(false)
 
-const panesNumberAbs = computed(() => {
-  // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-  if (panesNumber.value < 0) panesNumber.value = 0
-  return panesNumber.value
-})
+watch(panesNumber, val => { if (val < 0) panesNumber.value = 0 })
+const panesNumberAbs = computed(() => Math.max(0, panesNumber.value))
 
 const log = (eventName, eventParams) => {
   logs.value.unshift({ name: eventName, params: JSON.stringify(eventParams) })
 }
 
 const generateRandomNumber = () => {
-  randomNums.value = Object.assign(randomNums.value, {
+  randomNums.value = {
     1: Math.round(Math.random() * 100),
     2: Math.round(Math.random() * 100),
     3: Math.round(Math.random() * 100)
-  })
+  }
 }
 
 const incrementNumber = (i) => {
