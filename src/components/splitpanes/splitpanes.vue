@@ -1,5 +1,5 @@
 <script setup>
-import { h, ref, computed, onMounted, onBeforeUnmount, nextTick, provide, useSlots, watch } from 'vue'
+import { h, ref, computed, onMounted, onBeforeUnmount, nextTick, provide, useSlots, useAttrs, watch } from 'vue'
 
 const emit = defineEmits([
   'ready',
@@ -21,6 +21,9 @@ const props = defineProps({
   firstSplitter: { type: Boolean, default: false }
 })
 
+defineOptions({ inheritAttrs: false })
+
+const attrs = useAttrs()
 const slots = useSlots()
 const panes = ref([])
 // Indexed panes by id (Vue's internal component uid) of Pane components for fast lookup.
@@ -672,9 +675,10 @@ onMounted(() => {
 onBeforeUnmount(() => (ready.value = false))
 
 const render = () => {
+  const { class: attrClass, ...restAttrs } = attrs
   return h(
     'div',
-    { ref: containerEl, class: splitpanesClasses.value },
+    { ref: containerEl, class: [splitpanesClasses.value, attrClass], ...restAttrs },
     slots.default?.()
   )
 }
