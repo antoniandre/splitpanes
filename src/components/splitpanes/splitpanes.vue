@@ -186,6 +186,7 @@ const getCurrentDragPercentage = drag => {
 
 const calculatePanesSize = drag => {
   const splitterIndex = touch.value.activeSplitter
+  if (splitterIndex === null) return
   let sums = {
     prevPanesSize: sumPrevPanesSize(splitterIndex),
     nextPanesSize: sumNextPanesSize(splitterIndex),
@@ -202,8 +203,8 @@ const calculatePanesSize = drag => {
   let paneBefore = panes.value[panesToResize[0]] || null
   let paneAfter = panes.value[panesToResize[1]] || null
 
-  const paneBeforeMaxReached = paneBefore.max < 100 && (dragPercentage >= (paneBefore.max + sums.prevPanesSize))
-  const paneAfterMaxReached = paneAfter.max < 100 && (dragPercentage <= 100 - (paneAfter.max + sumNextPanesSize(splitterIndex + 1)))
+  const paneBeforeMaxReached = paneBefore !== null && paneBefore.max < 100 && (dragPercentage >= (paneBefore.max + sums.prevPanesSize))
+  const paneAfterMaxReached = paneAfter !== null && paneAfter.max < 100 && (dragPercentage <= 100 - (paneAfter.max + sumNextPanesSize(splitterIndex + 1)))
   // Prevent dragging beyond pane max.
   if (paneBeforeMaxReached || paneAfterMaxReached) {
     if (paneBeforeMaxReached) {
