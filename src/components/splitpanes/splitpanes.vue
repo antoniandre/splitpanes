@@ -18,7 +18,8 @@ const props = defineProps({
   pushOtherPanes: { type: Boolean, default: true },
   maximizePanes: { type: Boolean, default: true }, // Maximize pane on splitter double click/tap.
   rtl: { type: Boolean, default: false }, // Right to left direction.
-  firstSplitter: { type: Boolean, default: false }
+  firstSplitter: { type: Boolean, default: false },
+  keyboardStep: { type: Number, default: 5 } // % step per arrow key press when splitter is focused. 0 to disable.
 })
 
 defineOptions({ inheritAttrs: false })
@@ -155,6 +156,26 @@ const onSplitterDblClick = (event, splitterIndex) => {
   }
 }
 
+const onSplitterKeydown = (event, splitterIndex) => {
+  if (!props.keyboardStep) return
+
+  const isIncrease = props.horizontal ? event.key === 'ArrowDown' : event.key === 'ArrowRight'
+  const isDecrease = props.horizontal ? event.key === 'ArrowUp' : event.key === 'ArrowLeft'
+  if (!isIncrease && !isDecrease) return
+
+  event.preventDefault()
+  touch.value.activeSplitter = splitterIndex
+
+  const direction = (isIncrease ? 1 : -1) * (props.rtl && !props.horizontal ? -1 : 1)
+  const currentPos = sumPrevPanesSize(splitterIndex) + panes.value[splitterIndex].size
+  const newPos = Math.min(Math.max(currentPos + direction * props.keyboardStep, 0), 100)
+
+  calculatePanesSizeFromDragPercentage(newPos)
+  emitEvent('resize', { event }, true)
+  emitEvent('resized', { event }, true)
+  touch.value.activeSplitter = null
+}
+
 const onPaneClick = (event, paneId) => {
   const pane = indexedPanes.value[paneId]
   if (pane) {
@@ -188,6 +209,10 @@ const getCurrentDragPercentage = drag => {
 }
 
 const calculatePanesSize = drag => {
+  calculatePanesSizeFromDragPercentage(getCurrentDragPercentage(drag))
+}
+
+const calculatePanesSizeFromDragPercentage = dragPercentage => {
   const splitterIndex = touch.value.activeSplitter
   if (splitterIndex === null) return
   let sums = {
@@ -199,7 +224,7 @@ const calculatePanesSize = drag => {
 
   const minDrag = 0 + (props.pushOtherPanes ? 0 : sums.prevPanesSize)
   const maxDrag = 100 - (props.pushOtherPanes ? 0 : sums.nextPanesSize)
-  const dragPercentage = Math.max(Math.min(getCurrentDragPercentage(drag), maxDrag), minDrag)
+  dragPercentage = Math.max(Math.min(dragPercentage, maxDrag), minDrag)
 
   // If not pushing other panes, panes to resize are right before and right after splitter.
   let panesToResize = [splitterIndex, splitterIndex + 1]
@@ -352,6 +377,13 @@ const addSplitter = (paneIndex, nextPaneNode, isVeryFirst = false) => {
       elm.ontouchstart = event => onMouseDown(event, splitterIndex)
     }
     elm.onclick = event => onSplitterClick(event, splitterIndex + 1)
+
+    if (props.keyboardStep) {
+      elm.setAttribute('tabindex', '0')
+      elm.setAttribute('role', 'separator')
+      elm.setAttribute('aria-orientation', props.horizontal ? 'horizontal' : 'vertical')
+      elm.onkeydown = event => onSplitterKeydown(event, splitterIndex)
+    }
   }
 
   elm.ondblclick = event => onSplitterDblClick(event, splitterIndex + 1)
@@ -363,6 +395,7 @@ const removeSplitter = node => {
   node.onmousedown = null
   node.onclick = null
   node.ondblclick = null
+  node.onkeydown = null
   node.remove()
 }
 
@@ -722,6 +755,7 @@ provide('onPaneClick', onPaneClick)
 
   // Disable default zoom behavior on touch device when double tapping splitter.
   &__splitter {touch-action: none;}
+  &__splitter:focus {outline: none;}
   &--vertical > .splitpanes__splitter {min-width: 1px;cursor: col-resize;}
   &--horizontal > .splitpanes__splitter {min-height: 1px;cursor: row-resize;}
 }
@@ -735,6 +769,7 @@ provide('onPaneClick', onPaneClick)
     position: relative;
     flex-shrink: 0;
 
+    &:focus-visible {outline: 2px solid #3b82f6;outline-offset: -2px;}
     &:before, &:after {
       content: "";
       position: absolute;
