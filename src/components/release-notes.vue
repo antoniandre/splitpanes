@@ -15,6 +15,7 @@
         li Fixed text selection occurring on the first drag frame in Firefox. (#168)
         li Fixed initialization transition flash when panes first mount. (#242)
         li Fixed incorrect panel order when multiple panes are added in the same tick. (#202)
+        li Fixed transition while maximizing panes in nested splitpanes.
 
     li.minor
       strong.version 4.1.0
