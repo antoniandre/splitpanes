@@ -11,12 +11,14 @@
   "unpkg": "dist/splitpanes.umd.js",
   "jsdelivr": "dist/splitpanes.umd.js",
   "module": "./dist/splitpanes.esm.js",
+  "types": "./src/components/splitpanes/index.d.ts",
   "files": [
     "dist",
     "src/components/splitpanes"
   ],
   "exports": {
     ".": {
+      "types": "./src/components/splitpanes/index.d.ts",
       "import": "./dist/splitpanes.esm.js",
       "require": "./dist/splitpanes.umd.js"
     },
