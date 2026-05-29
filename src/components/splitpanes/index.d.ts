@@ -87,6 +87,7 @@ export interface SplitpanesProps {
   maximizePanes?: boolean
   rtl?: boolean
   firstSplitter?: boolean
+  keyboardStep?: number
 }
 
 export interface PaneProps {
