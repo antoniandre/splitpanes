@@ -240,6 +240,17 @@ const calculatePanesSizeFromDragPercentage = dragPercentage => {
   let paneBefore = panes.value[panesToResize[0]] || null
   let paneAfter = panes.value[panesToResize[1]] || null
 
+  if (!props.pushOtherPanes) {
+    // Fit the adjacent panes into the available space while respecting both panes' limits.
+    const totalSize = 100 - sums.prevPanesSize - sums.nextPanesSize
+    const minSize = Math.max(paneBefore.min, totalSize - paneAfter.max)
+    const maxSize = Math.min(paneBefore.max, totalSize - paneAfter.min)
+
+    paneBefore.size = Math.min(Math.max(dragPercentage - sums.prevPanesSize, minSize), maxSize)
+    paneAfter.size = totalSize - paneBefore.size
+    return
+  }
+
   const paneBeforeMaxReached = paneBefore !== null && paneBefore.max < 100 && (dragPercentage >= (paneBefore.max + sums.prevPanesSize))
   const paneAfterMaxReached = paneAfter !== null && paneAfter.max < 100 && (dragPercentage <= 100 - (paneAfter.max + sumNextPanesSize(splitterIndex + 1)))
   // Prevent dragging beyond pane max.
