@@ -465,6 +465,8 @@ const onPaneAdd = pane => {
 const onPaneRemove = uid => {
   // 1. Remove the pane from array and redo indexes.
   const index = panes.value.findIndex(p => p.id === uid)
+  // The pane was never registered (unmounted before `mounted`, e.g. while a parent <Suspense> is pending).
+  if (index < 0) return
   panes.value[index].el = null // Prevent memory leaks.
   const removed = panes.value.splice(index, 1)[0]
   panes.value.forEach((p, i) => (p.index = i)) // Redo indexes after removal.
