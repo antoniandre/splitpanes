@@ -553,8 +553,8 @@ const equalizeAfterAddOrRemove = ({ addedPane, removedPane } = {}) => {
 
   leftToAllocate = 100 // Reset for round 2.
   for (const pane of panes.value) {
-    // Preserve the size of any pane that has an explicit givenSize (not just the newly added one).
-    if (pane.givenSize === null) pane.size = Math.max(Math.min(equalSpace, pane.max), pane.min)
+    // Reapply explicit sizes: a pane may have expanded while its siblings were absent.
+    pane.size = Math.max(Math.min(pane.givenSize === null ? equalSpace : pane.givenSize, pane.max), pane.min)
 
     leftToAllocate -= pane.size
     if (pane.size >= pane.max) ungrowable.push(pane.id)
